@@ -18,6 +18,8 @@ export default function ReefOS() {
   const [currentView, setCurrentView] = useState<"dashboard" | "charts">(
     "dashboard",
   );
+  const [prediction, setPrediction] = useState<any>(null);
+  const [dataSource, setDataSource] = useState("csv");
 
   useEffect(() => {
     fetchData();
@@ -36,6 +38,17 @@ export default function ReefOS() {
       );
       const chatData = await chatRes.json();
       if (chatData.data) setMessages(chatData.data);
+
+      // Fetch ML predictions based on dataSource
+      try {
+        const predRes = await fetch(
+          `http://127.0.0.1:8000/predict/full-analysis?source=${dataSource}`,
+        );
+        const predData = await predRes.json();
+        setPrediction(predData);
+      } catch (err) {
+        console.log("Prediction not available");
+      }
     } catch (err) {}
   };
 
@@ -92,16 +105,95 @@ export default function ReefOS() {
   };
 
   const uniqueParams = useMemo(
-    () =>
-      Array.from(new Set(logs.map((l) => l.parameter))).length > 0
+    () => {
+      const validParams = ["Alkalinity", "Calcium", "Magnesium", "pH", "Temperature", "alk", "calcium", "magnesium", "ph", "temp"];
+      const allParams = Array.from(new Set(logs.map((l) => l.parameter))).length > 0
         ? Array.from(new Set(logs.map((l) => l.parameter)))
-        : ["Alkalinity"],
+        : ["Alkalinity"];
+      // Filter and normalize to canonical names
+      const normalized = allParams.map(p => {
+        const lower = p?.toLowerCase();
+        if (lower === "alk" || lower === "alkalinity") return "Alkalinity";
+        if (lower === "ca" || lower === "calcium") return "Calcium";
+        if (lower === "mg" || lower === "magnesium") return "Magnesium";
+        if (lower === "ph") return "pH";
+        if (lower === "temp" || lower === "temperature" || lower === "tds") return "Temperature";
+        return null; // Filter out invalid params
+      }).filter(Boolean);
+      return normalized.length > 0 ? normalized : ["Alkalinity"];
+    },
     [logs],
   );
   useEffect(() => {
     if (uniqueParams.length > 0 && !uniqueParams.includes(activeTab))
       setActiveTab(uniqueParams[0] as string);
   }, [uniqueParams, activeTab]);
+
+  // Refetch predictions when data source changes
+  useEffect(() => {
+    const fetchPrediction = async () => {
+      try {
+        const predRes = await fetch(
+          `http://127.0.0.1:8000/predict/full-analysis?source=${dataSource}`,
+        );
+        const predData = await predRes.json();
+        setPrediction(predData);
+      } catch (err) {
+        console.log("Prediction not available");
+      }
+    };
+    fetchPrediction();
+  }, [dataSource]);
+
+  // Handlers for CSV upload and synthetic generation
+  const handleUploadCSV = async (formData: FormData) => {
+    try {
+      const res = await fetch("http://127.0.0.1:8000/predict/upload-csv", {
+        method: "POST",
+        body: formData,
+      });
+      const data = await res.json();
+      if (data.status === "success") {
+        // Refetch with CSV source
+        const predRes = await fetch(
+          `http://127.0.0.1:8000/predict/full-analysis?source=csv`,
+        );
+        setPrediction(await predRes.json());
+      }
+    } catch (err) {
+      console.error("Upload failed", err);
+    }
+  };
+
+  const handleGenerateSynthetic = async () => {
+    try {
+      await fetch("http://127.0.0.1:8000/predict/generate-synthetic", {
+        method: "POST",
+      });
+      const predRes = await fetch(
+        `http://127.0.0.1:8000/predict/full-analysis?source=synthetic`,
+      );
+      setPrediction(await predRes.json());
+    } catch (err) {
+      console.error("Generate failed", err);
+    }
+  };
+
+  const handleDeleteLogs = async (param: string = null) => {
+    try {
+      const url = param 
+        ? `http://127.0.0.1:8000/delete-logs?parameter=${encodeURIComponent(param)}`
+        : "http://127.0.0.1:8000/delete-logs";
+      const res = await fetch(url, { method: "DELETE" });
+      const data = await res.json();
+      if (data.status === "success") {
+        alert(`Deleted ${data.deleted} log(s)`);
+        fetchData();
+      }
+    } catch (err) {
+      console.error("Delete failed", err);
+    }
+  };
 
   const chartData = useMemo(
     () =>
@@ -152,6 +244,12 @@ export default function ReefOS() {
                 setNewValue={setNewValue}
                 addManualLog={addManualLog}
                 latestMetrics={latestMetrics}
+                dataSource={dataSource}
+                setDataSource={setDataSource}
+                prediction={prediction}
+                onUploadCSV={handleUploadCSV}
+                onGenerateSynthetic={handleGenerateSynthetic}
+                onDeleteLogs={handleDeleteLogs}
               />
             ) : (
               <Readings

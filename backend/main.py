@@ -113,6 +113,50 @@ def log_metric(req: LogRequest):
 
 @app.delete("/reset-logs")
 def reset_logs():
-    # This deletes all rows in the tank_settings table
     response = supabase.table("tank_settings").delete().neq("id", 0).execute()
     return {"status": "success", "message": "All logs cleared from memory."}
+
+@app.delete("/delete-logs")
+def delete_logs(parameter: str = None):
+    """Delete logs - all, by parameter, or by ID."""
+    try:
+        if parameter:
+            response = supabase.table("metrics_log").delete().eq("parameter", parameter).execute()
+            return {"status": "success", "deleted": len(response.data) if response.data else 0, "parameter": parameter}
+        else:
+            response = supabase.table("metrics_log").delete().neq("id", 0).execute()
+            return {"status": "success", "deleted": len(response.data) if response.data else 0}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+
+# --- PREDICTION ENDPOINTS ---
+
+_predictor = None
+
+@app.get("/predict/state")
+def predict_state():
+    from inference import create_predictor
+    global _predictor
+    if _predictor is None:
+        _predictor = create_predictor()
+    return _predictor.predict_current_state()
+
+@app.get("/predict/full-analysis")
+def full_analysis(source: str = "auto"):
+    """Get full analysis. source=csv|supabase|synthetic|auto"""
+    from inference import create_predictor
+    global _predictor
+    if _predictor is None:
+        _predictor = create_predictor()
+    
+    _predictor.load_data(source)
+    
+    return _predictor.get_full_analysis()
+
+@app.post("/predict/generate-synthetic")
+def generate_synthetic():
+    """Generate new synthetic data"""
+    from data_loader import generate_synthetic_data
+    df = generate_synthetic_data(n_days=30)
+    df.to_csv("test_data.csv", index=False)
+    return {"status": "success", "rows": len(df)}
