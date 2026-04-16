@@ -10,7 +10,11 @@ from datetime import datetime
 
 from data_loader import generate_synthetic_data, PARAMETERS
 from features import FeatureEngineer, create_labels, calculate_velocity, IDEAL_RANGES, CRITICAL_RANGES, normalize_param_name
-import numpy as np
+
+try:
+    from rag import get_diagnosis_context, get_reef_advice, KNOWN_ISSUES
+except ImportError:
+    KNOWN_ISSUES = {}
 
 
 class ReefTankPredictor:
@@ -151,7 +155,13 @@ class ReefTankPredictor:
         
         if param_recs:
             recommendations.extend(param_recs)
-        elif state["state_id"] == 1:
+        
+        # Add RAG-based advice if available
+        if KNOWN_ISSUES:
+            current_vals = self._get_latest_values()
+            diag_context = get_diagnosis_context(state.get("warning_parameters", []), current_vals)
+        
+        if state["state_id"] == 1:
             recommendations.extend([
                 "Test water parameters manually",
                 "Check dosing pump operation",
