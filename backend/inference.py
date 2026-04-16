@@ -16,6 +16,11 @@ try:
 except ImportError:
     KNOWN_ISSUES = {}
 
+try:
+    from scraper import get_recommendation_system, MANUAL_KNOWLEDGE
+except ImportError:
+    pass
+
 
 class ReefTankPredictor:
     def __init__(self, user_id: str = None):
