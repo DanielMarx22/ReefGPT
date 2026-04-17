@@ -8,3 +8,8 @@ pandas
 numpy
 joblib
 openai
+pytest
+faiss-cpu
+sentence-transformers
+beautifulsoup4
+lxml

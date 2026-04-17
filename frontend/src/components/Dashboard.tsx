@@ -1,3 +1,24 @@
+/**
+ * Dashboard Component
+ * ==============
+ * Main control panel for ReefGPT frontend.
+ * 
+ * Functions:
+ * - Log parameter readings manually
+ * - Select data source (CSV/Supabase/Synthetic)
+ * - View prediction state and 24-hour forecast
+ * - Upload CSV or generate synthetic data
+ * - Delete logs
+ * 
+ * Props:
+ * - newParam, newValue: Current input values
+ * - addManualLog: Function to log a reading
+ * - latestMetrics: Current tank readings
+ * - dataSource: Selected data source
+ * - prediction: Current prediction state
+ * - onUploadCSV, onGenerateSynthetic, onDeleteLogs: Action handlers
+ */
+
 import { Activity, Plus, TrendingUp, AlertTriangle, CheckCircle, Database, Cloud, FlaskConical, RefreshCw, Trash2 } from "lucide-react";
 
 export default function Dashboard({
@@ -13,7 +34,20 @@ export default function Dashboard({
   onUploadCSV,
   onGenerateSynthetic,
   onDeleteLogs,
-}: any) {
+}: {
+  newParam: any;
+  setNewParam: any;
+  newValue: any;
+  setNewValue: any;
+  addManualLog: any;
+  latestMetrics: any;
+  dataSource: any;
+  setDataSource: any;
+  prediction: any;
+  onUploadCSV: any;
+  onGenerateSynthetic: any;
+  onDeleteLogs: any;
+}) {
   const getTrendColor = (trend: string) => {
     if (trend === "stable") return "text-green-400";
     if (trend === "warning") return "text-yellow-400";
@@ -26,32 +60,10 @@ export default function Dashboard({
   };
 
   const sources = [
-    { id: "csv", label: "CSV", icon: Database, desc: "Upload", hasAction: true },
+    { id: "csv", label: "CSV", icon: Database, desc: "Load file", hasAction: false },
     { id: "supabase", label: "Supabase", icon: Cloud, desc: "History", hasAction: false },
-    { id: "synthetic", label: "Synthetic", icon: FlaskConical, desc: "Generate", hasAction: true },
+    { id: "synthetic", label: "Synthetic", icon: FlaskConical, desc: "Generate", hasAction: false },
   ];
-
-  const handleCSVUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    
-    setUploading(true);
-    
-    // Read and send CSV content directly
-    const reader = new FileReader();
-    reader.onload = async () => {
-      try {
-        const text = reader.result as string;
-        // Save to localStorage for now (or send to backend)
-        localStorage.setItem("tank_csv_data", text);
-        alert("CSV loaded! Switch to CSV source to use it.");
-      } catch (err) {
-        console.error("Upload failed");
-      }
-      setUploading(false);
-    };
-    reader.readAsText(file);
-  };
 
   return (
     <div className="space-y-6 p-6">

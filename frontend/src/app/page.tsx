@@ -1,45 +1,118 @@
+/**
+ * ReefOS Main Page
+ * =============
+ * Main application page for the ReefGPT reef aquarium management system.
+ * 
+ * This is the main entry point that composes all components:
+ * - Navbar: Navigation header
+ * - Dashboard: Parameter logging, data source selection, predictions
+ * - Readings: Charts showing parameter trends
+ * - Chatbot: AI chat interface
+ * 
+ * Data Flow:
+ * 1. Fetches logs from Supabase on load
+ * 2. Fetches ML predictions from backend API
+ * 3. Displays real-time tank state and forecasts
+ * 
+ * API Endpoints Used:
+ * - GET /get-logs: Fetch parameter logs
+ * - GET /get-chat-history: Fetch chat history  
+ * - GET /predict/full-analysis: Get ML predictions
+ * - POST /log-metric: Log a parameter reading
+ * - POST /chat: Chat with ReefGPT
+ */
+
 "use client";
+
 import { useState, useEffect, useMemo } from "react";
 import { Group, Panel, Separator } from "react-resizable-panels";
 import Navbar from "@/components/Navbar";
 import Dashboard from "@/components/Dashboard";
 import Readings from "@/components/Readings";
+import DataView from "@/components/DataView";
 import Chatbot from "@/components/Chatbot";
 
 export default function ReefOS() {
-  const [messages, setMessages] = useState<{ role: string; content: string }[]>(
-    [],
-  );
+  // =========================================================================
+  // STATE MANAGEMENT
+  // =========================================================================
+  
+  // Chat messages (user/AI conversation)
+  const [messages, setMessages] = useState<{ role: string; content: string }[]>([]);
+  
+  // Chat input text
   const [input, setInput] = useState("");
+  
+  // Parameter logs from Supabase
   const [logs, setLogs] = useState<any[]>([]);
+  
+  // New parameter input (for logging)
   const [newParam, setNewParam] = useState("");
   const [newValue, setNewValue] = useState("");
-  const [activeTab, setActiveTab] = useState("Alkalinity");
-  const [currentView, setCurrentView] = useState<"dashboard" | "charts">(
-    "dashboard",
-  );
+  
+  // Active parameter tab in charts
+  const [activeTab, setActiveTab] = useState<string>("Alkalinity");
+  
+  // Current view (dashboard, charts, or data)
+  const [currentView, setCurrentView] = useState<"dashboard" | "charts" | "data">("dashboard");
+  
+  // ML prediction results
   const [prediction, setPrediction] = useState<any>(null);
+  
+  // Data source selection (csv/supabase/synthetic)
   const [dataSource, setDataSource] = useState("csv");
-
+  
   useEffect(() => {
     fetchData();
   }, []);
 
+  /**
+   * Fetch data from the ReefGPT API.
+   * 
+   * Gets:
+   * - Parameter logs from Supabase
+   * - Chat history for conversation context
+   * - ML predictions based on current dataSource
+   * - Model assessment results
+   */
   const fetchData = async () => {
     try {
-      const logRes = await fetch(
-        `http://127.0.0.1:8000/get-logs?t=${Date.now()}`,
-      );
-      const logData = await logRes.json();
-      if (logData.data) setLogs(logData.data);
+      // Fetch data based on selected source
+      let dataRecords: any[] = [];
+      
+      if (dataSource === "synthetic") {
+        // Fetch generated synthetic data
+        const synthRes = await fetch(
+          `http://127.0.0.1:8000/data/synthetic?t=${Date.now()}`,
+        );
+        const synthData = await synthRes.json();
+        if (synthData.data) dataRecords = synthData.data;
+      } else if (dataSource === "csv") {
+        // Fetch from CSV file
+        const csvRes = await fetch(
+          `http://127.0.0.1:8000/data/csv?t=${Date.now()}`,
+        );
+        const csvData = await csvRes.json();
+        if (csvData.data) dataRecords = csvData.data;
+      } else {
+        // Default: fetch from Supabase
+        const logRes = await fetch(
+          `http://127.0.0.1:8000/get-logs?t=${Date.now()}`,
+        );
+        const logData = await logRes.json();
+        if (logData.data) dataRecords = logData.data;
+      }
+      
+      setLogs(dataRecords);
 
+      // Fetch chat history
       const chatRes = await fetch(
         `http://127.0.0.1:8000/get-chat-history?t=${Date.now()}`,
       );
       const chatData = await chatRes.json();
       if (chatData.data) setMessages(chatData.data);
 
-      // Fetch ML predictions based on dataSource
+      // Fetch ML predictions based on selected data source
       try {
         const predRes = await fetch(
           `http://127.0.0.1:8000/predict/full-analysis?source=${dataSource}`,
@@ -52,9 +125,23 @@ export default function ReefOS() {
     } catch (err) {}
   };
 
+  /**
+   * Log a parameter reading to the database.
+   * 
+   * Sends to POST /log-metric endpoint which:
+   * 1. Validates parameter name (normalizes aliases)
+   * 2. Validates against physical limits (pH 0-14, etc.)
+   * 3. Saves to Supabase metrics_log table
+   * 
+   * Shows error if:
+   * - Parameter unknown
+   * - Value out of physical limits
+   * - Database connection failed
+   */
   const addManualLog = async () => {
     if (!newParam || !newValue) return;
 
+    // Parse the value as a number
     const val = parseFloat(newValue);
     if (isNaN(val)) {
       alert("Please enter a valid number.");
@@ -62,6 +149,7 @@ export default function ReefOS() {
     }
 
     try {
+      // Send to backend API
       const res = await fetch(
         `http://127.0.0.1:8000/log-metric?t=${Date.now()}`,
         {
@@ -73,12 +161,13 @@ export default function ReefOS() {
 
       const data = await res.json();
 
-      // THIS WILL CATCH THE SILENT DATABASE ERROR
+      // Handle validation errors (physical limits, unknown parameter)
       if (data.status === "error") {
-        alert("Database Error: " + data.message);
-        return; // Stops here, prevents the text box from clearing
+        alert(data.message);
+        return;
       }
 
+      // Clear input and refresh data
       setNewValue("");
       setActiveTab(newParam.trim());
       fetchData();
@@ -87,39 +176,57 @@ export default function ReefOS() {
     }
   };
 
+  /**
+   * Send a chat message to ReefGPT.
+   * 
+   * Sends to POST /chat endpoint which:
+   * 1. Gets tank data from Supabase
+   * 2. Searches vector DB for relevant context (RAG)
+   * 3. Injects context into LLM prompt (Llama 3.1)
+   * 4. Returns AI response
+   * 
+   * The RAG system uses the user's question to search
+   * 1377 knowledge vectors for relevant reef information.
+   */
   const sendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim()) return;
     const userMessage = input;
+    
+    // Optimistically add user message to UI
     setMessages((prev) => [...prev, { role: "user", content: userMessage }]);
     setInput("");
+    
     try {
+      // Send to ReefGPT chat API
       const res = await fetch(`http://127.0.0.1:8000/chat?t=${Date.now()}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text: userMessage }),
       });
       const data = await res.json();
+      
+      // Add AI response to chat
       setMessages((prev) => [...prev, { role: "ai", content: data.reply }]);
     } catch (err) {}
   };
 
-  const uniqueParams = useMemo(
-    () => {
-      const validParams = ["Alkalinity", "Calcium", "Magnesium", "pH", "Temperature", "alk", "calcium", "magnesium", "ph", "temp"];
+  const VALID_PARAMS = ["Alkalinity", "Calcium", "Magnesium", "pH", "Temperature"] as const;
+  type ValidParam = typeof VALID_PARAMS[number];
+
+  const uniqueParams = useMemo((): string[] => {
       const allParams = Array.from(new Set(logs.map((l) => l.parameter))).length > 0
         ? Array.from(new Set(logs.map((l) => l.parameter)))
         : ["Alkalinity"];
-      // Filter and normalize to canonical names
-      const normalized = allParams.map(p => {
+      const normalized: string[] = [];
+      for (const p of allParams) {
         const lower = p?.toLowerCase();
-        if (lower === "alk" || lower === "alkalinity") return "Alkalinity";
-        if (lower === "ca" || lower === "calcium") return "Calcium";
-        if (lower === "mg" || lower === "magnesium") return "Magnesium";
-        if (lower === "ph") return "pH";
-        if (lower === "temp" || lower === "temperature" || lower === "tds") return "Temperature";
-        return null; // Filter out invalid params
-      }).filter(Boolean);
+        if (lower === "alk" || lower === "alkalinity") normalized.push("Alkalinity");
+        else if (lower === "ca" || lower === "calcium") normalized.push("Calcium");
+        else if (lower === "mg" || lower === "magnesium") normalized.push("Magnesium");
+        else if (lower === "ph") normalized.push("pH");
+        else if (lower === "temp" || lower === "temperature" || lower === "tds") normalized.push("Temperature");
+      }
       return normalized.length > 0 ? normalized : ["Alkalinity"];
     },
     [logs],
@@ -129,9 +236,35 @@ export default function ReefOS() {
       setActiveTab(uniqueParams[0] as string);
   }, [uniqueParams, activeTab]);
 
-  // Refetch predictions when data source changes
+  // Refetch data and predictions when data source changes
   useEffect(() => {
     const fetchPrediction = async () => {
+      // Fetch data based on selected source
+      let dataRecords: any[] = [];
+      
+      if (dataSource === "synthetic") {
+        const synthRes = await fetch(
+          `http://127.0.0.1:8000/data/synthetic?t=${Date.now()}`,
+        );
+        const synthData = await synthRes.json();
+        if (synthData.data) dataRecords = synthData.data;
+      } else if (dataSource === "csv") {
+        const csvRes = await fetch(
+          `http://127.0.0.1:8000/data/csv?t=${Date.now()}`,
+        );
+        const csvData = await csvRes.json();
+        if (csvData.data) dataRecords = csvData.data;
+      } else {
+        const logRes = await fetch(
+          `http://127.0.0.1:8000/get-logs?t=${Date.now()}`,
+        );
+        const logData = await logRes.json();
+        if (logData.data) dataRecords = logData.data;
+      }
+      
+      setLogs(dataRecords);
+      
+      // Fetch predictions
       try {
         const predRes = await fetch(
           `http://127.0.0.1:8000/predict/full-analysis?source=${dataSource}`,
@@ -179,9 +312,9 @@ export default function ReefOS() {
     }
   };
 
-  const handleDeleteLogs = async (param: string = null) => {
+  const handleDeleteLogs = async (param?: string) => {
     try {
-      const url = param 
+      const url = param !== undefined
         ? `http://127.0.0.1:8000/delete-logs?parameter=${encodeURIComponent(param)}`
         : "http://127.0.0.1:8000/delete-logs";
       const res = await fetch(url, { method: "DELETE" });
@@ -251,12 +384,21 @@ export default function ReefOS() {
                 onGenerateSynthetic={handleGenerateSynthetic}
                 onDeleteLogs={handleDeleteLogs}
               />
-            ) : (
+            ) : currentView === "charts" ? (
               <Readings
                 uniqueParams={uniqueParams}
                 activeTab={activeTab}
                 setActiveTab={setActiveTab}
-                chartData={chartData}
+                dataSource={dataSource}
+                setDataSource={setDataSource}
+                logs={logs}
+              />
+            ) : (
+              <DataView
+                logs={logs}
+                dataSource={dataSource}
+                setDataSource={setDataSource}
+                prediction={prediction}
               />
             )}
           </Panel>

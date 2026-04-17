@@ -1,4 +1,4 @@
-import { LayoutDashboard, LineChart as ChartIcon } from "lucide-react";
+import { LayoutDashboard, LineChart as ChartIcon, Database } from "lucide-react";
 
 export default function Navbar({ currentView, setCurrentView }: any) {
   return (
@@ -18,6 +18,12 @@ export default function Navbar({ currentView, setCurrentView }: any) {
           className={`flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium transition ${currentView === "charts" ? "bg-cyan-600/30 text-cyan-300 border border-cyan-500/50" : "text-slate-400 hover:bg-white/5"}`}
         >
           <ChartIcon size={16} /> Readings
+        </button>
+        <button
+          onClick={() => setCurrentView("data")}
+          className={`flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium transition ${currentView === "data" ? "bg-cyan-600/30 text-cyan-300 border border-cyan-500/50" : "text-slate-400 hover:bg-white/5"}`}
+        >
+          <Database size={16} /> Data
         </button>
       </div>
     </nav>
