@@ -63,9 +63,17 @@ def update_profile(req: ProfileRequest):
     return {"status": "success"}
 
 @app.get("/get-logs")
-def get_logs():
-    response = supabase.table("metrics_log").select("*").eq("user_id", TEMP_USER_ID).order("timestamp", desc=False).execute()
-    return {"data": response.data}
+async def get_logs():
+    try:
+        response = supabase.table("metrics_log") \
+            .select("*") \
+            .order("timestamp", desc=True) \
+            .limit(1000) \
+            .execute()
+            
+        return {"data": response.data}
+    except Exception as e:
+        return {"error": str(e)}
 
 @app.get("/get-chat-history")
 def get_chat_history():
@@ -107,11 +115,16 @@ def delete_log(log_id: int):
 
 @app.post("/chat")
 def chat_endpoint(req: ChatRequest):
-    # 1. Get recent logs
     try:
-        history = supabase.table("metrics_log").select("*").order("id", desc=True).limit(15).execute()
-        tank_data = f"Recent Tank Logs: {history.data}"
-    except Exception:
+        # INCREASE LIMIT TO 150 so it actually sees the Alkalinity tests
+        history = supabase.table("metrics_log").select("*").order("timestamp", desc=True).limit(150).execute()
+        if history.data:
+            chrono_logs = sorted(history.data, key=lambda x: x['timestamp'])
+            log_strings = [f"[{log['timestamp'][:16]}] {log['parameter']}: {log['value']}" for log in chrono_logs]
+            tank_data = "Recent Tank Logs (Chronological, oldest to newest):\n" + "\n".join(log_strings)
+        else:
+            tank_data = "No tank logs found yet."
+    except Exception as e:
         tank_data = "No tank logs found yet."
 
     # 2. Get Livestock Profile

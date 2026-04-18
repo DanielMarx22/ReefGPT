@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { Group, Panel, Separator } from "react-resizable-panels";
 import Chatbot from "@/components/Chatbot";
+import ParameterGraph from "../components/Graphs";
 
 export default function ReefOS() {
   // Chat State
@@ -69,11 +70,22 @@ export default function ReefOS() {
       return;
     }
 
+    const paramName = name.trim();
+
+    // OPTIMISTIC UI UPDATE: Instantly add to local state so the graph updates immediately
+    const optimisticLog = {
+      id: Date.now(), // Temporary ID until refresh
+      parameter: paramName,
+      value: val,
+      timestamp: new Date().toISOString()
+    };
+    setLogs((prev) => [...prev, optimisticLog]);
+
     try {
       await fetch(`http://127.0.0.1:8000/log-metric?t=${Date.now()}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ parameter: name.trim(), value: val }),
+        body: JSON.stringify({ parameter: paramName, value: val }),
       });
 
       if (isNew) {
@@ -82,9 +94,12 @@ export default function ReefOS() {
       } else {
         setUpdateParamValue("");
       }
+      // Fetch fresh data from backend to ensure we have the real DB IDs and sync
       fetchData();
     } catch (err) {
       alert("Failed to save log");
+      // Revert optimistic update if failed by fetching true state
+      fetchData();
     }
   };
 
@@ -101,6 +116,8 @@ export default function ReefOS() {
   };
 
   const deleteSingleLog = async (id: number) => {
+    // Optimistically remove from UI
+    setLogs((prev) => prev.filter(log => log.id !== id));
     await fetch(`http://127.0.0.1:8000/delete-log/${id}`, { method: "DELETE" });
     fetchData();
   };
@@ -127,7 +144,9 @@ export default function ReefOS() {
   };
 
   const latestMetrics = useMemo(() => {
-    const grouped = logs.reduce((acc, log) => ({ ...acc, [log.parameter]: parseFloat(log.value) }), {});
+    // Sort logs by time first so the grouped object always gets the absolute newest value
+    const sorted = [...logs].sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+    const grouped = sorted.reduce((acc, log) => ({ ...acc, [log.parameter]: parseFloat(log.value) }), {});
     return Object.entries(grouped);
   }, [logs]);
 
@@ -239,6 +258,9 @@ export default function ReefOS() {
               )}
             </div>
           </div>
+
+          {/*Graphs*/}
+          <ParameterGraph logs={logs} />
 
           {/* Manage & Delete Logs */}
           <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-lg">
