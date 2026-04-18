@@ -1,225 +1,72 @@
 """
-RAG Knowledge Base for Reef Keeping
-Scrapes and indexes reef keeping information for clinical diagnostics.
+RAG Diagnostic Router for ReefGPT
+Analyzes the prompt to apply Generalized Expert Data Science Rules
+before the LLM generates a response.
 """
 
-import os
-import json
-from datetime import datetime
-from typing import List, Dict, Optional
+from typing import List, Dict
 
-# Local knowledge base - in production, this would use embeddings + vector DB
-KNOWLEDGE_BASE = {
-    "heater_malfunction": {
-        "symptoms": ["temperature dropping", "temperature spike", "heater not working", "cold water", "temp swing"],
-        "causes": ["heater failed", "thermostat broken", "power outage", "heater unplugged"],
-        "treatments": [
-            "Check heater is plugged in and functioning",
-            "Replace heater if malfunctioning",
-            "Gradually adjust temperature (max 2°F per hour)",
-            "Perform 25% water change with temp-matched water",
-            "Check for drafts near tank"
-        ],
-        "references": ["Reef2Reef", "ReefKeeping Magazine"]
-    },
-    "dosing_pump_clog": {
-        "symptoms": ["alkalinity dropping", "low alk", "dosing pump not working", "alk depletion"],
-        "causes": ["dosing pump clogged", "dosing bottle empty", "air lock in tubing", "pump malfunction"],
-        "treatments": [
-            "Check dosing pump is working",
-            "Clear any clogs in tubing",
-            "Refill dosing containers",
-            "Prime the dosing lines",
-            "Manual dose alkalinity to recover"
-        ],
-        "references": ["Reef2Reef", "Bulk Reef Supply"]
-    },
-    "calcifier_depletion": {
-        "symptoms": ["calcium dropping", "low calcium", "slow coral growth", "hollow skeletons", "calcium decline"],
-        "causes": ["calcium reactor issues", "low calcium in saltwater", "corals consuming calcium", "inadequate supplementation"],
-        "treatments": [
-            "Test calcium and alkalinity levels",
-            "Increase calcium reactor output",
-            "Add calcium supplement if needed",
-            "Maintain 400-450ppm calcium, 7-9dKH alkalinity",
-            "Check for coral bleaching indicating depletion"
-        ],
-        "references": ["Reef2Reef", "Tampa Bay Reef"]
-    },
-    "magnesium_spike": {
-        "symptoms": ["magnesium high", "magnesium spike", "mg elevated"],
-        "causes": ["overdosing magnesium supplement", "magnesium additive too much", "evaporation concentrating salts"],
-        "treatments": [
-            "Perform gradual water change (10-15% daily)",
-            "Stop magnesium supplementation",
-            "Test water for other parameter imbalances",
-            "Allow system to stabilize naturally",
-            "Do not add more magnesium until levels normalize"
-        ],
-        "references": ["Reef2Reef", "Reef Chemistry 101"]
-    },
-    "ph_issues": {
-        "symptoms": ["ph dropping", "ph too low", "ph swing", "acidosis", "ph波动"],
-        "causes": ["low alkalinity", "too much CO2", "outgassing", "biological load", "poor ventilation"],
-        "treatments": [
-            "Increase alkalinity to 8-9dKH",
-            "Check CO2 reactor/producer",
-            "Improve tank ventilation",
-            "Reduce feeding",
-            "Add Kalkwasser dosing for stability"
-        ],
-        "references": ["Reef2Reef", "Reefkeeping.com"]
-    },
-    "general_maintenance": {
-        "symptoms": [],
-        "causes": [],
-        "treatments": [
-            "Test water parameters weekly",
-            "25% water change monthly",
-            "Clean protein skimmer cup",
-            "Check flow pump performance",
-            "Inspect heater and cooling",
-            "Monitor dosing pump operation"
-        ],
-        "references": ["Reef2Reef", "BRS TV"]
-    }
-}
+def get_expert_routing_rules(query: str) -> str:
+    """
+    Applies strict, generalized data-science logic to the prompt.
+    """
+    query = query.lower()
+    rules = []
 
+    # RULE 1: Data Retrieval Requests (Keep this one, it formats the UI)
+    if any(word in query for word in ["tell", "list", "what", "show"]) and any(word in query for word in ["fish", "livestock", "parameter", "log", "reading"]):
+        rules.append("""
+        EXPERT OVERRIDE: DATA SUMMARY REQUEST
+        - The user is explicitly asking to see their data.
+        - INSTRUCTION: You MUST write your `final_user_reply` in natural human language (e.g., "You have 5 yellow tangs... Your recent readings are Alkalinity: 9.0...").
+        - INSTRUCTION: Do NOT output JSON arrays or lists of objects inside the `final_user_reply` string. Use conversational text and basic markdown only.
+        """)
+        return "\n".join(rules) # Exit early so it doesn't try to diagnose a simple list request
 
-def get_diagnosis_context(warning_parameters: List[str], current_values: Dict) -> str:
-    """Generate context for ReefGPT based on warning parameters and current values."""
-    if not warning_parameters:
-        context = KNOWN_ISSUES.get("general_maintenance", {})
-        return format_context("general_maintenance", context)
-    
-    issues = []
-    for param in warning_parameters:
-        issue_key = _map_param_to_issue(param, current_values)
-        if issue_key and issue_key in KNOWN_ISSUES:
-            issues.append(issue_key)
-    
-    context_parts = []
-    for issue in issues:
-        context_parts.append(format_context(issue, KNOWN_ISSUES[issue]))
-    
-    return "\n\n".join(context_parts) if context_parts else format_context("general_maintenance", KNOWN_ISSUES["general_maintenance"])
+    # RULE 2: Universal Biological Cross-Reference
+    if any(word in query for word in ["chewed", "bitten", "missing flesh", "receding", "dying", "closed", "bleaching"]):
+        rules.append("""
+        EXPERT OVERRIDE: LIVESTOCK COMPATIBILITY MATRIX
+        - INSTRUCTION: You MUST systematically cross-reference the affected coral with EVERY individual animal in the USER'S LIVESTOCK list.
+        - CHEAT SHEET FACTS TO PREVENT HALLUCINATIONS: 
+          * Dwarf/Flame Angelfish frequently nip fleshy LPS corals (Acans, Brains) but ignore SPS.
+          * Sand-sifting gobies (Diamond Gobies) will bury corals placed on the sandbed.
+          * Acro-eating flatworms ONLY eat Acropora (SPS). They NEVER eat Acans (LPS).
+          * Tangs generally only eat algae, not coral flesh.
+        - INSTRUCTION: If you identify a biological mismatch based on these facts, it MUST be listed as the primary culprit.
+        """)
 
+    # RULE 3: Universal Spatial/Placement Conflict
+    if any(word in query for word in ["next to", "near", "close", "beside"]):
+        rules.append("""
+        EXPERT OVERRIDE: SPATIAL CONFLICT ANALYSIS
+        - INSTRUCTION: The user mentioned corals in close proximity. You MUST evaluate them for placement mismatches.
+        - INSTRUCTION: Check for lighting/flow discrepancies (e.g., SPS needs high flow, LPS needs low flow).
+        - INSTRUCTION: Check for physical warfare (e.g., sweeper tentacles from Euphyllia/Torches stinging neighbors).
+        """)
 
-def _map_param_to_issue(param: str, values: Dict) -> Optional[str]:
-    """Map a parameter to the likely issue based on values."""
-    param = param.lower() if param else ""
-    
-    # Temperature issues
-    if param == "temperature":
-        temp = values.get("Temperature", 0)
-        if temp < 76:
-            return "heater_malfunction"
-        if temp > 82:
-            return "temperature_spike"
-    
-    # Alkalinity issues
-    if param in ["alkalinity", "alk"]:
-        alk = values.get("Alkalinity", 0)
-        if alk < 7.5:
-            return "dosing_pump_clog"
-        if alk > 11:
-            return "alkalinity_excess"
-    
-    # Calcium issues
-    if param == "calcium":
-        ca = values.get("Calcium", 0)
-        if ca < 380:
-            return "calcifier_depletion"
-    
-    # pH issues
-    if param == "ph":
-        ph = values.get("pH", 0)
-        if ph < 7.8:
-            return "ph_issues"
-    
-    # Magnesium issues
-    if param == "magnesium":
-        mg = values.get("Magnesium", 0)
-        if mg > 1500:
-            return "magnesium_spike"
-        if mg < 1200:
-            return "magnesium_depletion"
-    
-    return None
+    # RULE 4: The Systemic vs Localized Rule (Keep this, it's core Data Science)
+    if "all corals" in query and ("dying" in query or "bleaching" in query):
+        rules.append("""
+        EXPERT OVERRIDE: SYSTEMIC CRASH
+        - The user noted a tank-wide issue affecting multiple species.
+        - RULE: This indicates a fundamental water chemistry or temperature issue. 
+        - INSTRUCTION: If critical parameter logs (Alkalinity, Temp, Salinity) are missing or stale, you MUST demand the user tests them.
+        """)
 
+    # Default Rule
+    if not rules:
+        rules.append("EXPERT RULE: Evaluate the vector context and parameter logs normally.")
 
-def format_context(issue_key: str, issue_data: Dict) -> str:
-    """Format issue data into readable context."""
-    lines = [f"## {issue_key.replace('_', ' ').title()}"]
-    
-    if issue_data.get("symptoms"):
-        lines.append("### Symptoms:")
-        for s in issue_data["symptoms"]:
-            lines.append(f"- {s}")
-    
-    if issue_data.get("causes"):
-        lines.append("### Possible Causes:")
-        for c in issue_data["causes"]:
-            lines.append(f"- {c}")
-    
-    if issue_data.get("treatments"):
-        lines.append("### Recommended Actions:")
-        for t in issue_data["treatments"]:
-            lines.append(f"- {t}")
-    
-    if issue_data.get("references"):
-        lines.append(f"### References: {', '.join(issue_data['references'])}")
-    
-    return "\n".join(lines)
+    return "\n".join(rules)
 
-
-# Alias for compatibility
-KNOWN_ISSUES = KNOWLEDGE_BASE
-
-
-def get_reef_advice(param: str, value: float) -> Dict:
-    """Get specific advice for a parameter value."""
-    param = param.lower() if param else ""
+def get_diagnosis_context(query: str, warning_parameters: List[str], current_values: Dict) -> str:
+    routing_rules = get_expert_routing_rules(query)
+    context = f"""
+    ### DATA SCIENCE DIAGNOSTIC RULES ###
+    {routing_rules}
     
-    advice = {
-        "Alkalinity": {
-            "low": {"message": "Alkalinity is low. Check dosing pump operation and consider adding buffer.", "severity": "warning"},
-            "high": {"message": "Alkalinity is elevated. Perform water change to reduce.", "severity": "warning"},
-            "critical": {"message": "Alkalinity critical! Immediate water change recommended.", "severity": "critical"}
-        },
-        "Calcium": {
-            "low": {"message": "Calcium depleted. Increase calcium reactor or supplement.", "severity": "warning"},
-            "high": {"message": "Calcium elevated. Check water change schedule.", "severity": "warning"},
-            "critical": {"message": "Calcium critically low - coral health at risk!", "severity": "critical"}
-        },
-        "Magnesium": {
-            "low": {"message": "Magnesium low. Add magnesium supplement.", "severity": "warning"},
-            "high": {"message": "Magnesium elevated. Perform gradual water changes.", "severity": "warning"},
-            "critical": {"message": "Magnesium severely imbalanced!", "severity": "critical"}
-        },
-        "pH": {
-            "low": {"message": "pH low. Check CO2 levels and improve ventilation.", "severity": "warning"},
-            "high": {"message": "pH high. Check for alkalinity issues.", "severity": "warning"},
-            "critical": {"message": "pH outside safe range! Test immediately.", "severity": "critical"}
-        },
-        "Temperature": {
-            "low": {"message": "Temperature low. Check heater operation.", "severity": "warning"},
-            "high": {"message": "Temperature high. Check chiller and room temp.", "severity": "warning"},
-            "critical": {"message": "Temperature critical! Coral stress imminent.", "severity": "critical"}
-        }
-    }
-    
-    # Get the appropriate advice
-    if param in advice:
-        value_key = "low" if value < 0 else "high"  # Simplified
-        return advice[param].get(value_key, {"message": "Monitor parameter", "severity": "info"})
-    
-    return {"message": "No specific advice", "severity": "info"}
-
-
-if __name__ == "__main__":
-    # Test the RAG system
-    print("Testing Knowledge Base:")
-    print(get_diagnosis_context(["Temperature", "Alkalinity"], {"Temperature": 72, "Alkalinity": 6.0}))
-    print("\n" + "="*50)
-    print(get_reef_advice("Temperature", 72))
+    ### CURRENT KNOWN PARAMETERS ###
+    {current_values if current_values else "No current parameters provided."}
+    """
+    return context

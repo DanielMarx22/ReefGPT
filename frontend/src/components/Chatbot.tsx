@@ -1,52 +1,57 @@
-import { Send } from "lucide-react";
+import { useEffect, useRef } from "react";
 
-export default function Chatbot({
-  messages,
-  input,
-  setInput,
-  sendMessage,
-}: any) {
+interface ChatbotProps {
+  messages: { role: string; content: string | any }[];
+  input: string;
+  setInput: (val: string) => void;
+  sendMessage: (e: React.FormEvent) => void;
+}
+
+export default function Chatbot({ messages, input, setInput, sendMessage }: ChatbotProps) {
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Auto-scroll to the bottom whenever messages change
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
   return (
-    <div className="h-full flex flex-col">
-      <div className="p-4 border-b border-white/10 flex justify-between items-center backdrop-blur-md">
-        <h2 className="text-lg font-bold text-cyan-400">ReefGPT</h2>
-        <div className="flex items-center gap-2 text-xs font-medium text-slate-300">
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-          </span>
-          Online
-        </div>
-      </div>
+    <div className="flex flex-col h-full bg-black/40">
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {messages.map((m: any, i: number) => (
+        {messages.map((msg, i) => (
           <div
             key={i}
-            className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}
+            className={`p-4 rounded-xl ${msg.role === "user"
+                ? "bg-cyan-900/30 border border-cyan-500/30 ml-auto max-w-[80%]"
+                : "bg-slate-800/50 border border-slate-700 mr-auto max-w-[90%]"
+              }`}
           >
-            <div
-              className={`max-w-[85%] p-3 text-sm leading-relaxed shadow-lg backdrop-blur-md ${m.role === "user" ? "bg-cyan-600/80 text-white rounded-2xl rounded-tr-sm" : "bg-white/10 border border-white/20 text-slate-100 rounded-2xl rounded-tl-sm"}`}
-            >
-              {m.content}
+            <span className="text-xs text-slate-500 uppercase font-bold tracking-wider mb-2 block">
+              {msg.role === "ai" ? "ReefGPT" : "You"}
+            </span>
+            <div className="text-sm text-slate-200 whitespace-pre-wrap leading-relaxed">
+              {/* Fallback to prevent React crashes if a raw object slips through */}
+              {typeof msg.content === "string" ? msg.content : JSON.stringify(msg.content, null, 2)}
             </div>
           </div>
         ))}
+        {/* Invisible div acts as the scroll target */}
+        <div ref={messagesEndRef} />
       </div>
-      <form
-        onSubmit={sendMessage}
-        className="p-3 border-t border-white/10 flex gap-2 backdrop-blur-md bg-black/30"
-      >
+
+      <form onSubmit={sendMessage} className="p-4 border-t border-slate-800/50 bg-slate-900/50 flex gap-2">
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          className="flex-1 bg-black/50 border border-white/10 p-2.5 rounded-lg outline-none focus:border-cyan-500 text-sm"
+          className="flex-1 bg-black/50 border border-slate-700 rounded-lg p-3 text-sm focus:border-cyan-500 outline-none text-slate-200 placeholder-slate-500 transition-colors"
           placeholder="Ask ReefGPT..."
         />
         <button
           type="submit"
-          className="bg-cyan-600/80 text-white p-2.5 rounded-lg hover:bg-cyan-500 transition"
+          className="bg-cyan-600 hover:bg-cyan-500 text-white px-6 py-2 rounded-lg text-sm font-bold transition-colors disabled:opacity-50"
+          disabled={!input.trim()}
         >
-          <Send size={18} />
+          Send
         </button>
       </form>
     </div>

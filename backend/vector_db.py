@@ -507,32 +507,12 @@ class VectorKnowledgeBase:
 def create_vector_db():
     """
     Initialize the vector database with reef knowledge.
-    
-    This function:
-    1. Loads existing index if available
-    2. Runs web searches for reef content
-    3. Embeds the content
-    4. Saves to disk
-    
-    Returns:
-        The initialized VectorKnowledgeBase
-        
-    Usage:
-        kb = create_vector_db()  # Run once to initialize
     """
     kb = VectorKnowledgeBase()
     
-    # Try direct scraping first (usually returns 0 due to blocks)
-    scraper = ReefScraper()
-    chunks = scraper.scrape_all()
-    
-    if chunks:
-        kb.add_chunks(chunks)
-        kb.save()
-        return kb
-    
-    # Fall back to web search (works reliably)
-    # This searches for 105 reef topics and scrapes results
+    # We skip direct scraping because forums block it with 403 Forbidden.
+    # Instead, we rely entirely on DuckDuckGo web search.
+    print("Initiating Web Search Scraper...")
     web_scraper = WebSearchScraper()
     chunks = web_scraper.run()
     
@@ -541,33 +521,34 @@ def create_vector_db():
         kb.save()
         return kb
     
-    # If still no chunks, add seed data from scraper.py
-    from scraper import MANUAL_KNOWLEDGE
-    
-    seed_chunks = []
-    for issue, info in MANUAL_KNOWLEDGE.items():
-        content_parts = []
+    # If internet is down or search fails, add seed data from scraper.py
+    try:
+        from scraper import MANUAL_KNOWLEDGE
+        seed_chunks = []
+        for issue, info in MANUAL_KNOWLEDGE.items():
+            content_parts = []
+            if info.get("treatments"):
+                content_parts.append("Treatments: " + ", ".join(info["treatments"]))
+            if info.get("references"):
+                content_parts.append("References: " + ", ".join(info["references"]))
+            
+            if content_parts:
+                chunk = ReefKnowledgeChunk(
+                    content=". ".join(content_parts),
+                    source="seed_knowledge",
+                    url="",
+                    title=issue.replace("_", " ").title(),
+                    topic=issue,
+                    timestamp=datetime.now().isoformat(),
+                    chunk_id=hashlib.md5(issue.encode()).hexdigest()[:16],
+                )
+                seed_chunks.append(chunk)
         
-        if info.get("treatments"):
-            content_parts.append("Treatments: " + ", ".join(info["treatments"]))
-        if info.get("references"):
-            content_parts.append("References: " + ", ".join(info["references"]))
+        kb.add_chunks(seed_chunks)
+        kb.save()
+    except ImportError:
+        print("Failed to load seed data from scraper.py")
         
-        if content_parts:
-            chunk = ReefKnowledgeChunk(
-                content=". ".join(content_parts),
-                source="seed_knowledge",
-                url="",
-                title=issue.replace("_", " ").title(),
-                topic=issue,
-                timestamp=datetime.now().isoformat(),
-                chunk_id=hashlib.md5(issue.encode()).hexdigest()[:16],
-            )
-            seed_chunks.append(chunk)
-    
-    kb.add_chunks(seed_chunks)
-    kb.save()
-    
     return kb
 
 

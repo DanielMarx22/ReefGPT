@@ -1,197 +1,105 @@
 """
-ReefOS Model - Synthetic Data Generator
-===================================
-Generates synthetic reef tank data for training and testing ML models.
-
-This creates realistic reef aquarium water chemistry data including:
-- Normal operating conditions (stable parameters)
-- Common failure modes (heater malfunction, dosing pump clog, etc.)
-- Realistic correlations between parameters (e.g., calcium/alkalinity relationship)
-
-Usage:
-    from data_loader import generate_synthetic_data
-    
-    # Generate 30 days of normal data
-    df = generate_synthetic_data(n_days=30)
-    
-    # Generate 30 days with a specific failure mode
-    df = generate_synthetic_data(n_days=30, failure_mode='heater_malfunction')
-
-Failure Modes:
-    - None: Normal operation
-    - heater_malfunction: Temperature drops or spikes
-    - dosing_pump_clog: Alkalinity/Calcium dropping
-    - calcifier_depletion: Calcium depleting while alk stable
-    - magnesium_spike: Magnesium elevated
+Synthetic Reef Data Generator & Database Seeder
+Generates 90 days of realistic, sparse reef parameter data and uploads to Supabase.
 """
 
-from datetime import datetime, timedelta
-import numpy as np
+import os
 import pandas as pd
+import numpy as np
+from datetime import datetime, timedelta
+from supabase import create_client, Client
+from dotenv import load_dotenv
 
-# The 5 core parameters for reef tank water chemistry
-# These are what we measure and predict
-PARAMETERS = ["Alkalinity", "Calcium", "Magnesium", "pH", "Temperature"]
+load_dotenv()
 
+# Connect to Supabase
+url: str = os.environ.get("SUPABASE_URL")
+key: str = os.environ.get("SUPABASE_KEY")
+supabase: Client = create_client(url, key)
+TEMP_USER_ID = "00000000-0000-0000-0000-000000000000"
 
-def generate_synthetic_data(
-    n_days: int = 30,
-    sample_interval_hours: int = 6,
-    failure_mode: str = None,
-) -> pd.DataFrame:
-    """
-    Generate synthetic reef tank data for training.
+def generate_sparse_reef_data(days=90):
+    print(f"Generating {days} days of synthetic data...")
     
-    Creates realistic time-series data with:
-    - Correlated parameters (alk/calcium, mg/calcium)
-    - Random noise and drift
-    - Optional failure mode injection
+    # End date: April 17, 2026
+    end_date = pd.to_datetime("2026-04-17 12:00:00")
+    dates = pd.date_range(end=end_date, periods=days, freq='D')
     
-    Args:
-        n_days: Number of days of data to generate
-        sample_interval_hours: Hours between samples (6 = 4x/day)
-        failure_mode: Optional failure mode to inject
+    df = pd.DataFrame({'timestamp': dates})
+    
+    # 1. Generate Realistic Baselines with slight daily noise
+    np.random.seed(42) # Ensures reproducibility
+    df['Alkalinity'] = np.random.normal(8.5, 0.15, days)
+    df['Calcium'] = np.random.normal(440, 8, days)
+    df['Magnesium'] = np.random.normal(1350, 15, days)
+    df['pH'] = np.random.normal(8.1, 0.05, days)
+    df['Temperature'] = np.random.normal(78.0, 0.4, days)
+    df['Nitrate'] = np.random.normal(5.0, 0.5, days)
+    df['Phosphate'] = np.random.normal(0.05, 0.01, days)
+    
+    # 2. Apply Missing Data Masks
+    
+    # Alk, Ca, Mg: Miss roughly 1 in 10 days
+    for col in ['Alkalinity', 'Calcium', 'Magnesium']:
+        mask = np.random.rand(days) < 0.10
+        df.loc[mask, col] = np.nan
         
-    Returns:
-        DataFrame with columns: timestamp, Alkalinity, Calcium, Magnesium, pH, Temperature
+    # pH, Temp: Miss roughly 2 days a week (28% of the time)
+    for col in ['pH', 'Temperature']:
+        mask = np.random.rand(days) < 0.28
+        df.loc[mask, col] = np.nan
         
-    Example:
-        >>> df = generate_synthetic_data(n_days=7)
-        >>> print(df.head())
-           timestamp  Alkalinity  Calcium  Magnesium   pH  Temperature
-        0 2024-...      8.2      420        1350  8.1         78.1
-        1 2024-...      8.4      425        1345  8.2         78.3
-    """
-    # Use time-based seed for variety (different data each run)
-    np.random.seed(None)
+    # Nitrate, Phosphate: Tested exactly once a week
+    weekly_mask = np.ones(days, dtype=bool)
+    weekly_mask[::7] = False # Keep only every 7th day
+    df.loc[weekly_mask, 'Nitrate'] = np.nan
+    df.loc[weekly_mask, 'Phosphate'] = np.nan
     
-    # Calculate number of samples: n_days * 24h / interval
-    n_samples = n_days * 24 // sample_interval_hours
+    # Round the values for cleaner display
+    for col in df.columns:
+        if col != 'timestamp':
+            df[col] = df[col].round(2)
+            
+    return df
+
+def seed_database():
+    df = generate_sparse_reef_data(days=90)
     
-    # Generate timestamps spanning n_days into the past
-    timestamps = pd.date_range(
-        start=datetime.now() - timedelta(days=n_days),
-        periods=n_samples,
-        freq=f"{sample_interval_hours}h",
+    # Save to CSV
+    csv_path = "test_data.csv"
+    df.to_csv(csv_path, index=False)
+    print(f"Saved wide-format data to {csv_path}")
+    
+    # Melt to Long Format for the database
+    df_long = pd.melt(
+        df, 
+        id_vars=["timestamp"], 
+        var_name="parameter", 
+        value_name="value"
     )
     
-    # =========================================================================
-    # GENERATE BASE DATA WITH NORMAL PARAMETERS
-    # =========================================================================
-    # Generate values with realistic distributions:
-    # - Alkalinity: ~8.5 dKH (ideal is 8-9)
-    # - Calcium: ~420 ppm (ideal is 400-450)
-    # - Magnesium: ~1350 ppm (ideal is 1300-1400)
-    # - pH: ~8.2 (ideal is 8.1-8.3)
-    # - Temperature: ~78°F (ideal is 76-80)
+    # Drop the NaNs so they don't upload to the database
+    # (The AI will calculate the missing gaps via features.py)
+    df_long = df_long.dropna(subset=["value"])
     
-    data = {
-        "timestamp": timestamps,
-        "Alkalinity": np.random.normal(8.5, 0.5, n_samples),
-        "Calcium": np.random.normal(420, 20, n_samples),
-        "Magnesium": np.random.normal(1350, 50, n_samples),
-        "pH": np.random.normal(8.2, 0.1, n_samples),
-        "Temperature": np.random.normal(78, 1, n_samples),
-    }
+    print("Clearing old database logs...")
+    supabase.table("metrics_log").delete().eq("user_id", TEMP_USER_ID).execute()
     
-    # =========================================================================
-    # ADD CORRELATIONS (realistic chemistry relationships)
-    # =========================================================================
-    # In real tanks, parameters are correlated:
-    # - Higher calcium → slightly lower pH (carbon chemistry)
-    # - Sequential samples are correlated (not random)
+    print(f"Uploading {len(df_long)} valid records to Supabase...")
     
-    for i in range(1, n_samples):
-        # Add drift from previous value ( tanks aren't random)
-        data["Alkalinity"][i] += data["Alkalinity"][i-1] * 0.05
-        data["Calcium"][i] += data["Calcium"][i-1] * 0.03
-        data["Magnesium"][i] += data["Magnesium"][i-1] * 0.02
-        data["pH"][i] += np.random.randn() * 0.02
-        data["Temperature"][i] += np.random.randn() * 0.1
+    batch_size = 100
+    records = df_long.to_dict("records")
     
-    # =========================================================================
-    # CLAMP TO REALISTIC RANGES
-    # =========================================================================
-    # Ensure values are within reasonable bounds
-    for param, min_val, max_val in [
-        ("Alkalinity", 7.0, 12.0),
-        ("Calcium", 380, 500),
-        ("Magnesium", 1200, 1500),
-        ("pH", 7.8, 8.5),
-        ("Temperature", 74, 82),
-    ]:
-        data[param] = np.clip(data[param], min_val, max_val)
+    # Convert timestamps to string format for JSON serialization
+    for row in records:
+        row["timestamp"] = str(row["timestamp"])
+        row["user_id"] = TEMP_USER_ID
     
-    # =========================================================================
-    # INJECT FAILURE MODE (if specified)
-    # =========================================================================
-    if failure_mode:
-        data = _inject_failure_mode(data, failure_mode)
-    
-    return pd.DataFrame(data)
-
-
-def _inject_failure_mode(data: dict, mode: str) -> dict:
-    """
-    Inject a specific failure mode into the data.
-    
-    Common reef tank failures and their signatures:
-    
-    Args:
-        data: Dictionary of parameter arrays
-        mode: Failure mode name
+    for i in range(0, len(records), batch_size):
+        batch = records[i:i+batch_size]
+        supabase.table("metrics_log").insert(batch).execute()
         
-    Returns:
-        Modified data dictionary with failure injected
-    """
-    n = len(data["Alkalinity"])
-    
-    if mode == "heater_malfunction":
-        # Temperature drops suddenly, stays low
-        drop_point = n // 3
-        for i in range(drop_point, n):
-            data["Temperature"][i] -= np.random.uniform(2, 5)
-    
-    elif mode == "dosing_pump_clog":
-        # Alkalinity drops while calcium stays
-        drop_point = n // 2
-        for i in range(drop_point, n):
-            data["Alkalinity"][i] -= np.random.uniform(0.5, 1.5)
-    
-    elif mode == "calcifier_depletion":
-        # Calcium drops (coral consuming), alk stable
-        drop_point = n // 2
-        for i in range(drop_point, n):
-            data["Calcium"][i] -= np.random.uniform(1, 3)
-    
-    elif mode == "magnesium_spike":
-        # Magnesium spikes (overdosing)
-        spike_point = n // 2
-        for i in range(spike_point, n):
-            data["Magnesium"][i] += np.random.uniform(50, 150)
-    
-    # Re-clamp after failure injection
-    for param in PARAMETERS:
-        if param == "Alkalinity":
-            data[param] = np.clip(data[param], 6.0, 12.0)
-        elif param == "Calcium":
-            data[param] = np.clip(data[param], 350, 550)
-        elif param == "Magnesium":
-            data[param] = np.clip(data[param], 1100, 1700)
-        elif param == "pH":
-            data[param] = np.clip(data[param], 7.6, 8.6)
-        elif param == "Temperature":
-            data[param] = np.clip(data[param], 70, 86)
-    
-    return data
-
+    print("Seeding complete! Refresh your React frontend to see the updated metrics.")
 
 if __name__ == "__main__":
-    # Example usage
-    print("Generating normal data...")
-    df = generate_synthetic_data(n_days=7)
-    print(df.describe())
-    
-    print("\nGenerating heater malfunction data...")
-    df_fail = generate_synthetic_data(n_days=7, failure_mode="heater_malfunction")
-    print(f"Temperature range: {df_fail['Temperature'].min():.1f} - {df_fail['Temperature'].max():.1f}")
+    seed_database()
