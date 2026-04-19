@@ -30,27 +30,26 @@ export default function ParameterGraph({ logs }: ParameterGraphProps) {
     const chartData = useMemo(() => {
         if (!logs || logs.length === 0) return [];
 
-        // 1. Filter by parameter and ensure we have data
+        // 1. Find the GLOBAL latest date across ALL logs to anchor the timeline
+        const globalSortedLogs = [...logs].sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+        const latestGlobalDate = new Date(globalSortedLogs[globalSortedLogs.length - 1].timestamp);
+
+        // 2. Filter by parameter and ensure we have data for the specific line
         const paramLogs = logs.filter(log => log.parameter.toLowerCase() === selectedParam.toLowerCase());
         if (paramLogs.length === 0) return [];
 
-        // 2. Sort chronologically (oldest to newest)
-        const sortedLogs = [...paramLogs].sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+        const sortedParamLogs = [...paramLogs].sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
 
-        // 3. Find the LATEST date in the logs to anchor our time range
-        // This guarantees the chart never looks "empty" if the user hasn't tested in a few days
-        const latestDate = new Date(sortedLogs[sortedLogs.length - 1].timestamp);
-
-        // 4. Calculate the cutoff date based on the latest log, not the system clock
-        const cutoffDate = new Date(latestDate);
+        // 3. Calculate the cutoff date based on the GLOBAL latest log
+        // (FIXED: Using latestGlobalDate instead of latestDate)
+        const cutoffDate = new Date(latestGlobalDate);
         cutoffDate.setDate(cutoffDate.getDate() - timeRange);
 
-        // 5. Filter and format the data
-        const filteredLogs = sortedLogs.filter(log => new Date(log.timestamp) >= cutoffDate);
+        // 4. Filter and format the data
+        const filteredLogs = sortedParamLogs.filter(log => new Date(log.timestamp) >= cutoffDate);
 
         return filteredLogs.map(log => {
             const date = new Date(log.timestamp);
-            // Clean, compact formatting: e.g., "Apr 17 08:00"
             const formattedTime = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             const monthDay = date.toLocaleDateString([], { month: 'short', day: 'numeric' });
 

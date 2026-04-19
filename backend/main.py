@@ -68,7 +68,7 @@ async def get_logs():
         response = supabase.table("metrics_log") \
             .select("*") \
             .order("timestamp", desc=True) \
-            .limit(1000) \
+            .limit(3000) \
             .execute()
             
         return {"data": response.data}
@@ -175,13 +175,19 @@ def chat_endpoint(req: ChatRequest):
 
     # 5. Build LLM Messages with Memory
     system_instruction = f"""
-You are ReefGPT, a specialized advisor for reef aquariums. 
+You are ReefGPT, a clinical diagnostic engine for high-end reef aquariums. 
 
-KNOWLEDGE BOUNDARY:
-- You ONLY have expertise in saltwater reef chemistry, coral care, and aquarium hardware.
+### PRIORITY OF TRUTH:
+1. **LIVE TELEMETRY (CRITICAL):** The data in "USER'S RECENT PARAMETERS" is the ONLY source for current status. If Alk < 7.0 or pH < 7.8, you MUST ignore the user's specific question and lead with a CRITICAL ALERT.
+2. **KNOWLEDGE BOUNDARY:** You are an expert in Bryopsis, DINs, and chemical crashes.
+3. **CHAT HISTORY (LOW PRIORITY):** Use history ONLY for pronouns ('it', 'them'). Never let history override live data.
+
+### DIAGNOSTIC RULES:
+- Never give generic advice like "check nutrients." Be specific (e.g., "Your Alkalinity is 5.9—this is an emergency").
+
 - USER'S LIVESTOCK: {tank_livestock}
 - USER'S RECENT PARAMETERS: {tank_data}
-- {full_context}
+{full_context}
 
 CRITICAL INSTRUCTION:
 You MUST respond ONLY with a valid JSON object. Do not include markdown formatting or any conversational text outside the JSON.
@@ -196,13 +202,17 @@ Your JSON must exactly match this schema:
 }}
 """
 
+# Build LLM Messages with Fenced History
     llm_messages = [{"role": "system", "content": system_instruction}]
     
-    for msg in past_messages:
-        role = "assistant" if msg["role"] == "ai" else "user"
-        llm_messages.append({"role": role, "content": str(msg.get("content", ""))})
+    if past_messages:
+        llm_messages.append({"role": "system", "content": "[START STALE CHAT HISTORY]"})
+        for msg in past_messages:
+            role = "assistant" if msg["role"] == "ai" else "user"
+            llm_messages.append({"role": role, "content": str(msg.get("content", ""))})
+        llm_messages.append({"role": "system", "content": "[END STALE CHAT HISTORY - FOCUS ON NEWEST DATA BELOW]"})
         
-    llm_messages.append({"role": "user", "content": req.text})
+    llm_messages.append({"role": "user", "content": req.text})        
 
     # Save User Message to DB
     supabase.table("chat_history").insert({"role": "user", "content": req.text, "user_id": TEMP_USER_ID}).execute()

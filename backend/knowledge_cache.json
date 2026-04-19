@@ -195,5 +195,164 @@
       "Reef2Reef",
       "Bulk Reef Supply"
     ]
+  },
+  "bryopsis_outbreak": {
+    "symptoms": [
+      "long hairy algae",
+      "fern-like structure",
+      "snails won't eat it",
+      "tangs ignoring algae",
+      "mossy green tufts"
+    ],
+    "causes": [
+      "hitchhiking on coral frags",
+      "excessive magnesium (historical myth)",
+      "nutrient imbalance",
+      "lack of competition"
+    ],
+    "treatments": [
+      "Dose Fluconazole (Reef Flux) at 20mg/gallon",
+      "Remove carbon and turn off skimmer for 72 hours",
+      "Do not perform water changes during treatment window",
+      "Manual removal of large clumps to prevent rot"
+    ],
+    "references": [
+      "Reef2Reef",
+      "Humble.Fish",
+      "Bulk Reef Supply"
+    ]
+  },
+  "dinoflagellates_toxic": {
+    "symptoms": [
+      "brown snotty bubbles",
+      "bubbles on sand at night",
+      "snails dying suddenly",
+      "corals closing up",
+      "stringy brown algae"
+    ],
+    "causes": [
+      "zero nitrates",
+      "zero phosphates",
+      "bottomed out nutrients",
+      "excessive UV sterilization",
+      "over-use of GFO"
+    ],
+    "treatments": [
+      "Dose Nitrates and Phosphates to detectable levels (NO3: 5ppm, PO4: 0.05ppm)",
+      "Install UV sterilizer directly in display tank",
+      "3-day total blackout",
+      "Discontinue GFO and carbon",
+      "Increase biodiversity via live sand or pods"
+    ],
+    "references": [
+      "Mack's Dinoflagellate Facebook Group",
+      "Reef2Reef",
+      "BRS TV"
+    ]
+  },
+  "salinity_crash_ato": {
+    "symptoms": [
+      "low salinity",
+      "refractometer reading 1.020",
+      "corals swelling or puffy",
+      "fish swimming near surface",
+      "corals melting"
+    ],
+    "causes": [
+      "ATO stuck on",
+      "optical sensor failure",
+      "float switch stuck",
+      "leak causing over-fill"
+    ],
+    "treatments": [
+      "Disable ATO immediately",
+      "Remove excess water",
+      "Add small amounts of high-salinity saltwater (1.035)",
+      "Increase aeration (air stones) if fish are stressed",
+      "Recalibrate refractometer"
+    ],
+    "references": [
+      "ReefKeeping Magazine",
+      "Bulk Reef Supply"
+    ]
+  },
+  "rtn_stn_tissue_loss": {
+    "symptoms": [
+      "white skeleton showing",
+      "tissue peeling in wind",
+      "rapid tissue necrosis",
+      "slow tissue necrosis",
+      "bleaching from base"
+    ],
+    "causes": [
+      "alkalinity swing",
+      "temperature spike",
+      "bacterial infection",
+      "excessive lighting par",
+      "low flow dead spots"
+    ],
+    "treatments": [
+      "Stabilize alkalinity immediately",
+      "Frag the healthy sections to save the colony",
+      "Iodine or Ciprofloxacin coral dip",
+      "Improve laminar flow around the colony",
+      "Reduce lighting intensity (Acclimation mode)"
+    ],
+    "references": [
+      "Coral Magazine",
+      "Reef2Reef",
+      "WWC Care Guides"
+    ]
+  },
+  "brown_jelly_disease": {
+    "symptoms": [
+      "brown slime on torch",
+      "euphyllia melting",
+      "jelly-like substance on coral",
+      "rapid head loss on hammers"
+    ],
+    "causes": [
+      "Arcobacter bacteria",
+      "physical damage to tissue",
+      "poor water quality",
+      "low flow"
+    ],
+    "treatments": [
+      "Siphon out brown jelly before it spreads",
+      "Ciprofloxacin antibiotic dip",
+      "Increase flow to prevent sediment buildup",
+      "Check for nipping fish (Flame Angelfish)"
+    ],
+    "references": [
+      "Humble.Fish",
+      "Reef2Reef"
+    ]
+  },
+  "ammonia_spike_crash": {
+    "symptoms": [
+      "ammonia detectable",
+      "cloudy water",
+      "fish gasping",
+      "red gills",
+      "sudden livestock death"
+    ],
+    "causes": [
+      "dead fish in rocks",
+      "broken cycle",
+      "overfeeding frozen food",
+      "cleaning sandbed too aggressively",
+      "medication killing bacteria"
+    ],
+    "treatments": [
+      "Dose Seachem Prime to detoxify ammonia",
+      "Large 50% water change",
+      "Add concentrated nitrifying bacteria (Dr. Tims/BioSpira)",
+      "Stop all feeding",
+      "Increase oxygenation via surface agitation"
+    ],
+    "references": [
+      "Reef Chemistry 101",
+      "Bulk Reef Supply"
+    ]
   }
 }

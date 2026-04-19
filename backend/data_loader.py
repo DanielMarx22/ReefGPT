@@ -22,7 +22,7 @@ def generate_complex_reef_data(days=90):
     print(f"Generating {days} days of 10-minute IoT data...")
     
     # End date: April 17, 2026. 10-minute frequency = 144 readings/day
-    end_date = pd.to_datetime("2026-04-17 12:00:00")
+    end_date = pd.to_datetime("2026-04-19 12:00:00")
     timestamps = pd.date_range(end=end_date, periods=days * 24 * 6, freq='10min')
     df = pd.DataFrame({'timestamp': timestamps})
     
