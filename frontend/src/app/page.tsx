@@ -242,13 +242,26 @@ export default function ReefOS() {
                   </div>
                 </div>
               </div>
-              {/* Display the actual parameter values used for classification */}
+              {/* Display the actual parameter values and stability info */}
               {prediction.current_state.params && (
-                <div className="mt-3 pt-3 border-t border-white/10 grid grid-cols-4 gap-2 text-xs">
-                  <div><span className="text-slate-400">pH:</span> <span className="text-white">{prediction.current_state.params.pH?.toFixed(1)}</span></div>
-                  <div><span className="text-slate-400">Ca:</span> <span className="text-white">{prediction.current_state.params.Calcium?.toFixed(0)}</span></div>
-                  <div><span className="text-slate-400">Mg:</span> <span className="text-white">{prediction.current_state.params.Magnesium?.toFixed(0)}</span></div>
-                  <div><span className="text-slate-400">Alk:</span> <span className="text-white">{prediction.current_state.params.Alkalinity?.toFixed(1)}</span></div>
+                <div className="mt-3 pt-3 border-t border-white/10">
+                  <div className="grid grid-cols-4 gap-2 text-xs mb-2">
+                    <div><span className="text-slate-400">pH:</span> <span className="text-white">{prediction.current_state.params.pH?.toFixed(1)}</span></div>
+                    <div><span className="text-slate-400">Ca:</span> <span className="text-white">{prediction.current_state.params.Calcium?.toFixed(0)}</span></div>
+                    <div><span className="text-slate-400">Mg:</span> <span className="text-white">{prediction.current_state.params.Magnesium?.toFixed(0)}</span></div>
+                    <div><span className="text-slate-400">Alk:</span> <span className="text-white">{prediction.current_state.params.Alkalinity?.toFixed(1)}</span></div>
+                  </div>
+                  {/* Show stability info if available */}
+                  {prediction.current_state.stability && (
+                    <div className="text-xs text-slate-500">
+                      {prediction.current_state.stability.days_analyzed > 0 && (
+                        <span className="text-slate-400">({prediction.current_state.stability.days_analyzed} days)</span>
+                      )}
+                      pH ±{prediction.current_state.stability.ph_variance}, Alk ±{prediction.current_state.stability.alk_variance}
+                      {prediction.current_state.stability.is_fluctuating && <span className="text-yellow-400 ml-1">(Fluctuating)</span>}
+                      {prediction.current_state.stability.is_declining && <span className="text-red-400 ml-1">(Declining)</span>}
+                    </div>
+                  )}
                 </div>
               )}
             </div>

@@ -148,6 +148,17 @@ export default function Dashboard({
               </div>
             </div>
           </div>
+          {/* Show stability info */}
+          {prediction.current_state.stability && (
+            <div className="mt-3 pt-3 border-t border-white/10 text-xs text-slate-500">
+              {prediction.current_state.stability.days_analyzed > 0 && (
+                <span className="text-slate-400">({prediction.current_state.stability.days_analyzed} days)</span>
+              )}
+              pH ±{prediction.current_state.stability.ph_variance}, Alk ±{prediction.current_state.stability.alk_variance}
+              {prediction.current_state.stability.is_fluctuating && <span className="text-yellow-400 ml-1">(Fluctuating)</span>}
+              {prediction.current_state.stability.is_declining && <span className="text-red-400 ml-1">(Declining)</span>}
+            </div>
+          )}
         </div>
       )}
 
