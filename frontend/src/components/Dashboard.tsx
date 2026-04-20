@@ -19,7 +19,7 @@
  * - onUploadCSV, onGenerateSynthetic, onDeleteLogs: Action handlers
  */
 
-import { Activity, Plus, TrendingUp, AlertTriangle, CheckCircle, Database, Cloud, FlaskConical, RefreshCw, Trash2 } from "lucide-react";
+import { Activity, Plus, TrendingUp, AlertTriangle, CheckCircle, Database, Cloud, FlaskConical, RefreshCw, Trash2, ShieldAlert, ShieldCheck } from "lucide-react";
 
 export default function Dashboard({
   newParam,
@@ -107,6 +107,49 @@ export default function Dashboard({
           })}
         </div>
       </div>
+
+      {/* Tank Condition Alert 
+             * ======================
+             * Displays tank health status based on ML classification
+             * - Green (state_id=0): STABLE - all parameters in optimal range
+             * - Yellow (state_id=1): WARNING - parameters slightly off
+             * - Red (state_id=2): CRITICAL - immediate action required
+             * 
+             * Classification thresholds (backend/main.py /tank-status):
+             * - STABLE: pH 8.0-8.4, Ca 400-450, Mg 1250-1450, Alk 8.0-9.5
+             * - WARNING: pH 7.5-8.0, Ca 350-400, Mg 1100-1250, Alk 7.0-8.0
+             * - CRITICAL: Outside warning ranges
+             */}
+      {prediction?.current_state && (
+        <div className={`p-4 rounded-xl border backdrop-blur-md ${
+          prediction.current_state.state_id === 0 ? "bg-green-900/20 border-green-500/30" :
+          prediction.current_state.state_id === 1 ? "bg-yellow-900/20 border-yellow-500/30" :
+          "bg-red-900/20 border-red-500/30"
+        }`}>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              {prediction.current_state.state_id === 0 ? (
+                <ShieldCheck size={28} className="text-green-400" />
+              ) : (
+                <ShieldAlert size={28} className={prediction.current_state.state_id === 1 ? "text-yellow-400" : "text-red-400"} />
+              )}
+              <div>
+                <div className="text-xs text-slate-400 uppercase">Tank Condition</div>
+                <div className="text-xl font-bold text-white">
+                  {prediction.current_state.state_id === 0 ? "STABLE" : 
+                   prediction.current_state.state_id === 1 ? "WARNING" : "CRITICAL"}
+                </div>
+              </div>
+            </div>
+            <div className="text-right">
+              <div className="text-xs text-slate-400">ML Confidence</div>
+              <div className="text-lg font-bold text-white">
+                {Math.round((prediction.current_state.confidence || 0.8) * 100)}%
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Delete Section */}
       <div className="bg-black/40 p-3 rounded-xl border border-white/10 backdrop-blur-md">

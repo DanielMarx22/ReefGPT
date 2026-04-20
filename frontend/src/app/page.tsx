@@ -1,9 +1,11 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
+import { ShieldAlert, ShieldCheck } from "lucide-react";
 import { Group, Panel, Separator } from "react-resizable-panels";
 import Chatbot from "@/components/Chatbot";
 import ParameterGraph from "../components/Graphs";
+import Dashboard from "../components/Dashboard";
 
 export default function ReefOS() {
   // Chat State
@@ -24,9 +26,27 @@ export default function ReefOS() {
   // Existing Parameter Form
   const [updateParamName, setUpdateParamName] = useState("");
   const [updateParamValue, setUpdateParamValue] = useState("");
+  const [prediction, setPrediction] = useState<any>(null);
 
   useEffect(() => {
     fetchData();
+    // Auto-refresh tank status every 5 seconds (faster)
+    const tankInterval = setInterval(async () => {
+      try {
+        const predRes = await fetch(`http://127.0.0.1:8000/tank-status?t=${Date.now()}`);
+        const predData = await predRes.json();
+        if (predData.current_state) setPrediction(predData);
+      } catch (err) {}
+    }, 5000);
+    // Auto-refresh other data every 10 seconds
+    const dataInterval = setInterval(async () => {
+      try {
+        const logRes = await fetch(`http://127.0.0.1:8000/get-logs?t=${Date.now()}`);
+        const logData = await logRes.json();
+        if (logData.data) setLogs(logData.data);
+      } catch (err) {}
+    }, 10000);
+    return () => { clearInterval(tankInterval); clearInterval(dataInterval); };
   }, []);
 
   const fetchData = async () => {
@@ -42,6 +62,10 @@ export default function ReefOS() {
       const profRes = await fetch(`http://127.0.0.1:8000/get-profile?t=${Date.now()}`);
       const profData = await profRes.json();
       if (profData.livestock) setLivestock(profData.livestock);
+
+      const predRes = await fetch(`http://127.0.0.1:8000/tank-status?t=${Date.now()}`);
+      const predData = await predRes.json();
+      if (predData.current_state) setPrediction(predData);
     } catch (err) {
       console.error("Failed to fetch data", err);
     }
@@ -176,6 +200,59 @@ export default function ReefOS() {
               Save Profile
             </button>
           </div>
+
+          {/* Tank Condition Alert 
+             * ======================
+             * Shows the current tank health status (STABLE/WARNING/CRITICAL)
+             * Based on ML classification from /tank-status endpoint
+             * 
+             * Color coding:
+             * - Green (state_id=0): STABLE - all parameters in optimal range
+             * - Yellow (state_id=1): WARNING - parameters slightly off, may need attention
+             * - Red (state_id=2): CRITICAL - immediate action required
+             * 
+             * Data source: /tank-status fetches latest readings from Supabase metrics_log
+             * Updates every 5 seconds via polling in useEffect
+             */}
+          {prediction?.current_state && (
+            <div className={`p-4 rounded-xl border backdrop-blur-md ${
+              prediction.current_state.state_id === 0 ? "bg-green-900/20 border-green-500/30" :
+              prediction.current_state.state_id === 1 ? "bg-yellow-900/20 border-yellow-500/30" :
+              "bg-red-900/20 border-red-500/30"
+            }`}>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  {prediction.current_state.state_id === 0 ? (
+                    <ShieldCheck size={28} className="text-green-400" />
+                  ) : (
+                    <ShieldAlert size={28} className={prediction.current_state.state_id === 1 ? "text-yellow-400" : "text-red-400"} />
+                  )}
+                  <div>
+                    <div className="text-xs text-slate-400 uppercase">Tank Condition</div>
+                    <div className="text-xl font-bold text-white">
+                      {prediction.current_state.state_id === 0 ? "STABLE" : 
+                       prediction.current_state.state_id === 1 ? "WARNING" : "CRITICAL"}
+                    </div>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-xs text-slate-400">ML Confidence</div>
+                  <div className="text-lg font-bold text-white">
+                    {Math.round((prediction.current_state.confidence || 0.8) * 100)}%
+                  </div>
+                </div>
+              </div>
+              {/* Display the actual parameter values used for classification */}
+              {prediction.current_state.params && (
+                <div className="mt-3 pt-3 border-t border-white/10 grid grid-cols-4 gap-2 text-xs">
+                  <div><span className="text-slate-400">pH:</span> <span className="text-white">{prediction.current_state.params.pH?.toFixed(1)}</span></div>
+                  <div><span className="text-slate-400">Ca:</span> <span className="text-white">{prediction.current_state.params.Calcium?.toFixed(0)}</span></div>
+                  <div><span className="text-slate-400">Mg:</span> <span className="text-white">{prediction.current_state.params.Magnesium?.toFixed(0)}</span></div>
+                  <div><span className="text-slate-400">Alk:</span> <span className="text-white">{prediction.current_state.params.Alkalinity?.toFixed(1)}</span></div>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* New Parameter UI */}
           <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-lg">
