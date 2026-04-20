@@ -6,6 +6,12 @@ import { Group, Panel, Separator } from "react-resizable-panels";
 import Chatbot from "@/components/Chatbot";
 import ParameterGraph from "../components/Graphs";
 import Dashboard from "../components/Dashboard";
+import { createClient } from "@supabase/supabase-js";
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_KEY!
+);
 
 export default function ReefOS() {
   // Chat State
@@ -29,24 +35,39 @@ export default function ReefOS() {
   const [prediction, setPrediction] = useState<any>(null);
 
   useEffect(() => {
+    // Initial load on mount
     fetchData();
-    // Auto-refresh tank status every 5 seconds (faster)
-    const tankInterval = setInterval(async () => {
-      try {
-        const predRes = await fetch(`http://127.0.0.1:8000/tank-status?t=${Date.now()}`);
-        const predData = await predRes.json();
-        if (predData.current_state) setPrediction(predData);
-      } catch (err) {}
-    }, 5000);
-    // Auto-refresh other data every 10 seconds
-    const dataInterval = setInterval(async () => {
-      try {
-        const logRes = await fetch(`http://127.0.0.1:8000/get-logs?t=${Date.now()}`);
-        const logData = await logRes.json();
-        if (logData.data) setLogs(logData.data);
-      } catch (err) {}
-    }, 10000);
-    return () => { clearInterval(tankInterval); clearInterval(dataInterval); };
+
+    // Pro-Mode: Listen for database inserts
+    const channel = supabase
+      .channel('metrics-listener')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'metrics_log' },
+        async (payload: any) => {  // <-- TYPE ADDED HERE
+          console.log('New metric detected via Realtime!', payload);
+
+          try {
+            // 1. Instantly fetch the fresh ML status
+            const predRes = await fetch(`http://127.0.0.1:8000/tank-status?t=${Date.now()}`);
+            const predData = await predRes.json();
+            if (predData.current_state) setPrediction(predData);
+
+            // 2. Instantly fetch the updated logs
+            const logRes = await fetch(`http://127.0.0.1:8000/get-logs?t=${Date.now()}`);
+            const logData = await logRes.json();
+            if (logData.data) setLogs(logData.data);
+          } catch (err) {
+            console.error("Failed to sync live data:", err);
+          }
+        }
+      )
+      .subscribe();
+
+    // Cleanup listener on unmount
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const fetchData = async () => {
@@ -215,11 +236,10 @@ export default function ReefOS() {
              * Updates every 5 seconds via polling in useEffect
              */}
           {prediction?.current_state && (
-            <div className={`p-4 rounded-xl border backdrop-blur-md ${
-              prediction.current_state.state_id === 0 ? "bg-green-900/20 border-green-500/30" :
+            <div className={`p-4 rounded-xl border backdrop-blur-md ${prediction.current_state.state_id === 0 ? "bg-green-900/20 border-green-500/30" :
               prediction.current_state.state_id === 1 ? "bg-yellow-900/20 border-yellow-500/30" :
-              "bg-red-900/20 border-red-500/30"
-            }`}>
+                "bg-red-900/20 border-red-500/30"
+              }`}>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   {prediction.current_state.state_id === 0 ? (
@@ -230,8 +250,8 @@ export default function ReefOS() {
                   <div>
                     <div className="text-xs text-slate-400 uppercase">Tank Condition</div>
                     <div className="text-xl font-bold text-white">
-                      {prediction.current_state.state_id === 0 ? "STABLE" : 
-                       prediction.current_state.state_id === 1 ? "WARNING" : "CRITICAL"}
+                      {prediction.current_state.state_id === 0 ? "STABLE" :
+                        prediction.current_state.state_id === 1 ? "WARNING" : "CRITICAL"}
                     </div>
                   </div>
                 </div>

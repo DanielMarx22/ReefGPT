@@ -17,6 +17,7 @@ from supabase import create_client, Client
 from dotenv import load_dotenv
 from sklearn.metrics import accuracy_score, r2_score
 from xgboost import XGBClassifier
+from fastapi import BackgroundTasks
 
 load_dotenv()
 
@@ -247,6 +248,7 @@ def log_metric(req: LogRequest):
             "value": req.value,
             "user_id": TEMP_USER_ID
         }
+        # Pushing to Supabase automatically triggers the React listener
         supabase.table("metrics_log").insert(data).execute()
         return {"status": "success"}
     except Exception as e:
@@ -372,6 +374,7 @@ You are ReefGPT, an elite clinical diagnostic engine for high-end reef aquariums
 3. **CHAT HISTORY (LOW PRIORITY):** Use only to resolve pronouns. 
 
 ### DIAGNOSTIC & TONE RULES:
+- **Anti-Hallucination (CRITICAL):** Your ML models are Classifiers, NOT Regressors. If the user asks for a forecast, DO NOT invent specific numerical ranges (e.g., never say "pH will be 8.1"). Instead, state the predicted classification (STABLE/WARNING/CRITICAL) and cite the model's overall Test Accuracy as your confidence level.
 - **Be Succinct:** Keep your `reply` to 2-4 sentences maximum. 
 - **The 95% Rule:** Speak naturally and confidently. No bulleted lists.
 - **Secondary Causes:** For normal diagnostic questions (e.g., coral health, algae), solve the primary issue, but briefly mention 1-2 other possible causes at the end just in case.
@@ -379,7 +382,8 @@ You are ReefGPT, an elite clinical diagnostic engine for high-end reef aquariums
 
 ### CURRENT SYSTEM CONTEXT:
 - **OFFICIAL ML TANK STATE:** {state_name} (pH Variance: ±{ph_var}, Alk Variance: ±{alk_var})
-- **ML METRICS:** MLP Test Acc: {metrics['mlp_test']}%, R²: {metrics['mlp_r2']} | XGBoost Test Acc: {metrics['xgb_test']}%, R²: {metrics['xgb_r2']}
+- **ML METRICS (USE THESE EXACT NUMBERS FOR CONFIDENCE):** * Neural Network (MLP) Accuracy: {metrics['mlp_test']}% (R²: {metrics['mlp_r2']})
+  * XGBoost Accuracy: {metrics['xgb_test']}% (R²: {metrics['xgb_r2']})
 - **TANK LIVESTOCK:** {tank_livestock}
 - **USER'S RECENT PARAMETERS:** {tank_data}
 {full_context}
@@ -389,7 +393,7 @@ You are ReefGPT, an elite clinical diagnostic engine for high-end reef aquariums
   "xray": {{
     "step_1_intent": "1 sentence defining the exact user problem.",
     "step_2_telemetry_check": "Parameters considered vs. explicitly IGNORED.",
-    "step_3_ml_inference": "Show the exact ML math: 'XGBoost classified state as [STATUS] based on [PARAMETERS].'",
+    "step_3_ml_inference": "State the exact model used (NN or XGBoost), the classification, and the EXACT Accuracy % from the context.",
     "step_4_rag_knowledge": "Specific pathology retrieved.",
     "step_5_logic": "How the Agent combined ML and RAG to reach the answer."
   }},
@@ -446,77 +450,90 @@ You are ReefGPT, an elite clinical diagnostic engine for high-end reef aquariums
 # Tank Classification Endpoint
 @app.get("/tank-status")
 def get_tank_status():
-    """Get current tank status based on multi-day stability
-    
-    Looks at stability over past 2-3 days (not just current reading):
-    - STABLE: Parameters in range for multiple days with low variance
-    - WARNING: Parameters fluctuating or slightly off from optimal
-    - CRITICAL: Parameters outside safe ranges or rapidly changing
-    
-    Returns state considering overall stability trend.
-    """
+    """Get current tank status based on multi-day stability"""
     try:
-        # Get readings from last 3 days
         import datetime
         three_days_ago = (datetime.datetime.utcnow() - datetime.timedelta(days=3)).isoformat()
         res = supabase.table("metrics_log").select("parameter,value,timestamp").gte("timestamp", three_days_ago).order("timestamp", desc=True).execute()
+        
         if not res.data:
             return {"current_state": {"state_id": 0, "state_name": "Unknown", "confidence": 0.5}}
+
+        # 1. Sort chronological (oldest to newest)
+        raw_logs_asc = sorted(res.data, key=lambda x: str(x.get('timestamp', '')))
         
-        # Group by timestamp
-        by_ts = {}
-        for log in res.data:
-            ts = log.get('timestamp', '')[:16]
-            if ts not in by_ts:
-                by_ts[ts] = {}
-            by_ts[ts][log.get('parameter')] = float(log.get('value', 0))
-        
-        # Get all complete readings
+        running_state = {}
         all_params = []
-        for ts, params in by_ts.items():
-            if all(params.get(p) for p in ['pH', 'Calcium', 'Magnesium', 'Alkalinity']):
+        
+        # 2. Build timeline safely
+        for log in raw_logs_asc:
+            param_name = log.get('parameter')
+            raw_value = log.get('value')
+            
+            # Skip invalid rows safely
+            if not param_name or raw_value is None:
+                continue
+                
+            if param_name in ['pH', 'Calcium', 'Magnesium', 'Alkalinity']:
+                try:
+                    running_state[param_name] = float(raw_value)
+                except (ValueError, TypeError):
+                    continue # Skip if value isn't a number
+            
+            # Save snapshot if we have all 4
+            if len(running_state) == 4:
                 all_params.append({
-                    'timestamp': ts,
-                    'pH': params['pH'],
-                    'Calcium': params['Calcium'],
-                    'Magnesium': params['Magnesium'],
-                    'Alkalinity': params['Alkalinity']
+                    'timestamp': log.get('timestamp'),
+                    'pH': running_state['pH'],
+                    'Calcium': running_state['Calcium'],
+                    'Magnesium': running_state['Magnesium'],
+                    'Alkalinity': running_state['Alkalinity']
                 })
-        
+
         if not all_params:
+            print("DEBUG: all_params is empty. We never collected all 4 metrics.")
             return {"current_state": {"state_id": 0, "state_name": "Unknown", "confidence": 0.5}}
-        
-        # Latest reading
+
+        # 3. Sort descending (newest first)
+        all_params = sorted(all_params, key=lambda x: x['timestamp'], reverse=True)
         current = all_params[0]
-        
-        # Multi-day analysis (past 2-3 days = last 15-20 readings if collected hourly)
-        recent_readings = all_params[:15]  # Last 15 readings
-        
+
+        # 4. Time-Windowing for Variance
+        yesterday = datetime.datetime.utcnow() - datetime.timedelta(days=1)
+        recent_readings = []
+        for r in all_params:
+            try:
+                # Slice the string to keep only 'YYYY-MM-DDTHH:MM:SS'
+                # This strips the timezone/milliseconds, making it safely offset-naive
+                ts_str = str(r['timestamp'])[:19] 
+                
+                if datetime.datetime.fromisoformat(ts_str) >= yesterday:
+                    recent_readings.append(r)
+            except ValueError:
+                continue
+
         if len(recent_readings) >= 3:
             ph_values = [r['pH'] for r in recent_readings]
             alk_values = [r['Alkalinity'] for r in recent_readings]
             ca_values = [r['Calcium'] for r in recent_readings]
             
-            # Calculate overall variance (not just recent)
             ph_variance = max(ph_values) - min(ph_values)
             alk_variance = max(alk_values) - min(alk_values)
             ca_variance = max(ca_values) - min(ca_values)
             
-            # Calculate average for trend
             avg_ph = sum(ph_values) / len(ph_values)
             avg_alk = sum(alk_values) / len(alk_values)
             avg_ca = sum(ca_values) / len(ca_values)
             
-            # Check if ANY reading in the period was critical/warning
             period_states = []
             for r in recent_readings:
                 p, c, m, a = r['pH'], r['Calcium'], r['Magnesium'], r['Alkalinity']
                 if 8.0 <= p <= 8.4 and 400 <= c <= 450 and 1250 <= m <= 1450 and 8.0 <= a <= 9.5:
-                    period_states.append(0)  # Stable
+                    period_states.append(0) 
                 elif 7.5 <= p < 8.0 and 350 <= c < 400 and 1100 <= m < 1250 and 7.0 <= a < 8.0:
-                    period_states.append(1)  # Warning
+                    period_states.append(1) 
                 else:
-                    period_states.append(2)  # Critical
+                    period_states.append(2) 
             
             has_critical = 2 in period_states
             has_warning = 1 in period_states
@@ -524,14 +541,11 @@ def get_tank_status():
             total_count = len(period_states)
             stability_ratio = stable_count / total_count if total_count > 0 else 0
             
-            # High variance = fluctuating
             is_fluctuating = ph_variance > 0.5 or alk_variance > 1.0 or ca_variance > 50
             
-            # Check for declining trends (current vs average)
-            current = all_params[0]
             ph_trend = current['pH'] - avg_ph
             alk_trend = current['Alkalinity'] - avg_alk
-            is_declining = alk_trend < -0.5  # Dropping more than 0.5 dKH
+            is_declining = alk_trend < -0.5 
         else:
             ph_variance = alk_variance = ca_variance = 0
             avg_ph = avg_alk = avg_ca = 0
@@ -539,37 +553,23 @@ def get_tank_status():
             is_fluctuating = False
             stability_ratio = 1.0
             is_declining = False
-        
-        # Current reading
+
+        # 5. Current State Logic
         p, c, m, a = current['pH'], current['Calcium'], current['Magnesium'], current['Alkalinity']
-        
         if 8.0 <= p <= 8.4 and 400 <= c <= 450 and 1250 <= m <= 1450 and 8.0 <= a <= 9.5:
             current_state = 0
         elif 7.5 <= p < 8.0 and 350 <= c < 400 and 1100 <= m < 1250 and 7.0 <= a < 8.0:
             current_state = 1
         else:
             current_state = 2
-        
-        # Determine final state based on MULTI-DAY stability
-        if has_critical:
-            final_state = 2
-            final_name = "CRITICAL"
-        elif is_declining:
-            final_state = 2
-            final_name = "CRITICAL"
-        elif is_fluctuating:
-            final_state = 1
-            final_name = "WARNING"
-        elif has_warning:
-            final_state = 1
-            final_name = "WARNING"
-        elif stability_ratio < 0.5:  # Less than 50% stable readings
-            final_state = 1
-            final_name = "WARNING"
+
+        if has_critical or is_declining:
+            final_state, final_name = 2, "CRITICAL"
+        elif is_fluctuating or has_warning or stability_ratio < 0.5:
+            final_state, final_name = 1, "WARNING"
         else:
-            final_state = current_state
-            final_name = "STABLE"
-        
+            final_state, final_name = current_state, "STABLE"
+
         return {
             "current_state": {
                 "state_id": final_state,
@@ -583,9 +583,12 @@ def get_tank_status():
                     "is_fluctuating": is_fluctuating,
                     "is_declining": is_declining,
                     "stability_ratio": round(stability_ratio, 2),
-                    "days_analyzed": round(len(recent_readings) / 24, 1) if len(recent_readings) > 0 else 0
+                    "days_analyzed": round(len(recent_readings) / 24, 1) if recent_readings else 0
                 }
             }
         }
     except Exception as e:
+        import traceback
+        print(f"TANK STATUS ERROR: {str(e)}")
+        print(traceback.format_exc())
         return {"current_state": {"state_id": 0, "state_name": "Unknown", "confidence": 0.5}, "error": str(e)}
