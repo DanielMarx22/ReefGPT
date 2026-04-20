@@ -274,16 +274,33 @@ def delete_log(log_id: int):
 
 @app.post("/chat")
 def chat_endpoint(req: ChatRequest):
-    try:
-        # INCREASE LIMIT TO 150 so it actually sees the Alkalinity tests
-        history = supabase.table("metrics_log").select("*").order("timestamp", desc=True).limit(150).execute()
-        if history.data:
-            chrono_logs = sorted(history.data, key=lambda x: x['timestamp'])
-            log_strings = [f"[{log['timestamp'][:16]}] {log['parameter']}: {log['value']}" for log in chrono_logs]
-            tank_data = "Recent Tank Logs (Chronological, oldest to newest):\n" + "\n".join(log_strings)
-        else:
-            tank_data = "No tank logs found yet."
-    except Exception as e:
+    # Smart Data Fetching: Get latest readings PER parameter
+    # This drastically reduces token count while guaranteeing Alk/Ca/Mg are always included
+    
+    parameters = ["pH", "Temperature", "Alkalinity", "Calcium", "Magnesium"]
+    chrono_logs = []
+    
+    for param in parameters:
+        # For fast-moving params, get last 8. For slow params, get last 2.
+        limit = 8 if param in ["pH", "Temperature"] else 2
+        
+        res = supabase.table("metrics_log") \
+            .select("*") \
+            .eq("parameter", param) \
+            .order("timestamp", desc=True) \
+            .limit(limit) \
+            .execute()
+            
+        if res.data:
+            chrono_logs.extend(res.data)
+            
+    # Sort the combined list chronologically
+    chrono_logs = sorted(chrono_logs, key=lambda x: x['timestamp'])
+    
+    if chrono_logs:
+        log_strings = [f"[{log['timestamp'][:16]}] {log['parameter']}: {log['value']}" for log in chrono_logs]
+        tank_data = "Recent Tank Logs (Chronological, oldest to newest):\n" + "\n".join(log_strings)
+    else:
         tank_data = "No tank logs found yet."
 
     # 2. Get Livestock Profile
@@ -295,6 +312,14 @@ def chat_endpoint(req: ChatRequest):
     
     # 2b. Get ML Model Metrics (dynamic for Step 4 output)
     metrics = get_model_metrics()
+
+    # 2c. Fetch the official tank state and stability variances
+    status_response = get_tank_status()
+    tank_state = status_response.get("current_state", {})
+    state_name = tank_state.get("state_name", "UNKNOWN")
+    stability = tank_state.get("stability", {})
+    ph_var = stability.get("ph_variance", 0)
+    alk_var = stability.get("alk_variance", 0)
 
     # 3. Fetch Chat History (Moved UP so RAG can use it)
     try:
@@ -309,8 +334,8 @@ def chat_endpoint(req: ChatRequest):
         from vector_db import get_vector_context
         
         current_vals = {}
-        if history.data:
-            for row in history.data:
+        if chrono_logs: # <--- Updated to use your new list
+            for row in chrono_logs: # <--- Updated
                 param = row.get("parameter", "")
                 val = row.get("value", 0)
                 if param and val:
@@ -336,37 +361,39 @@ def chat_endpoint(req: ChatRequest):
         full_context = f"(RAG unavailable: {e})"
 
     # 5. Build LLM Messages with Memory with ML Pipeline
+    # 5. Build LLM Messages with Memory with ML Pipeline
+    # 5. Build LLM Messages with Memory with ML Pipeline
     system_instruction = f"""
-You are ReefGPT, a reef aquarium diagnostic assistant.
+You are ReefGPT, an elite clinical diagnostic engine for high-end reef aquariums. 
 
-### PRIORITY:
-1. LIVE DATA: Alk < 7.0 or pH < 7.8 → CRITICAL ALERT
-2. ML: If classified CRITICAL → override all
-3. RAG: For treatments
-4. HISTORY: Only for pronouns
+### PRIORITY OF TRUTH:
+1. **LIVE TELEMETRY & ML ALERTS (CRITICAL):** If the ML models or live data flag a CRITICAL or WARNING state, address the anomaly first.
+2. **KNOWLEDGE BOUNDARY (RAG):** Rely on the provided Vector DB. Never guess.
+3. **CHAT HISTORY (LOW PRIORITY):** Use only to resolve pronouns. 
 
-### ML METRICS (Step 4):
-- MLP: {metrics.mlp_test}% acc, R² {metrics.mlp_r2}, gap {metrics.mlp_gap}%
-- XGB: {metrics.xgb_test}% acc, R² {metrics.xgb_r2}, gap {metrics.xgb_gap}%
-- Data: {metrics.get('samples', 'benchmark')}, src: {metrics.get('data_source', 'eval')}
+### DIAGNOSTIC & TONE RULES:
+- **Be Succinct:** Keep your `reply` to 2-4 sentences maximum. 
+- **The 95% Rule:** Speak naturally and confidently. No bulleted lists.
+- **Secondary Causes:** For normal diagnostic questions (e.g., coral health, algae), solve the primary issue, but briefly mention 1-2 other possible causes at the end just in case.
+- **The Prediction Exception:** If asked for a status/forecast or if the ML flags an anomaly, explicitly state the ML's classification (Safe/Warning/Critical) and confidence score in your reply.
 
-### CLASSIFICATION:
-- STABLE: pH 8.0-8.4, Ca 400-450, Mg 1250-1450, Alk 8.0-9.5
-- WARNING: pH 7.5-8.0, Ca 350-400, Mg 1100-1250
-- CRITICAL: Outside WARNING ranges
-
-- TANK: {tank_livestock}
-- DATA: {tank_data}
+### CURRENT SYSTEM CONTEXT:
+- **OFFICIAL ML TANK STATE:** {state_name} (pH Variance: ±{ph_var}, Alk Variance: ±{alk_var})
+- **ML METRICS:** MLP Test Acc: {metrics['mlp_test']}%, R²: {metrics['mlp_r2']} | XGBoost Test Acc: {metrics['xgb_test']}%, R²: {metrics['xgb_r2']}
+- **TANK LIVESTOCK:** {tank_livestock}
+- **USER'S RECENT PARAMETERS:** {tank_data}
 {full_context}
 
-### OUTPUT:
+### OUTPUT SCHEMA (STRICT JSON):
 {{
-    "intent": {{"query": "user question", "symptom": "issue", "urgency": "LEVEL"}},
-    "telemetry": {{"readings": {{pH, Ca, Mg, Alk, Temp}}, "points": N}},
-    "ml": {{"mlp": "{metrics.mlp_test}%", "xgb": "{metrics.xgb_test}%"}},
-    "classify": {{"label": "STABLE/WARNING/CRITICAL", "conf": X.X}},
-    "rag": {{"match": "condition", "treatment": "action"}},
-    "reply": "Your response. 1. Diagnosis. 2. Action. 3. Secondary possibility."
+  "xray": {{
+    "step_1_intent": "1 sentence defining the exact user problem.",
+    "step_2_telemetry_check": "Parameters considered vs. explicitly IGNORED.",
+    "step_3_ml_inference": "Show the exact ML math: 'XGBoost classified state as [STATUS] based on [PARAMETERS].'",
+    "step_4_rag_knowledge": "Specific pathology retrieved.",
+    "step_5_logic": "How the Agent combined ML and RAG to reach the answer."
+  }},
+  "reply": "Your succinct, 2-4 sentence conversational response."
 }}
 """
 
@@ -387,7 +414,7 @@ You are ReefGPT, a reef aquarium diagnostic assistant.
 
     # 6. Call LLM
     response = client.chat.completions.create(
-        model="llama-3.1-8b-instant", 
+        model="meta-llama/llama-4-scout-17b-16e-instruct", 
         messages=llm_messages,
         response_format={"type": "json_object"}
     )
@@ -396,20 +423,12 @@ You are ReefGPT, a reef aquarium diagnostic assistant.
     
     try:
         json_data = json.loads(raw_reply)
-        user_reply = json_data.get("final_user_reply", "I encountered an error processing that.")
+        user_reply = json_data.get("reply", "I encountered an error processing that.")
         if not isinstance(user_reply, str):
             user_reply = json.dumps(user_reply, indent=2)
     except json.JSONDecodeError:
         json_data = {"error": "Failed to parse JSON", "raw": raw_reply}
         user_reply = raw_reply
-
-    # Add tank context to xray for debugging
-    json_data["tank_context"] = {
-        "livestock": tank_livestock,
-        "recent_readings": tank_data[:1000] if tank_data else "No data",
-        "ml_predictions": {},
-        "raw_parameters": current_vals
-    }
     
     # Save AI Message to DB
     supabase.table("chat_history").insert({
