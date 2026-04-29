@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 """
-ReefGPT ML BENCHMARK - Data Evaluation with Trained Models
-===================================================
 Loads trained models and new CSV evaluation data, evaluates with metrics.
 """
 import numpy as np
@@ -12,8 +10,8 @@ from sklearn.metrics import accuracy_score, f1_score, r2_score, precision_score,
 import warnings
 warnings.filterwarnings('ignore')
 
-MODEL_DIR = os.path.join(os.path.dirname(__file__), 'models')
-EVAL_CSV = os.path.join(os.path.dirname(__file__), 'models', 'benchmark_eval_data.csv')
+MODEL_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'models')
+EVAL_CSV = os.path.join(os.path.dirname(__file__), '..', 'models', 'benchmark_eval_data.csv')
 
 def main():
     print("=" * 70)
