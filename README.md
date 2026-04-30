@@ -42,10 +42,6 @@ ReefGPT/
 │   │       ├── Navbar.tsx
 │   │       └── DataView.tsx
 │   └── package.json
-├── docs/              # Documentation
-│   ├── report.tex
-│   ├── report.txt
-│   └── ai_usage_log.*
 ├── README.md         # This file
 └── .gitignore
 ```
