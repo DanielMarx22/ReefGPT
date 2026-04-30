@@ -530,10 +530,14 @@ def get_tank_status():
             period_states = []
             for r in recent_readings:
                 p, c, m, a = r['pH'], r['Calcium'], r['Magnesium'], r['Alkalinity']
+                
+                # Perfect Range = STABLE (0)
                 if 8.0 <= p <= 8.4 and 400 <= c <= 450 and 1250 <= m <= 1450 and 8.0 <= a <= 9.5:
                     period_states.append(0) 
-                elif 7.5 <= p < 8.0 and 350 <= c < 400 and 1100 <= m < 1250 and 7.0 <= a < 8.0:
+                # Slightly Wide Range = WARNING (1)
+                elif 7.5 <= p <= 8.5 and 350 <= c <= 500 and 1100 <= m <= 1500 and 7.0 <= a <= 10.0:
                     period_states.append(1) 
+                # Outside Wide Range = CRITICAL (2)
                 else:
                     period_states.append(2) 
             
@@ -560,7 +564,7 @@ def get_tank_status():
         p, c, m, a = current['pH'], current['Calcium'], current['Magnesium'], current['Alkalinity']
         if 8.0 <= p <= 8.4 and 400 <= c <= 450 and 1250 <= m <= 1450 and 8.0 <= a <= 9.5:
             current_state = 0
-        elif 7.5 <= p < 8.0 and 350 <= c < 400 and 1100 <= m < 1250 and 7.0 <= a < 8.0:
+        elif 7.5 <= p <= 8.5 and 350 <= c <= 500 and 1100 <= m <= 1500 and 7.0 <= a <= 10.0:
             current_state = 1
         else:
             current_state = 2
