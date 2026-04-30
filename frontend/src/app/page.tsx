@@ -49,12 +49,12 @@ export default function ReefOS() {
 
           try {
             // 1. Instantly fetch the fresh ML status
-            const predRes = await fetch(`http://127.0.0.1:8000/tank-status?t=${Date.now()}`);
+            const predRes = await fetch(`http://localhost:8000/tank-status?t=${Date.now()}`);
             const predData = await predRes.json();
             if (predData.current_state) setPrediction(predData);
 
             // 2. Instantly fetch the updated logs
-            const logRes = await fetch(`http://127.0.0.1:8000/get-logs?t=${Date.now()}`);
+            const logRes = await fetch(`http://localhost:8000/get-logs?t=${Date.now()}`);
             const logData = await logRes.json();
             if (logData.data) setLogs(logData.data);
           } catch (err) {
@@ -72,19 +72,19 @@ export default function ReefOS() {
 
   const fetchData = async () => {
     try {
-      const logRes = await fetch(`http://127.0.0.1:8000/get-logs?t=${Date.now()}`);
+      const logRes = await fetch(`http://localhost:8000/get-logs?t=${Date.now()}`);
       const logData = await logRes.json();
       if (logData.data) setLogs(logData.data);
 
-      const chatRes = await fetch(`http://127.0.0.1:8000/get-chat-history?t=${Date.now()}`);
+      const chatRes = await fetch(`http://localhost:8000/get-chat-history?t=${Date.now()}`);
       const chatData = await chatRes.json();
       if (chatData.data) setMessages(chatData.data);
 
-      const profRes = await fetch(`http://127.0.0.1:8000/get-profile?t=${Date.now()}`);
+      const profRes = await fetch(`http://localhost:8000/get-profile?t=${Date.now()}`);
       const profData = await profRes.json();
       if (profData.livestock) setLivestock(profData.livestock);
 
-      const predRes = await fetch(`http://127.0.0.1:8000/tank-status?t=${Date.now()}`);
+      const predRes = await fetch(`http://localhost:8000/tank-status?t=${Date.now()}`);
       const predData = await predRes.json();
       if (predData.current_state) setPrediction(predData);
     } catch (err) {
@@ -95,7 +95,7 @@ export default function ReefOS() {
   const saveProfile = async () => {
     setSaveStatus("Saving...");
     try {
-      await fetch(`http://127.0.0.1:8000/update-profile`, {
+      await fetch(`http://localhost:8000/update-profile`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ livestock }),
@@ -127,7 +127,7 @@ export default function ReefOS() {
     setLogs((prev) => [...prev, optimisticLog]);
 
     try {
-      await fetch(`http://127.0.0.1:8000/log-metric?t=${Date.now()}`, {
+      await fetch(`http://localhost:8000/log-metric?t=${Date.now()}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ parameter: paramName, value: val }),
@@ -153,8 +153,8 @@ export default function ReefOS() {
     if (!confirm(msg)) return;
 
     const url = paramName
-      ? `http://127.0.0.1:8000/delete-logs?parameter=${encodeURIComponent(paramName)}`
-      : `http://127.0.0.1:8000/delete-logs`;
+      ? `http://localhost:8000/delete-logs?parameter=${encodeURIComponent(paramName)}`
+      : `http://localhost:8000/delete-logs`;
 
     await fetch(url, { method: "DELETE" });
     fetchData();
@@ -163,7 +163,7 @@ export default function ReefOS() {
   const deleteSingleLog = async (id: number) => {
     // Optimistically remove from UI
     setLogs((prev) => prev.filter(log => log.id !== id));
-    await fetch(`http://127.0.0.1:8000/delete-log/${id}`, { method: "DELETE" });
+    await fetch(`http://localhost:8000/delete-log/${id}`, { method: "DELETE" });
     fetchData();
   };
 
@@ -176,7 +176,7 @@ export default function ReefOS() {
     setInput("");
 
     try {
-      const res = await fetch(`http://127.0.0.1:8000/chat?t=${Date.now()}`, {
+      const res = await fetch(`http://localhost:8000/chat?t=${Date.now()}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text: userMessage }),
