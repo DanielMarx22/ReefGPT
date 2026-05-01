@@ -106,20 +106,12 @@ curl -X DELETE http://localhost:8000/delete-log/1
 
 ## Environment Variables
 
-### backend/.env
+### backend/ and frontend/.env
 
 ```
 SUPABASE_URL=...
 SUPABASE_KEY=...
 GROQ_API_KEY=gsk_...
-```
-
-### frontend/.env.local
-
-```
-NEXT_PUBLIC_SUPABASE_URL=...
-NEXT_PUBLIC_SUPABASE_KEY=...
-NEXT_PUBLIC_API_PORT=8000
 ```
 
 ## API Endpoints
