@@ -33,7 +33,6 @@ from collections import defaultdict
 
 # Third-party imports for ML/vectors
 import numpy as np
-import faiss  # Facebook AI Similarity Search - vector database
 from sentence_transformers import SentenceTransformer  # Text embeddings
 
 # Check if torch is available (used by sentence_transformers)
@@ -43,23 +42,17 @@ try:
 except ImportError:
     HAS_TORCH = False
 
+from supabase import create_client, Client
+from dotenv import load_dotenv
+
+load_dotenv(os.path.join(os.path.dirname(os.path.dirname(__file__)), '.env'))
+
 
 # ============================================================================
 # CONFIGURATION
 # ============================================================================
 
-# Get the directory where this script is located for relative file paths
-# This ensures the index files are stored next to the script
-SCRIPT_DIR = os.path.dirname(__file__)
-
-# File paths for the vector index and metadata
-# - INDEX_FILE: The FAISS vector index (binary file)
-# - METADATA_FILE: JSON file with text content for each vector
-INDEX_FILE = os.path.join(SCRIPT_DIR, "reef_knowledge.index")
-METADATA_FILE = os.path.join(SCRIPT_DIR, "reef_knowledge_meta.json")
-
 # Embedding dimension for All-MiniLM-L6-v2 model
-# This is the size of the vector that represents each text chunk
 EMBED_DIM = 384
 
 
@@ -329,175 +322,91 @@ class WebSearchScraper:
 
 class VectorKnowledgeBase:
     """
-    Vector database for reef knowledge using FAISS.
-    
-    FAISS (Facebook AI Similarity Search) is a library for efficient
-    similarity search of dense vectors. It allows us to:
-    
-    1. Store embeddings (numerical representations of text)
-    2. Search by semantic similarity (not just keywords)
-    3. Scale to millions of vectors
-    
-    How it works:
-    1. Each text chunk is converted to a 384-dimensional vector
-    2. Vectors are stored in a FAISS index
-    3. To search, we convert the query to a vector
-    4. FAISS finds the closest vectors (most similar text)
+    Vector database for reef knowledge using Supabase pgvector.
     """
     
-    def __init__(self, index_path: str = INDEX_FILE, meta_path: str = METADATA_FILE):
-        """
-        Initialize the vector knowledge base.
-        
-        Args:
-            index_path: Path to the FAISS index file
-            meta_path: Path to the metadata JSON file
-        """
-        self.index_path = index_path
-        self.meta_path = meta_path
-        self.index: Optional[faiss.IndexFlatIP] = None
-        self.metadata: List[Dict] = []
+    def __init__(self):
         self.model: Optional[SentenceTransformer] = None
-        self._load()  # Try to load existing index
+        self.supabase: Client = create_client(
+            os.environ.get("SUPABASE_URL", ""),
+            os.environ.get("SUPABASE_KEY", "")
+        )
     
     def _load_model(self):
         """Load the sentence transformer model for embeddings."""
         if self.model is None:
             print("Loading embedding model...")
-            # All-MiniLM-L6-v2 creates 384-dimensional embeddings
-            # It's fast and produces good results for semantic search
             self.model = SentenceTransformer('all-MiniLM-L6-v2')
             print("Model loaded")
     
-    def _load(self):
-        """
-        Load existing index and metadata from disk.
-        
-        Called automatically on initialization to resume previous work.
-        """
-        # Try to load FAISS index
-        if os.path.exists(self.index_path):
-            try:
-                self.index = faiss.read_index(self.index_path)
-                print(f"Loaded index with {self.index.ntotal} vectors")
-            except Exception as e:
-                print(f"Could not load index: {e}")
-                self.index = None
-        
-        # Try to load metadata
-        if os.path.exists(self.meta_path):
-            try:
-                with open(self.meta_path, 'r') as f:
-                    self.metadata = json.load(f)
-                print(f"Loaded {len(self.metadata)} metadata entries")
-            except Exception as e:
-                print(f"Could not load metadata: {e}")
-                self.metadata = []
-    
     def _normalize(self, vectors: np.ndarray) -> np.ndarray:
-        """
-        Normalize vectors for cosine similarity.
-        
-        Cosine similarity measures how similar two vectors are
-        by the angle between them (not magnitude).
-        This is important for semantic search.
-        """
         norms = np.linalg.norm(vectors, axis=1, keepdims=True)
-        norms = np.where(norms == 0, 1, norms)  # Avoid division by zero
+        norms = np.where(norms == 0, 1, norms)
         return vectors / norms
     
     def add_chunks(self, chunks: List[ReefKnowledgeChunk]):
-        """
-        Add knowledge chunks to the vector database.
-        
-        This:
-        1. Converts each text chunk to a vector (embedding)
-        2. Normalizes the vectors
-        3. Adds them to the FAISS index
-        4. Stores metadata for retrieval
-        
-        Args:
-            chunks: List of knowledge chunks to add
-        """
         if not chunks:
             return
         
         self._load_model()
-        
-        # Extract text content from chunks
         texts = [chunk.content for chunk in chunks]
         print(f"Embedding {len(texts)} chunks...")
         
-        # Convert text to vectors using the transformer model
         vectors = self.model.encode(texts, show_progress_bar=True)
         vectors = vectors.astype('float32')
         vectors = self._normalize(vectors)
         
-        # Get the dimension of the vectors
-        dim = vectors.shape[1]
-        
-        # Create index if needed (IndexFlatIP = inner product for cosine similarity)
-        if self.index is None:
-            self.index = faiss.IndexFlatIP(dim)
-        
-        # Add vectors to the index
-        self.index.add(vectors)
-        
-        # Store metadata for retrieval
-        for chunk in chunks:
-            self.metadata.append(chunk.to_dict())
-        
-        print(f"Total vectors: {self.index.ntotal}")
+        print("Uploading to Supabase pgvector...")
+        data_to_insert = []
+        for i, chunk in enumerate(chunks):
+            data_to_insert.append({
+                "content": chunk.content,
+                "source": chunk.source,
+                "topic": chunk.title,
+                "embedding": vectors[i].tolist()
+            })
+            
+        # Batch insert to avoid payload size limits
+        batch_size = 50
+        for i in range(0, len(data_to_insert), batch_size):
+            batch = data_to_insert[i:i + batch_size]
+            try:
+                self.supabase.table("reef_knowledge").insert(batch).execute()
+            except Exception as e:
+                print(f"Error inserting batch: {e}")
+                
+        print("Upload complete!")
     
     def save(self):
-        """
-        Save index and metadata to disk for later use.
-        
-        This allows us to load the database without re-scraping.
-        """
-        if self.index:
-            faiss.write_index(self.index, self.index_path)
-            print(f"Saved index to {self.index_path}")
-        
-        with open(self.meta_path, 'w') as f:
-            json.dump(self.metadata, f, indent=2)
-            print(f"Saved {len(self.metadata)} metadata entries")
+        # Deprecated: Supabase saves instantly
+        pass
     
     def search(self, query: str, k: int = 5) -> List[Dict]:
-        """
-        Search for relevant knowledge chunks.
-        
-        This is the core function that enables RAG (Retrieval-Augmented Generation).
-        
-        Args:
-            query: The user's question
-            k: Number of results to return
-            
-        Returns:
-            List of relevant knowledge chunks with scores
-        """
-        if self.index is None or self.index.ntotal == 0:
-            return []
-        
         self._load_model()
         
-        # Convert query to embedding
         query_vec = self.model.encode([query]).astype('float32')
         query_vec = self._normalize(query_vec)
         
-        # Search for k most similar vectors
-        # Returns both scores (similarity) and indices
-        scores, indices = self.index.search(query_vec, min(k, self.index.ntotal))
-        
-        # Build results from metadata
-        results = []
-        for score, idx in zip(scores[0], indices[0]):
-            if idx >= 0 and idx < len(self.metadata):
-                result = self.metadata[idx].copy()
-                result['score'] = float(score)
-                results.append(result)
-        
-        return results
+        try:
+            response = self.supabase.rpc("match_knowledge", {
+                "query_embedding": query_vec[0].tolist(),
+                "match_threshold": 0.1,
+                "match_count": k
+            }).execute()
+            
+            results = []
+            if response.data:
+                for item in response.data:
+                    results.append({
+                        "content": item.get("content", ""),
+                        "source": item.get("source", ""),
+                        "title": item.get("topic", "Unknown"),
+                        "score": item.get("similarity", 0.0)
+                    })
+            return results
+        except Exception as e:
+            print(f"Supabase RPC Error: {e}")
+            return []
 
 
 # ============================================================================
@@ -510,8 +419,36 @@ def create_vector_db():
     """
     kb = VectorKnowledgeBase()
     
-    # We skip direct scraping because forums block it with 403 Forbidden.
-    # Instead, we rely entirely on DuckDuckGo web search.
+    # Try to load existing local chunks first to avoid rate-limiting
+    meta_path = os.path.join(os.path.dirname(__file__), "reef_knowledge_meta.json")
+    if os.path.exists(meta_path):
+        print(f"Found existing local knowledge chunks in {meta_path}. Loading...")
+        try:
+            with open(meta_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                
+            chunks = []
+            for item in data:
+                chunk = ReefKnowledgeChunk(
+                    content=item.get("content", ""),
+                    source=item.get("source", "local_json"),
+                    url=item.get("url", ""),
+                    title=item.get("title", "Unknown"),
+                    topic=item.get("topic", "general"),
+                    timestamp=item.get("timestamp", datetime.now().isoformat()),
+                    chunk_id=item.get("chunk_id", hashlib.md5(item.get("content", "").encode()).hexdigest()[:16])
+                )
+                chunks.append(chunk)
+            
+            if chunks:
+                print(f"Loaded {len(chunks)} chunks from local file. Uploading to Supabase...")
+                kb.add_chunks(chunks)
+                kb.save()
+                return kb
+        except Exception as e:
+            print(f"Error loading local chunks: {e}")
+
+    # Fallback to scraping
     print("Initiating Web Search Scraper...")
     web_scraper = WebSearchScraper()
     chunks = web_scraper.run()
@@ -521,36 +458,20 @@ def create_vector_db():
         kb.save()
         return kb
     
-    # If internet is down or search fails, add seed data from scraper.py
-    try:
-        from scraper import MANUAL_KNOWLEDGE
-        seed_chunks = []
-        for issue, info in MANUAL_KNOWLEDGE.items():
-            content_parts = []
-            if info.get("treatments"):
-                content_parts.append("Treatments: " + ", ".join(info["treatments"]))
-            if info.get("references"):
-                content_parts.append("References: " + ", ".join(info["references"]))
-            
-            if content_parts:
-                chunk = ReefKnowledgeChunk(
-                    content=". ".join(content_parts),
-                    source="seed_knowledge",
-                    url="",
-                    title=issue.replace("_", " ").title(),
-                    topic=issue,
-                    timestamp=datetime.now().isoformat(),
-                    chunk_id=hashlib.md5(issue.encode()).hexdigest()[:16],
-                )
-                seed_chunks.append(chunk)
-        
-        kb.add_chunks(seed_chunks)
-        kb.save()
-    except ImportError:
-        print("Failed to load seed data from scraper.py")
-        
     return kb
 
+
+# Global instance to prevent reloading the PyTorch model on every request
+GLOBAL_KB = None
+
+def get_global_kb():
+    global GLOBAL_KB
+    if GLOBAL_KB is None:
+        print("Initializing Global Vector Database (Model loaded once in memory)...")
+        GLOBAL_KB = VectorKnowledgeBase()
+        # Force the model to load into memory now, not during the first chat request
+        GLOBAL_KB._load_model()
+    return GLOBAL_KB
 
 def get_vector_context(query: str, k: int = 5) -> str:
     """
@@ -565,17 +486,8 @@ def get_vector_context(query: str, k: int = 5) -> str:
         
     Returns:
         Formatted context string for the LLM prompt
-        
-    Usage:
-        context = get_vector_context("How do I raise pH?", k=3)
-        # Returns:
-        # ## Relevant Reef Knowledge
-        # 
-        # ### 1. reef aquarium ph troubleshooting
-        # Source: web_search
-        # If you have suppressed pH in your reef tank (7.7 to 7.9)...
     """
-    kb = VectorKnowledgeBase()
+    kb = get_global_kb()
     results = kb.search(query, k=k)
     
     if not results:
@@ -596,10 +508,10 @@ if __name__ == "__main__":
     import sys
     
     if len(sys.argv) > 1 and sys.argv[1] == "init":
-        print("Initializing vector database...")
+        print("Initializing Supabase pgvector database...")
         print("(This will take a few minutes on first run)")
         kb = create_vector_db()
-        print(f"\nVector database ready with {kb.index.ntotal} vectors")
+        print(f"\nVector database seeded into Supabase!")
         print(f"Run: get_vector_context('your question') to search")
     else:
         print("Testing vector search...")
@@ -607,8 +519,8 @@ if __name__ == "__main__":
         
         # Quick test
         kb = VectorKnowledgeBase()
-        if kb.index and kb.index.ntotal > 0:
-            results = kb.search("calcium reactor setup", k=3)
+        results = kb.search("calcium reactor setup", k=3)
+        if results:
             print(f"\nFound {len(results)} results:")
             for r in results:
                 print(f"  - {r.get('title')}: {r.get('content')[:80]}...")

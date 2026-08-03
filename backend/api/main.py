@@ -55,6 +55,21 @@ CRITICAL_RANGES = {
     "Temperature": (70, 86),
 }
 
+# Global ML Models Cache
+GLOBAL_ML_MODELS = {"xgb": None, "mlp": None, "scaler": None}
+
+def get_ml_models():
+    """Lazy load models once into memory for fast inference"""
+    global GLOBAL_ML_MODELS
+    if GLOBAL_ML_MODELS["xgb"] is None:
+        print("Loading ML models into memory...")
+        xgb_data = joblib.load(os.path.join(MODEL_DIR, "xgb_model.pkl"))
+        mlp_data = joblib.load(os.path.join(MODEL_DIR, "mlp_model.pkl"))
+        GLOBAL_ML_MODELS["xgb"] = xgb_data['model']
+        GLOBAL_ML_MODELS["scaler"] = xgb_data['scaler']
+        GLOBAL_ML_MODELS["mlp"] = mlp_data['model']
+    return GLOBAL_ML_MODELS
+
 def get_model_metrics():
     """Run models on Supabase tank data and return real metrics"""
     try:
@@ -107,12 +122,10 @@ def get_model_metrics():
                 X_eval = np.array(X_data)
                 y_eval = np.array(y_data)
                 
-                xgb_data = joblib.load(os.path.join(MODEL_DIR, "xgb_model.pkl"))
-                mlp_data = joblib.load(os.path.join(MODEL_DIR, "mlp_model.pkl"))
-                
-                xgb = xgb_data['model']
-                mlp = mlp_data['model']
-                scaler = xgb_data['scaler']
+                models = get_ml_models()
+                xgb = models['xgb']
+                mlp = models['mlp']
+                scaler = models['scaler']
                 
                 X_eval_s = scaler.transform(X_eval)
                 
@@ -149,12 +162,10 @@ def get_model_metrics():
         X_eval = df[['pH', 'Calcium', 'Magnesium', 'Alkalinity', 'Salinity']].values
         y_eval = df['tank_state'].values.astype(int)
         
-        xgb_data = joblib.load(os.path.join(MODEL_DIR, "xgb_model.pkl"))
-        mlp_data = joblib.load(os.path.join(MODEL_DIR, "mlp_model.pkl"))
-        
-        xgb = xgb_data['model']
-        mlp = mlp_data['model']
-        scaler = xgb_data['scaler']
+        models = get_ml_models()
+        xgb = models['xgb']
+        mlp = models['mlp']
+        scaler = models['scaler']
         
         X_eval_s = scaler.transform(X_eval)
         
@@ -345,9 +356,9 @@ def chat_endpoint(req: ChatRequest):
             m = current_vals.get('Magnesium', 1350)
             a = current_vals.get('Alkalinity', 8.0)
             ml_features = np.array([[p, c, m, a, 78.0]])  # pH, Ca, Mg, Alk, Temp
-            xgb_data = joblib.load(os.path.join(MODEL_DIR, "xgb_model.pkl"))
-            xgb = xgb_data['model']
-            scaler = xgb_data['scaler']
+            models = get_ml_models()
+            xgb = models['xgb']
+            scaler = models['scaler']
             ml_features_s = scaler.transform(ml_features)
             xgb_pred = xgb.predict(ml_features_s)[0]
             ml_labels = {0: "STABLE", 1: "WARNING", 2: "CRITICAL"}
@@ -464,6 +475,10 @@ You are ReefGPT, an elite clinical diagnostic engine for high-end reef aquariums
         user_reply = json_data.get("reply", "I encountered an error processing that.")
         if not isinstance(user_reply, str):
             user_reply = json.dumps(user_reply, indent=2)
+            
+        # Expose the raw RAG context to the frontend X-Ray for debugging
+        json_data["rag_sources_retrieved"] = full_context
+        
     except json.JSONDecodeError:
         json_data = {"error": "Failed to parse JSON", "raw": raw_reply}
         user_reply = raw_reply

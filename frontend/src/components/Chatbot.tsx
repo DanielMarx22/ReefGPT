@@ -1,19 +1,25 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface ChatbotProps {
   messages: { role: string; content: string | any }[];
-  input: string;
-  setInput: (val: string) => void;
-  sendMessage: (e: React.FormEvent) => void;
+  sendMessage: (message: string) => void;
 }
 
-export default function Chatbot({ messages, input, setInput, sendMessage }: ChatbotProps) {
+export default function Chatbot({ messages, sendMessage }: ChatbotProps) {
+  const [input, setInput] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Auto-scroll to the bottom whenever messages change
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!input.trim()) return;
+    sendMessage(input);
+    setInput("");
+  };
 
   return (
     <div className="flex flex-col h-full bg-black/40">
@@ -39,7 +45,7 @@ export default function Chatbot({ messages, input, setInput, sendMessage }: Chat
         <div ref={messagesEndRef} />
       </div>
 
-      <form onSubmit={sendMessage} className="p-4 border-t border-slate-800/50 bg-slate-900/50 flex gap-2">
+      <form onSubmit={handleSubmit} className="p-4 border-t border-slate-800/50 bg-slate-900/50 flex gap-2">
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}

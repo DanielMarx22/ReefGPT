@@ -1,0 +1,42 @@
+[
+  {
+    "category": "emergency_chemistry",
+    "query": "My alkalinity dropped to 6.5 dKH over two days and my SPS corals are losing tissue. What should I do?",
+    "expected_answer": "Do not raise alkalinity rapidly. Raise it slowly by no more than 0.5 to 1.0 dKH per day using a buffer or two-part solution. Check dosing pumps for clogs. Test calcium and magnesium to ensure balance."
+  },
+  {
+    "category": "biological_disease",
+    "query": "My Clownfish has small white spots that look like salt grains and is scratching against rocks.",
+    "expected_answer": "This is likely Marine Ich (Cryptocaryon irritans) or Marine Velvet. You should quarantine the affected fish immediately and consider a Copper or formalin-based treatment (like Ich-X) in a separate hospital tank."
+  },
+  {
+    "category": "long_form_plumbing",
+    "query": "Walk me through the plumbing setup for a BeanAnimal overflow system.",
+    "expected_answer": "A BeanAnimal overflow is a safe, silent system using three standpipes: 1) A full-siphon primary drain controlled by a gate valve. 2) An open-channel secondary drain to handle slight flow fluctuations. 3) A dry emergency drain set higher than the normal water level to prevent flooding if the other two fail."
+  },
+  {
+    "category": "long_form_maintenance",
+    "query": "What are the step-by-step instructions for performing a safe 20% water change?",
+    "expected_answer": "1. Mix RO/DI water with salt mix to match your tank's exact salinity (e.g., 1.025-1.026) and heat it to match the tank temperature. 2. Turn off return pumps, skimmer, and heaters. 3. Siphon out 20% of the display or sump water, using the opportunity to vacuum detritus from the sand or rocks. 4. Gently add the new saltwater back into the system. 5. Turn equipment back on and test salinity after it circulates."
+  },
+  {
+    "category": "tone_check",
+    "query": "Is a pH of 7.9 at night bad?",
+    "expected_answer": "A pH drop to 7.9 at night is completely normal. It happens because photosynthesis stops without light, leading to an increase in dissolved CO2 from respiration. As long as your alkalinity is stable and pH rises during the day, do not try to chase a perfect pH number."
+  },
+  {
+    "category": "parameter_check",
+    "query": "what is the most recent alkalinity test?",
+    "expected_answer": "The AI must state the actual alkalinity value pulled from the Supabase database."
+  },
+  {
+    "category": "livestock_profile_check",
+    "query": "What livestock do I currently have in my tank?",
+    "expected_answer": "The AI must list the livestock profile that is stored in the Supabase tank_settings table."
+  },
+  {
+    "category": "ml_status_check",
+    "query": "Is my tank stable or in critical condition according to the AI model?",
+    "expected_answer": "The AI must reference the XGBoost model prediction (Stable, Warning, or Critical) and provide the confidence percentage."
+  }
+]

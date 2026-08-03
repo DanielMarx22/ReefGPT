@@ -1,6 +1,18 @@
 # ReefGPT
 
-Reef aquarium management system with AI diagnostics, ML-based chemistry forecasting, and parameter tracking.
+ReefGPT is an AI-powered B2B API designed to be seamlessly integrated into existing reef tracking applications (like Neptune Systems and Reeftrak). It functions as a custom, expert-level reef agent that operates on a user's individual tank data combined with an extensively trained knowledge base.
+
+## Product Vision & Roadmap
+
+ReefGPT is transitioning into a robust, multi-tenant API to serve enterprise partners. 
+
+### Planned Features:
+- **B2B API & User Login**: Secure API endpoints with authentication to support multiple apps and individual user accounts.
+- **Expert-Level Training Data**: Drastically expanding the knowledge cache and scraped data to give the agent the insight of an extremely experienced reefkeeper.
+- **Model Accuracy Improvements**: Upgrading the core model to provide hyper-accurate diagnostics and forecasting for individual tanks.
+
+### Deprecations:
+- Removed legacy features originally built for school projects (such as the MLP Neural Network), focusing the system entirely on production-grade models (like XGBoost).
 
 ## Project Structure
 
@@ -8,43 +20,39 @@ Reef aquarium management system with AI diagnostics, ML-based chemistry forecast
 ReefGPT/
 ├── backend/               # FastAPI Python backend
 │   ├── api/
-│   │   └── main.py       # FastAPI endpoints
+│   │   └── main.py        # FastAPI endpoints
 │   ├── benchmarks/
-│   │   ├── traintest.py  # Train models (80/20 split)
-│   │   ├── benchmark.py # Evaluate models
-│   │   ├── backtest.py  # Backtest on historical data
-│   │   └── benchmark_rag.py
+│   │   ├── benchmark_rag.py
+│   │   └── train.py       # Unified training script
+│   ├── ml/
+│   │   ├── data_loader.py # Synthetic data generation
+│   │   ├── features.py    # Feature engineering
+│   │   ├── inference.py   # Rule-based classification
+│   │   └── ml_models.py   # Core XGBoost models
+│   ├── models/            # Trained models
+│   │   └── xgb_model.pkl
 │   ├── rag/
-│   │   ├── rag.py       # RAG retrieval
-│   │   ├── vector_db.py # FAISS vector search
-│   │   └── scraper.py   # Knowledge scraper
-│   ├── tests/
-│   │   └── data/       # Test scenarios CSV
-│   ├── models/         # Trained models
-│   │   ├── xgb_model.pkl
-│   │   └── mlp_model.pkl
-│   ├── main.py         # Legacy API entry
-│   ├── inference.py   # Rule-based classification
-│   ├── features.py   # Feature engineering
-│   ├── data_loader.py
-│   ├── ml_models.py  # XGBoost + MLP classes
+│   │   ├── rag.py         # RAG retrieval
+│   │   ├── scraper.py     # Knowledge scraper
+│   │   └── vector_db.py   # FAISS vector search
 │   └── requirements.txt
-├── frontend/           # Next.js React frontend
+├── frontend/              # Next.js React frontend
 │   ├── src/
-│   │   ├── app/      # Pages
+│   │   ├── app/
 │   │   │   ├── page.tsx
 │   │   │   └── globals.css
 │   │   └── components/
-│   │       ├── Dashboard.tsx
-│   │       ├── Graphs.tsx
-│   │       ├── Readings.tsx
 │   │       ├── Chatbot.tsx
+│   │       ├── Dashboard.tsx
+│   │       ├── DataView.tsx
+│   │       ├── Graphs.tsx
 │   │       ├── Navbar.tsx
-│   │       └── DataView.tsx
+│   │       └── Readings.tsx
 │   └── package.json
-├── README.md         # This file
+├── README.md              # This file
 └── .gitignore
 ```
+
 
 ## Running
 
@@ -66,7 +74,7 @@ pip3 install -r requirements.txt
 python3 -m uvicorn api.main:app --port 8000
 ```
 
-### Frontend
+### Frontend (Dashboard UI)
 
 ```bash
 cd frontend
@@ -145,7 +153,6 @@ python3 -m benchmarks.traintest
 
 Models saved to `backend/models/`:
 - `xgb_model.pkl` - XGBoost classifier
-- `mlp_model.pkl` - MLP neural network
 
 ## Dependencies
 

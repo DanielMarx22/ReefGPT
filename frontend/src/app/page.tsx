@@ -16,7 +16,6 @@ const supabase = createClient(
 export default function ReefOS() {
   // Chat State
   const [messages, setMessages] = useState<{ role: string; content: string }[]>([]);
-  const [input, setInput] = useState("");
   const [devMode, setDevMode] = useState(true);
   const [sessionXrays, setSessionXrays] = useState<any[]>([]);
 
@@ -167,13 +166,8 @@ export default function ReefOS() {
     fetchData();
   };
 
-  const sendMessage = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!input.trim()) return;
-    const userMessage = input;
-
+  const sendMessage = async (userMessage: string) => {
     setMessages((prev) => [...prev, { role: "user", content: userMessage }]);
-    setInput("");
 
     try {
       const res = await fetch(`http://localhost:8000/chat?t=${Date.now()}`, {
@@ -445,7 +439,7 @@ export default function ReefOS() {
           {devMode ? (
             <Group orientation="vertical">
               <Panel defaultSize={50} className="flex flex-col">
-                <Chatbot messages={messages} input={input} setInput={setInput} sendMessage={sendMessage} />
+                <Chatbot messages={messages} sendMessage={sendMessage} />
               </Panel>
               <Separator className="h-2 bg-slate-900 cursor-row-resize transition-colors hover:bg-cyan-900/30" />
               <Panel defaultSize={50} className="bg-slate-950 p-4 overflow-y-auto font-mono text-xs border-t border-slate-800 scrollbar-hide">
@@ -471,7 +465,7 @@ export default function ReefOS() {
               </Panel>
             </Group>
           ) : (
-            <Chatbot messages={messages} input={input} setInput={setInput} sendMessage={sendMessage} />
+            <Chatbot messages={messages} sendMessage={sendMessage} />
           )}
         </Panel>
 
