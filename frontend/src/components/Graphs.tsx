@@ -5,7 +5,7 @@ import {
     LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
 } from 'recharts';
 
-const PARAMETERS = ['pH', 'Alkalinity', 'Calcium', 'Magnesium', 'Temperature'];
+const PARAMETERS = ['pH', 'Alkalinity', 'Calcium', 'Magnesium', 'Temperature', 'Nitrate', 'Phosphate'];
 const TIME_RANGES = [
     { label: '1D', days: 1 },
     { label: '3D', days: 3 },

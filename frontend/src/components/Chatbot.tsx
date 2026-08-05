@@ -60,6 +60,9 @@ export default function Chatbot({ messages, sendMessage }: ChatbotProps) {
           Send
         </button>
       </form>
+      <div className="bg-slate-900/50 pb-2 px-4 text-center">
+        <span className="text-[10px] text-slate-500">ReefGPT can make mistakes. Please verify critical advice before acting. It does not control hardware.</span>
+      </div>
     </div>
   );
 }

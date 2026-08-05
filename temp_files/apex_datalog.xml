@@ -1,0 +1,3437 @@
+<?xml version="1.0"?>
+<datalog software="5.12L_8H24" hardware="1.0">
+<hostname>Yffgg</hostname>
+<serial>AC6:03458</serial>
+<timezone>-5.00</timezone>
+<record>
+<date>08/04/2026 00:00:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>77.6</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.91</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.6</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>3</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>3</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>52</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>73</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>32</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>2</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>119</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.83</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>466</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1189</value></probe>
+</record>
+<record>
+<date>08/04/2026 00:10:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>77.6</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.91</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.6</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>3</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>51</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>73</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>32</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>0</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>119</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.83</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>466</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1189</value></probe>
+</record>
+<record>
+<date>08/04/2026 00:20:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>77.6</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.90</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.6</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>3</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>51</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>73</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>31</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>2</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>119</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.60</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 00:30:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>77.7</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.90</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.6</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>3</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>2</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>51</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>72</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>31</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>2</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>119</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.60</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 00:40:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>77.7</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.90</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.6</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>2</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>52</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>72</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>32</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>0</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>119</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.60</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 00:50:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>77.7</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.90</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.6</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>3</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>2</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>52</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>73</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>32</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>2</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>119</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.60</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 01:00:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>77.8</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.90</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.6</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>3</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>2</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>52</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>73</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>32</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>0</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>2</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>119</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.60</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 01:10:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>77.8</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.89</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.6</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>3</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>2</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>52</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>73</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>32</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>2</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>119</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.60</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 01:20:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>77.8</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.89</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.6</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>2</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>53</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>73</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>33</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>0</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>120</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.60</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 01:30:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>77.8</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.89</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.6</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>3</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>53</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>73</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>32</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>120</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.60</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 01:40:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>77.8</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.89</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.6</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>3</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>2</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>52</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>73</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>32</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>0</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>120</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.60</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 01:50:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>78.0</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.89</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.6</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>3</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>2</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>53</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>75</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>32</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>2</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>120</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.60</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 02:00:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>78.0</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.88</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.6</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>2</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>52</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>73</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>32</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>119</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.60</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 02:10:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>78.0</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.88</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.6</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>2</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>2</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>53</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>74</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>32</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>0</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>120</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.60</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 02:20:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>78.1</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.88</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.6</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>3</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>54</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>74</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>32</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>120</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.60</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 02:30:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>78.1</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.88</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.6</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>3</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>54</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>75</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>33</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>121</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.60</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 02:40:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>78.1</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.88</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.6</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>3</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>3</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>53</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>73</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>33</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>121</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.60</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 02:50:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>78.2</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.88</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.6</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>2</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>53</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>74</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>32</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>120</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.60</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 03:00:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>78.2</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.88</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.6</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>3</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>2</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>52</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>73</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>32</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>120</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.60</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 03:10:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>78.2</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.88</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.6</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>3</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>2</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>53</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>74</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>32</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>0</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>2</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>120</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.60</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 03:20:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>78.3</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.87</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.6</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>3</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>2</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>53</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>73</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>32</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>120</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.60</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 03:30:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>78.3</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.87</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.6</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>2</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>2</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>53</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>73</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>33</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>120</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.60</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 03:40:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>78.3</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.87</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.6</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>3</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>52</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>73</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>32</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>2</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>119</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.60</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 03:50:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>78.3</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.87</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.6</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>3</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>2</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>53</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>74</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>32</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>0</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>120</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.60</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 04:00:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>78.4</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.87</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.6</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>3</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>2</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>53</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>73</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>32</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>120</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.60</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 04:10:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>78.4</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.87</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.6</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>3</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>2</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>52</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>73</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>32</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>0</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>119</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.60</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 04:20:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>78.4</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.87</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.6</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>3</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>53</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>73</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>32</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>120</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.60</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 04:30:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>78.4</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.87</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.6</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>3</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>2</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>53</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>74</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>32</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>120</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.60</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 04:40:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>78.4</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.87</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.6</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>2</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>2</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>53</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>74</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>32</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>119</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.60</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 04:50:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>78.4</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.87</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.6</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>2</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>2</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>52</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>73</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>32</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>0</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>119</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.60</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 05:00:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>78.4</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.86</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.6</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>3</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>2</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>53</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>74</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>32</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>0</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>0</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>120</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.60</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 05:10:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>78.5</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.86</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.6</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>3</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>2</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>53</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>73</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>32</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>120</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.60</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 05:20:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>78.5</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.86</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.6</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>2</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>53</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>73</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>32</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>0</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>120</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.60</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 05:30:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>78.5</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.86</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.6</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>3</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>2</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>53</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>74</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>32</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>0</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>120</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.60</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 05:40:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>78.5</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.86</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.6</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>3</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>2</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>52</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>74</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>32</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>0</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>120</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.60</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 05:50:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>78.5</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.86</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.6</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>2</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>2</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>53</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>74</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>32</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>0</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>0</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>120</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.60</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 06:00:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>78.5</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.86</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.6</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>53</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>73</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>32</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>2</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>120</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.60</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 06:10:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>78.6</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.86</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>53</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>32</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>119</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.60</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 06:20:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>78.6</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.86</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>2</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>2</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>53</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>32</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>2</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>120</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.78</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 06:30:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>78.3</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.86</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>2</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>53</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>0</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>32</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>120</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.78</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 06:40:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>78.2</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.86</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>53</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>32</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>0</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>120</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.78</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 06:50:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>78.1</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.85</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>2</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>53</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>0</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>32</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>120</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.78</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 07:00:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>77.8</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.85</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>53</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>32</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>119</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.78</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 07:10:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>77.7</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.85</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.1</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>3</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>10</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>52</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>32</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>2</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>119</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.78</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 07:20:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>77.6</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.85</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.1</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>3</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>10</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>53</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>32</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>120</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.78</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 07:30:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>77.5</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.85</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>3</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>2</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>54</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>0</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>33</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>0</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>120</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.78</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 07:40:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>77.4</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.85</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.6</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>3</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>53</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>73</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>33</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>0</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>120</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.78</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 07:50:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>77.4</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.85</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.6</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>3</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>2</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>53</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>75</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>32</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>0</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>2</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>120</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.78</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 08:00:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>77.4</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.84</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.6</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>53</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>73</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>32</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>120</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.78</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 08:10:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>77.5</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.84</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.6</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>3</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>2</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>53</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>73</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>32</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>0</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>120</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.78</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 08:20:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>77.6</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.84</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.1</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.6</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>3</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>9</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>52</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>74</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>32</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>2</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>120</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.78</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 08:30:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>77.6</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.84</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.1</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.6</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>2</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>10</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>53</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>73</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>32</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>120</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.78</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 08:40:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>77.6</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.84</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.1</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.6</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>3</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>10</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>53</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>74</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>33</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>120</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.78</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 08:50:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>77.7</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.84</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.1</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.6</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>2</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>10</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>53</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>73</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>32</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>120</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.78</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 09:00:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>77.7</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.84</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.6</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>3</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>3</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>53</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>73</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>32</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>120</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.78</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 09:10:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>77.8</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.84</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.6</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>10</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>53</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>73</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>32</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>0</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>3</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>120</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.78</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 09:20:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>77.8</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.84</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.1</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.6</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>17</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>2</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>53</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>74</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>32</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>119</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.78</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 09:30:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>78.0</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.84</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.1</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.1</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.6</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>25</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>10</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>53</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>73</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>32</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>119</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.78</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 09:40:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>78.1</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.84</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.2</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.1</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.6</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>34</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>8</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>53</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>73</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>32</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>0</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>119</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.78</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 09:50:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>78.1</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.84</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.3</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.1</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.6</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>43</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>10</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>52</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>73</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>32</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>119</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.78</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 10:00:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>78.2</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.84</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.6</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>50</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>2</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>52</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>73</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>32</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>119</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.78</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 10:10:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>78.3</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.86</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.6</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>52</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>51</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>72</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>32</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>2</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>119</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.78</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 10:20:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>78.3</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.86</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.6</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>52</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>3</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>51</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>71</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>31</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>0</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>118</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.78</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 10:30:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>78.4</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.86</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.5</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.1</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.6</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>52</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>10</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>51</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>71</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>31</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>117</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.78</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 10:40:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>78.4</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.87</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.6</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>53</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>51</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>71</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>31</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>0</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>0</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>118</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.78</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 10:50:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>78.5</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.87</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.1</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.6</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>53</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>9</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>51</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>71</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>32</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>118</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.78</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 11:00:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>78.5</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.87</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.5</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.6</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>53</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>51</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>71</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>31</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>0</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>0</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>118</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.78</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 11:10:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>78.6</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.88</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.5</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>54</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>51</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>0</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>31</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>2</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>118</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.78</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 11:20:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>78.6</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.88</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.5</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>55</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>5</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>50</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>31</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>118</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.78</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 11:30:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>78.4</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.88</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.5</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.1</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>56</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>9</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>51</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>0</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>31</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>0</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>0</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>118</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.78</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 11:40:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>78.4</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.88</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.5</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>57</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>5</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>51</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>31</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>118</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.78</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 11:50:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>78.3</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.89</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.5</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>55</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>51</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>30</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>0</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>117</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.78</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+<record>
+<date>08/04/2026 12:00:00</date>
+<probe>
+<name>Tmp</name> <type>Temp</type><value>78.2</value></probe>
+<probe>
+<name>pH</name> <type>pH</type><value>7.89</value></probe>
+<probe>
+<name>AIPrimeA</name> <type>Amps</type><value>0.5</value></probe>
+<probe>
+<name>PowerheadA</name> <type>Amps</type><value>0.1</value></probe>
+<probe>
+<name>ReturnPumpA</name> <type>Amps</type><value>0.7</value></probe>
+<probe>
+<name>HeaterA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>SkimmerA</name> <type>Amps</type><value>0.4</value></probe>
+<probe>
+<name>ExtraA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>Extra2A</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>TopOffA</name> <type>Amps</type><value>0.0</value></probe>
+<probe>
+<name>AIPrimeW</name> <type>pwr</type><value>56</value></probe>
+<probe>
+<name>PowerheadW</name> <type>pwr</type><value>10</value></probe>
+<probe>
+<name>ReturnPumpW</name> <type>pwr</type><value>51</value></probe>
+<probe>
+<name>HeaterW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>SkimmerW</name> <type>pwr</type><value>31</value></probe>
+<probe>
+<name>ExtraW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Extra2W</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>TopOffW</name> <type>pwr</type><value>1</value></probe>
+<probe>
+<name>Volt_2</name> <type>volts</type><value>118</value></probe>
+<probe>
+<name>Alkx3</name> <type>alk</type><value>8.78</value></probe>
+<probe>
+<name>Cax3</name> <type>ca</type><value>465</value></probe>
+<probe>
+<name>Mgx3</name> <type>mg</type><value>1202</value></probe>
+</record>
+</datalog>

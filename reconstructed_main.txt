@@ -1,0 +1,151 @@
+                    "days_analyzed": round(len(recent_readings) / 24, 1) if recent_readings else 0
+                }
+            }
+        }
+    except Exception as e:
+        import traceback
+        print(f"TANK STATUS ERROR: {str(e)}")
+        return {"current_state": {"state_id": 0, "state_name": "Unknown", "confidence": 0.5}, "error": str(e)}
+
+@app.post("/chat-v2")
+async def chat_v2_endpoint(req: ChatRequest):
+    from rag.summarizers import summarize_telemetry, summarize_history, retrieve_knowledge
+    from rag.router import route_intent
+    import asyncio
+    
+    # 1. Fetch raw data to feed the workers (same as v1 but we don't send it to the 70B model directly)
+    parameters = ["pH", "Temperature", "Alkalinity", "Calcium", "Magnesium"]
+    chrono_logs = []
+    for param in parameters:
+        limit = 8 if param in ["pH", "Temperature"] else 2
+        res = supabase.table("metrics_log").select("*").eq("parameter", param).order("timestamp", desc=True).limit(limit).execute()
+        if res.data:
+            chrono_logs.extend(res.data)
+            
+    chrono_logs = sorted(chrono_logs, key=lambda x: x['timestamp'])
+    raw_telemetry = "\n".join([f"[{log['timestamp'][:16]}] {log['parameter']}: {log['value']}" for log in chrono_logs]) if chrono_logs else "No logs"
+    
+    try:
+        profile = supabase.table("inhabitants").select("*").eq("user_id", user_id_ctx.get()).execute()
+        tank_livestock = json.dumps(profile.data) if profile.data else "No livestock"
+    except Exception:
+        tank_livestock = "No livestock"
+        
+    try:
+        raw_history = supabase.table("chat_history").select("role,content").eq("user_id", user_id_ctx.get()).order("id", desc=True).limit(6).execute()
+        past_messages = json.dumps(raw_history.data[::-1]) if raw_history.data else "No chat history"
+    except Exception:
+        past_messages = "No chat history"
+        
+    # 2. RUN PARALLEL WORKERS
+    # We run the 4 8B models simultaneously
+    results = await asyncio.gather(
+        summarize_telemetry(async_client, raw_telemetry),
+        summarize_history(async_client, tank_livestock, past_messages),
+        retrieve_knowledge(async_client, req.text),
+        route_intent(async_client, req.text, past_messages)
+    )
+    
+    telemetry_node, history_node, knowledge_node, router_node = results
+    
+    xray_trace = [
+        {"node": "Intent Router", "summary": f"Status: {router_node['content'].get('status')}", "tokens": router_node['tokens']},
+        {"node": "Telemetry Summarizer", "summary": telemetry_node['content'], "tokens": telemetry_node['tokens']},
+        {"node": "Historian", "summary": history_node['content'], "tokens": history_node['tokens']},
+        {"node": "Knowledge Retriever", "summary": knowledge_node['content'], "tokens": knowledge_node['tokens']}
+    ]
+    
+    total_prompt_tokens = sum(n['tokens'] for n in xray_trace)
+    
+    # 3. SHORT-CIRCUIT CHECK
+    if router_node['content'].get('status') == "SHORT_CIRCUIT":
+        # Reply directly without calling 70B model
+        reply_text = router_node['content'].get('reply', 'I need more information to proceed.')
+        return {
+            "reply": reply_text,
+            "proposed_actions": [],
+            "xray": {
+                "severity": "INFO",
+                "reasoning_steps": xray_trace,
+                "token_usage": {
+                    "layer_1_tokens": total_prompt_tokens,
+                    "layer_2_tokens": 0,
+                    "total_saved": 8500 # rough estimate of sending raw JSON to 70B
+                }
+            }
+        }
+        
+    # 4. MASTER DIAGNOSTICIAN (70B)
+    master_prompt = f"""
+    You are ReefGPT, an elite clinical diagnostic engine.
+    
+    --- LAYER 1 SUMMARIES ---
+    TELEMETRY: {telemetry_node['content']}
+    HISTORY: {history_node['content']}
+    KNOWLEDGE BASE: {knowledge_node['content']}
+    
+    USER PROMPT: "{req.text}"
+    
+    DIRECTIONS:
+    1. Respond to the user with expert, nuanced advice based ONLY on the Layer 1 Summaries.
+    2. CONVERSATIONAL & SUCCINCT: Write no more than 2-3 sentences. Sound like a knowledgeable human LFS employee talking to a customer. DO NOT write essays.
+    3. You MUST ALWAYS return a valid JSON object at the end of your response, starting with `JSON_START` and ending with `JSON_END`.
+    4. Inside the JSON, you must include a `severity` field ("CRITICAL", "WARNING", or "INFO").
+    5. If the user's prompt implies they are adding livestock or logging data, include an `actions` array in the JSON.
+
+    Example Response:
+    That Purple Tang is a great addition, but watch out for aggression with your other fish. Let me add him to your tank profile. How is he eating so far?
+    
+    JSON_START
+    {{
+      "severity": "INFO",
+      "actions": [
+        {{
+          "action": "add_inhabitant",
+          "name": "Yellow Tang",
+          "species": "Zebrasoma flavescens",
+          "category": "Fish",
+          "size": "3 inches"
+        }}
+      ]
+    }}
+    JSON_END
+    """
+    
+    response = await async_client.chat.completions.create(
+        model="llama-3.3-70b-versatile",
+        messages=[{"role": "user", "content": master_prompt}],
+        temperature=0.2
+    )
+    
+    full_text = response.choices[0].message.content
+    layer_2_tokens = response.usage.total_tokens
+    
+    # 5. Extract JSON Payload
+    reply_text = full_text
+    proposed_actions = []
+    dynamic_severity = "EXPERT_ANALYSIS"
+    
+    if "JSON_START" in full_text and "JSON_END" in full_text:
+        try:
+            json_str = full_text.split("JSON_START")[1].split("JSON_END")[0].strip()
+            parsed = json.loads(json_str)
+            proposed_actions = parsed.get("actions", [])
+            dynamic_severity = parsed.get("severity", "EXPERT_ANALYSIS")
+            reply_text = full_text.split("JSON_START")[0].strip()
+        except Exception as e:
+            print("Failed to parse JSON:", e)
+            
+    # Save to chat history
+    supabase.table("chat_history").insert({"user_id": user_id_ctx.get(), "role": "user", "content": req.text}).execute()
+    supabase.table("chat_history").insert({"user_id": user_id_ctx.get(), "role": "assistant", "content": reply_text}).execute()
+    
+    xray_trace.append({
+        "node": "Master Diagnostician (70B)",
+        "summary": "Synthesized summaries and formulated response.",
+        "tokens": layer_2_tokens
+    })
+    
+    return {
+        "reply": reply_text,
+        "proposed_actions": proposed_actions,

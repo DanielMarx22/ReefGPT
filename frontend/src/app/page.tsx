@@ -6,6 +6,7 @@ import { Group, Panel, Separator } from "react-resizable-panels";
 import Chatbot from "@/components/Chatbot";
 import ParameterGraph from "../components/Graphs";
 import Dashboard from "../components/Dashboard";
+import ActionPopup from "@/components/ActionPopup";
 import { createClient } from "@supabase/supabase-js";
 
 const supabase = createClient(
@@ -18,11 +19,12 @@ export default function ReefOS() {
   const [messages, setMessages] = useState<{ role: string; content: string }[]>([]);
   const [devMode, setDevMode] = useState(true);
   const [sessionXrays, setSessionXrays] = useState<any[]>([]);
+  const [xraysLoaded, setXraysLoaded] = useState(false);
+  const [useV2, setUseV2] = useState(true);
+  const [pendingActions, setPendingActions] = useState<any[]>([]);
 
   // Data State
   const [logs, setLogs] = useState<any[]>([]);
-  const [livestock, setLivestock] = useState("");
-  const [saveStatus, setSaveStatus] = useState("");
 
   // New Parameter Form
   const [newParamName, setNewParamName] = useState("");
@@ -32,6 +34,25 @@ export default function ReefOS() {
   const [updateParamName, setUpdateParamName] = useState("");
   const [updateParamValue, setUpdateParamValue] = useState("");
   const [prediction, setPrediction] = useState<any>(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("reef_session_xrays");
+      if (saved) {
+        try {
+          setSessionXrays(JSON.parse(saved));
+        } catch (e) {}
+      }
+      setXraysLoaded(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (xraysLoaded && typeof window !== "undefined") {
+      const last10 = sessionXrays.slice(-10);
+      localStorage.setItem("reef_session_xrays", JSON.stringify(last10));
+    }
+  }, [sessionXrays, xraysLoaded]);
 
   useEffect(() => {
     // Initial load on mount
@@ -77,32 +98,22 @@ export default function ReefOS() {
 
       const chatRes = await fetch(`http://localhost:8000/get-chat-history?t=${Date.now()}`);
       const chatData = await chatRes.json();
-      if (chatData.data) setMessages(chatData.data);
-
-      const profRes = await fetch(`http://localhost:8000/get-profile?t=${Date.now()}`);
-      const profData = await profRes.json();
-      if (profData.livestock) setLivestock(profData.livestock);
+      if (chatData.data) {
+        setMessages(chatData.data);
+        // Extract xrays from history
+        const loadedXrays = chatData.data
+          .filter((msg: any) => msg.role === 'ai' && msg.agent_reasoning)
+          .map((msg: any) => msg.agent_reasoning);
+        if (loadedXrays.length > 0) {
+          setSessionXrays(loadedXrays.slice(-10));
+        }
+      }
 
       const predRes = await fetch(`http://localhost:8000/tank-status?t=${Date.now()}`);
       const predData = await predRes.json();
       if (predData.current_state) setPrediction(predData);
     } catch (err) {
       console.error("Failed to fetch data", err);
-    }
-  };
-
-  const saveProfile = async () => {
-    setSaveStatus("Saving...");
-    try {
-      await fetch(`http://localhost:8000/update-profile`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ livestock }),
-      });
-      setSaveStatus("Saved!");
-      setTimeout(() => setSaveStatus(""), 2000);
-    } catch (err) {
-      setSaveStatus("Error saving");
     }
   };
 
@@ -170,7 +181,8 @@ export default function ReefOS() {
     setMessages((prev) => [...prev, { role: "user", content: userMessage }]);
 
     try {
-      const res = await fetch(`http://localhost:8000/chat?t=${Date.now()}`, {
+      const endpoint = useV2 ? "chat-v2" : "chat";
+      const res = await fetch(`http://localhost:8000/${endpoint}?t=${Date.now()}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text: userMessage }),
@@ -178,8 +190,103 @@ export default function ReefOS() {
       const data = await res.json();
 
       setMessages((prev) => [...prev, { role: "ai", content: data.reply }]);
-      if (data.debug_xray) setSessionXrays((prev) => [...prev, data.debug_xray]);
+      if (data.debug_xray) {
+        setSessionXrays((prev) => {
+          const updated = [...prev, data.debug_xray];
+          return updated.slice(-10); // Keep only the last 10 in state
+        });
+      }
+      if (data.proposed_actions && data.proposed_actions.length > 0) {
+        const validActions = data.proposed_actions.filter((a: any) => {
+          if (a.action === "add_inhabitant" && !a.species && !a.name) return false;
+          return true;
+        });
+        if (validActions.length > 0) {
+          setPendingActions(validActions);
+        }
+      }
     } catch (err) { }
+  };
+
+  const handleConfirmAction = async (actions: any[]) => {
+    let successCount = 0;
+    let failCount = 0;
+    let errors: string[] = [];
+
+    for (const action of actions) {
+      try {
+        if (action.action === "add_inhabitant") {
+          const res = await fetch(`http://localhost:8000/add-inhabitant`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ 
+              category: action.category || "Other",
+              species: action.species || "Unknown Species",
+              name: action.name || action.species || "Unknown Item",
+              count: action.count || 1,
+              size: action.size || "",
+              notes: action.notes || action.summary || "",
+              care_info: action.care_info || "",
+              image_url: "",
+              date_added: action.date_added || new Date().toISOString()
+            }),
+          });
+          if (res.ok) successCount++;
+          else failCount++;
+        } else if (action.action === "log_event") {
+          const res = await fetch(`http://localhost:8000/log-event`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ 
+              summary: action.summary,
+              event_type: "general"
+            }),
+          });
+          if (res.ok) successCount++;
+          else failCount++;
+        } else if (action.action === "update_inhabitant" && action.id) {
+          const res = await fetch(`http://localhost:8000/patch-inhabitant/${action.id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(action),
+          });
+          const data = await res.json();
+          if (res.ok && data.status !== "error") {
+            successCount++;
+          } else {
+            failCount++;
+            errors.push(data.message || "Unknown error");
+          }
+        } else if (action.action === "delete_inhabitant" && action.id) {
+          const res = await fetch(`http://localhost:8000/delete-inhabitant/${action.id}`, {
+            method: "DELETE"
+          });
+          const data = await res.json();
+          if (res.ok && data.status !== "error") {
+            successCount++;
+          } else {
+            failCount++;
+            errors.push(data.message || "Unknown error");
+          }
+        }
+      } catch (err: any) {
+        console.error(err);
+        failCount++;
+        errors.push(err.message || "Network error");
+      }
+    }
+    
+    if (failCount === 0) {
+      alert(`Success! Successfully executed ${successCount} action${successCount > 1 ? 's' : ''}.`);
+    } else {
+      alert(`Executed ${successCount} action(s). Failed ${failCount} action(s).\n\nErrors:\n${errors.join('\n')}`);
+    }
+    
+    setPendingActions([]);
+  };
+
+  const handleDismissAction = () => {
+    setPendingActions([]);
   };
 
   const latestMetrics = useMemo(() => {
@@ -190,31 +297,16 @@ export default function ReefOS() {
   }, [logs]);
 
   return (
-    <div className="h-screen w-full bg-slate-950 text-slate-200 font-sans flex flex-col p-2">
-      <div className="flex items-center justify-between mb-2 px-2">
-        <h1 className="text-xl font-bold text-cyan-400 tracking-wider">ReefGPT<span className="text-slate-500 text-sm ml-2">Testing Rig</span></h1>
-      </div>
-
+    <div className="h-full w-full flex flex-col p-2 relative">
+      <ActionPopup 
+        actions={pendingActions} 
+        onConfirm={handleConfirmAction} 
+        onDismiss={handleDismissAction} 
+      />
       <Group orientation="horizontal" className="h-full rounded-xl overflow-hidden border border-white/10 shadow-2xl bg-black/40">
 
         {/* LEFT PANEL: Data Input */}
         <Panel defaultSize={40} minSize={20} className="p-6 overflow-y-auto flex flex-col gap-6 scrollbar-hide">
-
-          <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-lg">
-            <div className="flex justify-between items-center mb-3">
-              <h2 className="text-lg font-bold text-cyan-400">Tank Profile</h2>
-              <span className="text-xs text-green-400">{saveStatus}</span>
-            </div>
-            <textarea
-              value={livestock}
-              onChange={(e) => setLivestock(e.target.value)}
-              className="w-full h-32 bg-black/50 border border-slate-700 rounded p-3 text-sm focus:border-cyan-500 outline-none resize-none mb-3 placeholder-slate-600"
-              placeholder="e.g. Emperor Angelfish, Mixed SPS, Acans."
-            />
-            <button onClick={saveProfile} className="w-full bg-cyan-600 hover:bg-cyan-500 text-white py-2 rounded text-sm font-bold transition-colors">
-              Save Profile
-            </button>
-          </div>
 
           {/* Tank Condition Alert 
              * ======================
@@ -428,13 +520,21 @@ export default function ReefOS() {
 
         {/* RIGHT PANEL: Chat & X-Ray */}
         <Panel defaultSize={60} minSize={30} className="bg-black/20 border-l border-slate-800 flex flex-col relative">
-          <button
-            onClick={() => setDevMode(!devMode)}
-            className={`absolute top-3 right-3 z-50 text-xs px-2 py-1 rounded border transition-colors ${devMode ? "bg-cyan-500/20 border-cyan-500 text-cyan-300" : "bg-slate-800 border-slate-600 text-slate-400 hover:text-white"
-              }`}
-          >
-            {devMode ? "X-Ray: ON" : "X-Ray: OFF"}
-          </button>
+          <div className="absolute top-3 right-3 z-50 flex gap-2">
+            <button
+              onClick={() => setUseV2(!useV2)}
+              className={`text-xs px-3 py-1 rounded border transition-colors ${useV2 ? "bg-purple-500/20 border-purple-500 text-purple-300" : "bg-slate-800 border-slate-600 text-slate-400 hover:text-white"}`}
+            >
+              {useV2 ? "Engine: V2 (Agentic)" : "Engine: V1 (Standard)"}
+            </button>
+            <button
+              onClick={() => setDevMode(!devMode)}
+              className={`text-xs px-2 py-1 rounded border transition-colors ${devMode ? "bg-cyan-500/20 border-cyan-500 text-cyan-300" : "bg-slate-800 border-slate-600 text-slate-400 hover:text-white"
+                }`}
+            >
+              {devMode ? "X-Ray: ON" : "X-Ray: OFF"}
+            </button>
+          </div>
 
           {devMode ? (
             <Group orientation="vertical">
@@ -452,10 +552,84 @@ export default function ReefOS() {
                   <div className="space-y-4 flex flex-col">
                     {sessionXrays.map((xray, idx) => (
                       <div key={idx} className="bg-black/50 p-3 rounded-lg border border-slate-800 shadow-inner">
-                        <div className="text-slate-500 mb-2 border-b border-slate-800/50 pb-1 font-bold">
-                          Turn {idx + 1}
+                        <div className="flex justify-between items-center text-slate-500 mb-2 border-b border-slate-800/50 pb-1 font-bold">
+                          <span>Turn {idx + 1}</span>
+                          {xray.token_usage && (
+                            <span className="text-purple-400/80 text-[10px]">
+                              Total Tokens: {xray.token_usage.total_tokens || xray.token_usage.layer_1_tokens}
+                              {xray.token_usage.total_saved && <span className="text-green-500 ml-2">(Saved ~{xray.token_usage.total_saved})</span>}
+                            </span>
+                          )}
                         </div>
-                        <pre className="text-green-400 whitespace-pre-wrap">{JSON.stringify(xray, null, 2)}</pre>
+                        {xray.orchestrator ? (
+                          <div className="space-y-3 mt-2">
+                            {/* Orchestrator Phase */}
+                            <div className="border border-purple-900/50 rounded bg-purple-950/20 p-2">
+                               <div className="text-purple-400 text-[10px] uppercase font-bold tracking-wider mb-1 flex justify-between">
+                                  <span>Step 1: Orchestrator</span>
+                                  <span className="text-slate-500">{xray.orchestrator.tokens} tkns</span>
+                               </div>
+                               <div className="text-slate-300 text-xs flex gap-2 items-center">
+                                  <span className="text-slate-500">Decision:</span> 
+                                  {xray.orchestrator.status === "SHORT_CIRCUIT" ? (
+                                     <span className="text-red-400 font-bold bg-red-900/20 px-2 rounded">Short Circuit</span>
+                                  ) : (
+                                     <div className="flex gap-1 flex-wrap">
+                                        {xray.orchestrator.decision?.map((d: string) => (
+                                           <span key={d} className="bg-purple-900/40 text-purple-300 px-1.5 py-0.5 rounded text-[10px]">{d}</span>
+                                        ))}
+                                     </div>
+                                  )}
+                               </div>
+                            </div>
+
+                            {/* Subagents Phase */}
+                            {xray.subagents && xray.subagents.length > 0 && (
+                               <div className="border border-blue-900/50 rounded bg-blue-950/20 p-2 space-y-2">
+                                  <div className="text-blue-400 text-[10px] uppercase font-bold tracking-wider mb-2">
+                                     <span>Step 2: Subagents ({xray.subagents.length})</span>
+                                  </div>
+                                  {xray.subagents.map((sub: any, sIdx: number) => (
+                                     <div key={sIdx} className="border-l-2 border-blue-700/50 pl-2">
+                                        <div className="text-blue-300/80 text-[10px] font-bold flex justify-between">
+                                           <span>{sub.node}</span>
+                                           <span className="text-slate-500">{sub.tokens} tkns</span>
+                                        </div>
+                                        <div className="text-slate-300 text-xs mt-1">{sub.summary}</div>
+                                     </div>
+                                  ))}
+                               </div>
+                            )}
+
+                            {/* Master Phase */}
+                            {xray.master && (
+                               <div className="border border-emerald-900/50 rounded bg-emerald-950/20 p-2">
+                                  <div className="text-emerald-400 text-[10px] uppercase font-bold tracking-wider mb-1 flex justify-between">
+                                     <span>Step 3: Master AI Synthesis</span>
+                                     <span className="text-slate-500">{xray.master.tokens} tkns</span>
+                                  </div>
+                                  <div className="text-slate-500 text-[10px] mb-1">Internal Thoughts:</div>
+                                  <div className="text-emerald-200/90 text-xs italic border-l-2 border-emerald-700/50 pl-2">
+                                     {xray.master.internal_thoughts}
+                                  </div>
+                               </div>
+                            )}
+                          </div>
+                        ) : xray.reasoning_steps ? (
+                          <div className="space-y-2 mt-2">
+                            {xray.reasoning_steps.map((step: any, sIdx: number) => (
+                              <div key={sIdx} className="border-l-2 border-cyan-700/50 pl-3 py-1">
+                                <div className="text-cyan-500/80 text-[10px] uppercase font-bold tracking-wider mb-1 flex justify-between">
+                                  <span>{step.node}</span>
+                                  <span className="text-slate-500">{step.tokens} tkns</span>
+                                </div>
+                                <div className="text-slate-300 text-xs">{step.summary}</div>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <pre className="text-green-400 whitespace-pre-wrap text-[10px]">{JSON.stringify(xray, null, 2)}</pre>
+                        )}
                       </div>
                     ))}
                   </div>

@@ -4,6 +4,8 @@ ReefGPT is an AI-powered B2B API designed to be seamlessly integrated into exist
 
 ## Product Vision & Roadmap
 
+**Read the full project goal here:** [Project Vision & Goal](file:///c:/Users/Daniel/Desktop/reefGPT/docs/project_vision.md)
+
 ReefGPT is transitioning into a robust, multi-tenant API to serve enterprise partners. 
 
 ### Planned Features:
@@ -60,18 +62,18 @@ ReefGPT/
 
 ```bash
 cd backend
-python3 -m venv venv
+python -m venv venv
 source venv/bin/activate  # or venv\Scripts\activate on Windows
 pip install -r requirements.txt
-python3 -m uvicorn api.main:app --port 8000
+python -m uvicorn api.main:app --port 8000
 ```
 
 **Note**: If you get `ModuleNotFoundError: No module named 'faiss'`, use system Python instead:
 
 ```bash
 cd backend
-pip3 install -r requirements.txt
-python3 -m uvicorn api.main:app --port 8000
+pip install -r requirements.txt
+python -m uvicorn api.main:app --port 8000
 ```
 
 ### Frontend (Dashboard UI)
