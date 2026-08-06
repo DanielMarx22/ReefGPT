@@ -30,6 +30,8 @@ import {
 import { SortableTelemetryTile, SortableGraphWrapper, TelemetryTile } from '@/components/Sortables';
 import { motion } from 'framer-motion';
 
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.NEXT_PUBLIC_SUPABASE_KEY!
@@ -103,7 +105,7 @@ export default function ReefOS() {
   useEffect(() => {
     const fetchLayout = async () => {
       try {
-        const res = await fetch(`http://localhost:8000/get-layout?t=${Date.now()}`);
+        const res = await fetch(`${API_BASE}/get-layout?t=${Date.now()}`);
         const data = await res.json();
         if (data.layout) {
           setVisibleGraphs(data.layout.graphs || []);
@@ -125,7 +127,7 @@ export default function ReefOS() {
   // Save layout when it changes
   useEffect(() => {
     if (graphsLoaded && !layoutFetchFailed) {
-      fetch(`http://localhost:8000/save-layout`, {
+      fetch(`${API_BASE}/save-layout`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ layout: { graphs: visibleGraphs, telemetry: telemetryLayout } }),
@@ -155,12 +157,12 @@ export default function ReefOS() {
 
           try {
             // 1. Instantly fetch the fresh ML status
-            const predRes = await fetch(`http://localhost:8000/tank-status?t=${Date.now()}`);
+            const predRes = await fetch(`${API_BASE}/tank-status?t=${Date.now()}`);
             const predData = await predRes.json();
             if (predData.current_state) setPrediction(predData);
 
             // 2. Instantly fetch the updated logs
-            const logRes = await fetch(`http://localhost:8000/get-logs?t=${Date.now()}`);
+            const logRes = await fetch(`${API_BASE}/get-logs?t=${Date.now()}`);
             const logData = await logRes.json();
             if (logData.data) setLogs(logData.data);
           } catch (err) {
@@ -178,11 +180,11 @@ export default function ReefOS() {
 
   const fetchData = async () => {
     try {
-      const logRes = await fetch(`http://localhost:8000/get-logs?t=${Date.now()}`);
+      const logRes = await fetch(`${API_BASE}/get-logs?t=${Date.now()}`);
       const logData = await logRes.json();
       if (logData.data) setLogs(logData.data);
 
-      const chatRes = await fetch(`http://localhost:8000/get-chat-history?t=${Date.now()}`);
+      const chatRes = await fetch(`${API_BASE}/get-chat-history?t=${Date.now()}`);
       const chatData = await chatRes.json();
       if (chatData.data) {
         setMessages(chatData.data);
@@ -195,7 +197,7 @@ export default function ReefOS() {
         }
       }
 
-      const predRes = await fetch(`http://localhost:8000/tank-status?t=${Date.now()}`);
+      const predRes = await fetch(`${API_BASE}/tank-status?t=${Date.now()}`);
       const predData = await predRes.json();
       if (predData.current_state) setPrediction(predData);
     } catch (err) {
@@ -223,7 +225,7 @@ export default function ReefOS() {
     setLogs((prev) => [...prev, optimisticLog]);
 
     try {
-      await fetch(`http://localhost:8000/log-metric?t=${Date.now()}`, {
+      await fetch(`${API_BASE}/log-metric?t=${Date.now()}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ parameter: paramName, value: val }),
@@ -249,8 +251,8 @@ export default function ReefOS() {
     if (!confirm(msg)) return;
 
     const url = paramName
-      ? `http://localhost:8000/delete-logs?parameter=${encodeURIComponent(paramName)}`
-      : `http://localhost:8000/delete-logs`;
+      ? `${API_BASE}/delete-logs?parameter=${encodeURIComponent(paramName)}`
+      : `${API_BASE}/delete-logs`;
 
     await fetch(url, { method: "DELETE" });
     fetchData();
@@ -259,7 +261,7 @@ export default function ReefOS() {
   const deleteSingleLog = async (id: number) => {
     // Optimistically remove from UI
     setLogs((prev) => prev.filter(log => log.id !== id));
-    await fetch(`http://localhost:8000/delete-log/${id}`, { method: "DELETE" });
+    await fetch(`${API_BASE}/delete-log/${id}`, { method: "DELETE" });
     fetchData();
   };
 
@@ -268,7 +270,7 @@ export default function ReefOS() {
 
     try {
       const endpoint = useV2 ? "chat-v2" : "chat";
-      const res = await fetch(`http://localhost:8000/${endpoint}?t=${Date.now()}`, {
+      const res = await fetch(`${API_BASE}/${endpoint}?t=${Date.now()}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text: userMessage }),
@@ -297,7 +299,7 @@ export default function ReefOS() {
   const clearHistory = async () => {
     if (!confirm("Are you sure you want to clear the chat history for this tank?")) return;
     try {
-      await fetch(`http://localhost:8000/chat-history`, { method: "DELETE" });
+      await fetch(`${API_BASE}/chat-history`, { method: "DELETE" });
       setMessages([]);
       setSessionXrays([]);
       localStorage.removeItem("reef_session_xrays");
@@ -314,7 +316,7 @@ export default function ReefOS() {
     for (const action of actions) {
       try {
         if (action.action === "add_inhabitant") {
-          const res = await fetch(`http://localhost:8000/add-inhabitant`, {
+          const res = await fetch(`${API_BASE}/add-inhabitant`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ 
@@ -332,7 +334,7 @@ export default function ReefOS() {
           if (res.ok) successCount++;
           else failCount++;
         } else if (action.action === "log_event") {
-          const res = await fetch(`http://localhost:8000/log-event`, {
+          const res = await fetch(`${API_BASE}/log-event`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ 
@@ -343,7 +345,7 @@ export default function ReefOS() {
           if (res.ok) successCount++;
           else failCount++;
         } else if (action.action === "update_inhabitant" && action.id) {
-          const res = await fetch(`http://localhost:8000/patch-inhabitant/${action.id}`, {
+          const res = await fetch(`${API_BASE}/patch-inhabitant/${action.id}`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(action),
@@ -356,7 +358,7 @@ export default function ReefOS() {
             errors.push(data.message || "Unknown error");
           }
         } else if (action.action === "delete_inhabitant" && action.id) {
-          const res = await fetch(`http://localhost:8000/delete-inhabitant/${action.id}`, {
+          const res = await fetch(`${API_BASE}/delete-inhabitant/${action.id}`, {
             method: "DELETE"
           });
           const data = await res.json();
@@ -486,7 +488,7 @@ export default function ReefOS() {
           </div>
           <Group orientation={isMobile ? "vertical" : "horizontal"} className="flex-1 min-h-0 rounded-xl overflow-hidden border border-white/10 shadow-2xl bg-black/20 backdrop-blur-xl">
           {/* LEFT PANEL: Data Input */}
-          <Panel defaultSize={40} minSize={20} className="p-6 overflow-y-auto flex flex-col gap-6 scrollbar-hide h-full">
+          <Panel defaultSize={40} minSize={20} className="p-3 md:p-6 overflow-y-auto flex flex-col gap-3 md:gap-6 scrollbar-hide h-full">
 
           {/* Tank Condition Alert 
              * ======================
@@ -505,7 +507,7 @@ export default function ReefOS() {
               layout
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="relative rounded-xl overflow-hidden shadow-[0_0_30px_rgba(0,0,0,0.5)] border border-white/10 h-32 flex-shrink-0"
+              className="relative rounded-xl overflow-hidden shadow-[0_0_30px_rgba(0,0,0,0.5)] border border-white/10 h-auto py-2 md:py-0 md:h-32 flex-shrink-0"
             >
               {prediction?.current_state ? (
                 <>
@@ -607,7 +609,7 @@ export default function ReefOS() {
             </motion.div>
 
           {/* Current Known Values (Apex-Style Tiles) */}
-          <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-lg">
+          <div className="bg-slate-900 border border-slate-800 rounded-xl p-3 md:p-5 shadow-lg">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-lg font-bold text-cyan-400">Current Telemetry</h2>
               <button onClick={() => deleteLogs()} className="text-xs text-red-400 hover:text-red-300 border border-red-900/50 px-2 py-1 rounded">Clear All</button>
@@ -618,7 +620,7 @@ export default function ReefOS() {
               onDragStart={handleTelemetryDragStart}
               onDragEnd={handleTelemetryDragEnd}
             >
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-3">
                 {latestMetrics.length === 0 ? (
                   <p className="text-xs text-slate-500 col-span-full">No data logged.</p>
                 ) : (

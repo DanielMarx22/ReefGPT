@@ -50,12 +50,12 @@ export function TelemetryTile({ paramKey, val, isOverlay = false }: { paramKey: 
   const sparkline = getMockSparkline(paramKey);
 
   return (
-    <div className={`relative group bg-black/40 backdrop-blur-xl border ${isOverlay ? 'border-white/30 scale-105 z-50' : 'border-white/10 hover:border-white/20'} ${glow} p-4 rounded-xl flex flex-col items-center justify-center shadow-2xl overflow-hidden cursor-grabbing transition-colors duration-300`}>
+    <div className={`relative group bg-black/40 backdrop-blur-xl border ${isOverlay ? 'border-white/30 scale-105 z-50' : 'border-white/10 hover:border-white/20'} ${glow} p-2 md:p-4 rounded-xl flex flex-col items-center justify-center shadow-2xl overflow-hidden cursor-grabbing transition-colors duration-300`}>
       <svg className="absolute bottom-0 left-0 w-full h-8 opacity-20 pointer-events-none" viewBox="0 0 100 30" preserveAspectRatio="none">
         <path d={sparkline} fill="none" stroke="currentColor" strokeWidth="2" className={color} />
       </svg>
-      <div className={`text-[10px] ${color} font-bold uppercase tracking-widest mb-1 z-10 drop-shadow-md`}>{paramKey}</div>
-      <div className="text-2xl font-black text-white tracking-tight z-10">{val}</div>
+      <div className={`text-[8px] md:text-[10px] ${color} font-bold uppercase tracking-widest mb-1 z-10 drop-shadow-md`}>{paramKey}</div>
+      <div className="text-xl md:text-2xl font-black text-white tracking-tight z-10">{val}</div>
     </div>
   );
 }
@@ -83,12 +83,12 @@ export function SortableTelemetryTile({ id, paramKey, val, index }: { id: string
 
   return (
     <div ref={setNodeRef} style={style}>
-      <motion.div 
+        <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: index * 0.05, duration: 0.3 }}
         whileHover={{ scale: 1.05 }}
-        className={`relative group bg-black/40 backdrop-blur-xl border border-white/10 hover:border-white/20 ${glow} p-4 rounded-xl flex flex-col items-center justify-center shadow-2xl overflow-hidden h-full transition-colors duration-300`}
+        className={`relative group bg-black/40 backdrop-blur-xl border border-white/10 hover:border-white/20 ${glow} p-2 md:p-4 rounded-xl flex flex-col items-center justify-center shadow-2xl overflow-hidden h-full transition-colors duration-300`}
       >
         <svg className="absolute bottom-0 left-0 w-full h-8 opacity-20 pointer-events-none" viewBox="0 0 100 30" preserveAspectRatio="none">
           <path d={sparkline} fill="none" stroke="currentColor" strokeWidth="2" className={color} />
@@ -96,12 +96,12 @@ export function SortableTelemetryTile({ id, paramKey, val, index }: { id: string
         <div 
           {...attributes} 
           {...listeners}
-          className="absolute top-2 left-2 text-slate-500 hover:text-white cursor-grab active:cursor-grabbing opacity-0 group-hover:opacity-100 transition-opacity outline-none"
+          className="absolute top-1 left-1 md:top-2 md:left-2 text-slate-500 hover:text-white cursor-grab active:cursor-grabbing opacity-0 group-hover:opacity-100 transition-opacity outline-none"
         >
-          <GripVertical size={16} />
+          <GripVertical size={14} />
         </div>
-        <div className={`text-[10px] ${color} font-bold uppercase tracking-widest mb-1 z-10 drop-shadow-md`}>{paramKey}</div>
-        <div className="text-2xl font-black text-white tracking-tight z-10">{val}</div>
+        <div className={`text-[8px] md:text-[10px] ${color} font-bold uppercase tracking-widest mb-0.5 md:mb-1 z-10 drop-shadow-md`}>{paramKey}</div>
+        <div className="text-xl md:text-2xl font-black text-white tracking-tight z-10">{val}</div>
       </motion.div>
     </div>
   );

@@ -3,6 +3,8 @@
 import { useState, useEffect, useRef } from "react";
 import { Fish, Plus, Image as ImageIcon, ChevronDown, ChevronUp, Droplets, Anchor, Cpu, UploadCloud, Pencil } from "lucide-react";
 
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+
 const SUGGESTIONS: Record<string, string[]> = {
   Fish: [
     "Yellow Tang", "Blue Hippo Tang", "Kole Tang", "Purple Tang", "Sailfin Tang", "Naso Tang", "Powder Blue Tang", "Powder Brown Tang", "Achilles Tang", "Gem Tang",
@@ -107,7 +109,7 @@ export default function LivestockPage() {
 
   const fetchTankNotes = async () => {
     try {
-      const res = await fetch(`http://localhost:8000/get-tank-notes?t=${Date.now()}`);
+      const res = await fetch(`${API_BASE}/get-tank-notes?t=${Date.now()}`);
       const data = await res.json();
       if (data.data) {
         setTankNotes(data.data);
@@ -119,7 +121,7 @@ export default function LivestockPage() {
 
   const fetchInhabitants = async (isInitialLoad = false) => {
     try {
-      const res = await fetch(`http://localhost:8000/get-inhabitants?t=${Date.now()}`);
+      const res = await fetch(`${API_BASE}/get-inhabitants?t=${Date.now()}`);
       const data = await res.json();
       if (data.data) {
         setInhabitants(data.data);
@@ -157,7 +159,7 @@ export default function LivestockPage() {
     formData.append("file", file);
 
     try {
-      const res = await fetch("http://localhost:8000/upload-image", {
+      const res = await fetch(`${API_BASE}/upload-image`, {
         method: "POST",
         body: formData,
       });
@@ -200,7 +202,7 @@ export default function LivestockPage() {
     if (!confirm(`Are you sure you want to delete this ${formCategory}?`)) return;
     
     try {
-      const res = await fetch(`http://localhost:8000/delete-inhabitant/${editingItemId}`, {
+      const res = await fetch(`${API_BASE}/delete-inhabitant/${editingItemId}`, {
         method: "DELETE",
       });
       const data = await res.json();
@@ -259,7 +261,7 @@ export default function LivestockPage() {
         }
       }
 
-      const res = await fetch(`http://localhost:8000/${endpoint}`, {
+      const res = await fetch(`${API_BASE}/${endpoint}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -446,7 +448,7 @@ export default function LivestockPage() {
                       onClick={async () => {
                         if (!confirm("Delete this tank note?")) return;
                         try {
-                          await fetch(`http://localhost:8000/delete-tank-note/${note.id}`, { method: "DELETE" });
+                          await fetch(`${API_BASE}/delete-tank-note/${note.id}`, { method: "DELETE" });
                           fetchTankNotes();
                         } catch (err) {
                           console.error(err);
@@ -479,7 +481,7 @@ export default function LivestockPage() {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-6">
             {activeInhabitants.map((item) => (
               <div 
                 key={item.id} 
@@ -531,16 +533,16 @@ export default function LivestockPage() {
                   </div>
                 </div>
                 
-                <div className="p-4 bg-slate-900 flex flex-col h-full">
-                  <div className="text-xs text-slate-500 font-mono mb-3">
-                    Added: {item.date_added ? new Date(item.date_added).toLocaleDateString('en-US', { timeZone: 'UTC' }) : 'Unknown'}
+                <div className="p-3 md:p-4 bg-slate-900 flex flex-col h-full">
+                  <div className="text-[10px] md:text-xs text-slate-500 font-mono mb-2 md:mb-3 flex justify-between">
+                    <span>Added: {item.date_added ? new Date(item.date_added).toLocaleDateString('en-US', { timeZone: 'UTC' }) : 'Unknown'}</span>
                   </div>
                   
                   {item.notes || item.care_info ? (
-                    <div className="border-t border-slate-800 pt-3 mt-auto">
+                    <div className="border-t border-slate-800 pt-2 md:pt-3 mt-auto">
                       <button 
                         onClick={() => toggleNotes(item.id)}
-                        className="flex items-center justify-between w-full text-xs font-bold text-slate-400 hover:text-cyan-400 transition-colors uppercase tracking-wider mb-2"
+                        className="flex items-center justify-between w-full text-[10px] md:text-xs font-bold text-slate-400 hover:text-cyan-400 transition-colors uppercase tracking-wider mb-2"
                       >
                         {item.category === 'Equipment' ? 'Maintenance & Notes' : 'Notes & Care Guide'}
                         {expandedNotes[item.id] ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
