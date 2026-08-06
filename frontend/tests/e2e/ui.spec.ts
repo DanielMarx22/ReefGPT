@@ -4,6 +4,9 @@ test.describe('Basic UI Rendering & Navigation', () => {
   test('Navbar navigation works', async ({ page }) => {
     await page.goto('/');
     
+    // Login using Dev Bypass
+    await page.getByRole('button', { name: /Customer A/i }).click();
+    
     // Verify the page loads successfully by looking for the chat input
     await expect(page.getByPlaceholder(/Ask ReefGPT/i)).toBeVisible();
     
@@ -20,6 +23,9 @@ test.describe('Basic UI Rendering & Navigation', () => {
 
   test('Dashboard components render', async ({ page }) => {
     await page.goto('/');
+    
+    // Login using Dev Bypass
+    await page.getByRole('button', { name: /Customer A/i }).click();
     
     // Check if the chat input exists
     await expect(page.getByPlaceholder(/Ask ReefGPT/i)).toBeVisible();

@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState } from "react";
+import { Trash2 } from "lucide-react";
 
 interface ChatbotProps {
   messages: { role: string; content: string | any }[];
   sendMessage: (message: string) => void;
+  clearHistory?: () => void;
 }
 
-export default function Chatbot({ messages, sendMessage }: ChatbotProps) {
+export default function Chatbot({ messages, sendMessage, clearHistory }: ChatbotProps) {
   const [input, setInput] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -22,14 +24,33 @@ export default function Chatbot({ messages, sendMessage }: ChatbotProps) {
   };
 
   return (
-    <div className="flex flex-col h-full bg-black/40">
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+    <div className="flex flex-col h-full bg-slate-950 relative overflow-hidden">
+      {/* Textured Background Pattern */}
+      <div 
+        className="absolute inset-0 z-0 opacity-20 pointer-events-none" 
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2306b6d4' fill-opacity='0.15'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
+        }}
+      />
+      
+      {/* Ambient Glow */}
+      <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-cyan-900/20 blur-[100px] rounded-full pointer-events-none z-0" />
+      {clearHistory && messages.length > 0 && (
+        <button 
+          onClick={clearHistory}
+          className="absolute top-2 left-4 z-10 bg-red-900/50 hover:bg-red-900/80 text-red-300 p-1.5 rounded text-xs flex items-center gap-1 transition-colors border border-red-800"
+          title="Clear Chat History"
+        >
+          <Trash2 size={12} /> Clear History
+        </button>
+      )}
+      <div className="flex-1 overflow-y-auto p-4 space-y-4 pt-10">
         {messages.map((msg, i) => (
           <div
             key={i}
-            className={`p-4 rounded-xl ${msg.role === "user"
-                ? "bg-cyan-900/30 border border-cyan-500/30 ml-auto max-w-[80%]"
-                : "bg-slate-800/50 border border-slate-700 mr-auto max-w-[90%]"
+            className={`p-4 rounded-xl relative z-10 backdrop-blur-md shadow-lg transition-all ${msg.role === "user"
+                ? "bg-cyan-950/40 border border-cyan-500/30 ml-auto max-w-[80%] shadow-[0_0_15px_rgba(6,182,212,0.15)]"
+                : "bg-slate-900/60 border border-white/10 mr-auto max-w-[90%]"
               }`}
           >
             <span className="text-xs text-slate-500 uppercase font-bold tracking-wider mb-2 block">
@@ -45,7 +66,7 @@ export default function Chatbot({ messages, sendMessage }: ChatbotProps) {
         <div ref={messagesEndRef} />
       </div>
 
-      <form onSubmit={handleSubmit} className="p-4 border-t border-slate-800/50 bg-slate-900/50 flex gap-2">
+      <form onSubmit={handleSubmit} className="p-4 border-t border-white/10 bg-black/40 backdrop-blur-xl flex gap-2 relative z-10">
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
@@ -60,7 +81,7 @@ export default function Chatbot({ messages, sendMessage }: ChatbotProps) {
           Send
         </button>
       </form>
-      <div className="bg-slate-900/50 pb-2 px-4 text-center">
+      <div className="bg-black/40 backdrop-blur-xl pb-2 px-4 text-center relative z-10">
         <span className="text-[10px] text-slate-500">ReefGPT can make mistakes. Please verify critical advice before acting. It does not control hardware.</span>
       </div>
     </div>

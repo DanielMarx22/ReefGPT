@@ -60,6 +60,7 @@ const SUGGESTIONS: Record<string, string[]> = {
 
 export default function LivestockPage() {
   const [inhabitants, setInhabitants] = useState<any[]>([]);
+  const [tankNotes, setTankNotes] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("Equipment");
   const [visibleTabs, setVisibleTabs] = useState<string[]>(["Equipment"]);
@@ -88,7 +89,8 @@ export default function LivestockPage() {
   const PREDEFINED_CATEGORIES = ["Fish", "Coral", "Invertebrate", "Equipment", "Other"];
 
   useEffect(() => {
-    fetchInhabitants();
+    fetchInhabitants(true);
+    fetchTankNotes();
     
     // Close dropdowns on outside click
     const handleClickOutside = (event: MouseEvent) => {
@@ -103,7 +105,19 @@ export default function LivestockPage() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const fetchInhabitants = async () => {
+  const fetchTankNotes = async () => {
+    try {
+      const res = await fetch(`http://localhost:8000/get-tank-notes?t=${Date.now()}`);
+      const data = await res.json();
+      if (data.data) {
+        setTankNotes(data.data);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const fetchInhabitants = async (isInitialLoad = false) => {
     try {
       const res = await fetch(`http://localhost:8000/get-inhabitants?t=${Date.now()}`);
       const data = await res.json();
@@ -113,6 +127,8 @@ export default function LivestockPage() {
         // Compute active tabs from data
         const cats = Array.from(new Set(data.data.map((i: any) => i.category || 'Fish'))) as string[];
         if (!cats.includes("Equipment")) cats.unshift("Equipment");
+        if (!cats.includes("Tank Notes")) cats.push("Tank Notes");
+
         
         // Merge with any manually added tabs that don't have data yet
         setVisibleTabs(prev => {
@@ -121,7 +137,7 @@ export default function LivestockPage() {
         });
 
         // Smart default tab: select the first category that actually has items
-        if (data.data.length > 0) {
+        if (isInitialLoad && data.data.length > 0) {
           setActiveTab(data.data[0].category || "Fish");
         }
       }
@@ -204,9 +220,9 @@ export default function LivestockPage() {
   const handleAddItem = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const endpoint = editingItemId ? "update-inhabitant" : "add-inhabitant";
+      let endpoint = editingItemId ? "update-inhabitant" : "add-inhabitant";
       
-      const payload: any = {
+      let payload: any = {
         category: formCategory,
         species: formSpecies,
         name: formName,
@@ -224,6 +240,23 @@ export default function LivestockPage() {
       if (formDateAdded) {
         // Date input gives YYYY-MM-DD, convert to ISO datetime format for backend
         payload.date_added = new Date(formDateAdded).toISOString();
+      }
+
+      if (formCategory === "Tank Notes") {
+        if (editingItemId) {
+          endpoint = "update-tank-note";
+          payload = {
+            id: editingItemId,
+            summary: formNotes,
+            date: formDateAdded ? new Date(formDateAdded).toISOString() : new Date().toISOString()
+          };
+        } else {
+          endpoint = "add-tank-note";
+          payload = {
+            summary: formNotes,
+            date: formDateAdded ? new Date(formDateAdded).toISOString() : new Date().toISOString()
+          };
+        }
       }
 
       const res = await fetch(`http://localhost:8000/${endpoint}`, {
@@ -254,6 +287,9 @@ export default function LivestockPage() {
       setActiveTab(formCategory);
       
       fetchInhabitants();
+      if (formCategory === "Tank Notes") {
+        fetchTankNotes();
+      }
     } catch (err) {
       console.error(err);
       alert("Network error while trying to save.");
@@ -381,6 +417,57 @@ export default function LivestockPage() {
           <div className="flex items-center justify-center flex-1 text-slate-500">
             Loading {activeTab}...
           </div>
+        ) : activeTab === "Tank Notes" ? (
+          <div className="flex flex-col gap-4 w-full">
+            {tankNotes.length === 0 ? (
+              <div className="flex flex-col items-center justify-center flex-1 bg-slate-900/50 rounded-2xl border border-slate-800 border-dashed p-12 text-center mt-8">
+                <h3 className="text-xl font-bold text-slate-300 mb-2">No Tank Notes</h3>
+                <p className="text-slate-500 max-w-sm mb-6">ReefGPT will automatically save critical events and equipment checks here.</p>
+              </div>
+            ) : (
+              tankNotes.map((note: any) => (
+                <div key={note.id} className="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-lg w-full max-w-4xl hover:border-cyan-500/30 transition-colors group relative">
+                  {/* Edit / Delete buttons */}
+                  <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                    <button
+                      onClick={() => {
+                        setEditingItemId(note.id);
+                        setFormCategory("Tank Notes");
+                        setFormNotes(note.summary || "");
+                        setFormDateAdded(note.date ? new Date(note.date).toISOString().split('T')[0] : "");
+                        setIsModalOpen(true);
+                      }}
+                      className="bg-black/60 hover:bg-cyan-600 text-white p-2 rounded-lg transition-all duration-300 backdrop-blur-md border border-white/10 shadow-lg"
+                      title="Edit Note"
+                    >
+                      <Pencil size={14} />
+                    </button>
+                    <button
+                      onClick={async () => {
+                        if (!confirm("Delete this tank note?")) return;
+                        try {
+                          await fetch(`http://localhost:8000/delete-tank-note/${note.id}`, { method: "DELETE" });
+                          fetchTankNotes();
+                        } catch (err) {
+                          console.error(err);
+                          alert("Failed to delete note.");
+                        }
+                      }}
+                      className="bg-black/60 hover:bg-red-600 text-white p-2 rounded-lg transition-all duration-300 backdrop-blur-md border border-white/10 shadow-lg"
+                      title="Delete Note"
+                    >
+                      <Plus size={14} className="rotate-45" />
+                    </button>
+                  </div>
+                  <div className="flex justify-between items-start mb-3">
+                    <div className="text-cyan-400 font-bold uppercase text-xs tracking-wider">{note.event_type}</div>
+                    <div className="text-slate-500 text-xs font-mono">{new Date(note.date).toLocaleDateString()}</div>
+                  </div>
+                  <div className="text-slate-200">{note.summary}</div>
+                </div>
+              ))
+            )}
+          </div>
         ) : activeInhabitants.length === 0 ? (
           <div className="flex flex-col items-center justify-center flex-1 bg-slate-900/50 rounded-2xl border border-slate-800 border-dashed p-12 text-center mt-8">
             <div className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center mb-4 text-cyan-600/50">
@@ -499,9 +586,38 @@ export default function LivestockPage() {
             <div className="overflow-y-auto p-5 scrollbar-hide">
               <form onSubmit={handleAddItem} className="flex flex-col gap-5">
                 
-                {/* Image Upload Area */}
-                <div>
-                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Photo</label>
+                {formCategory === 'Tank Notes' ? (
+                  <>
+                    <div>
+                      <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">
+                        Date
+                      </label>
+                      <input 
+                        type="date" 
+                        value={formDateAdded} 
+                        onChange={(e) => setFormDateAdded(e.target.value)}
+                        className="w-full bg-black/50 border border-slate-700 rounded-lg p-3 text-sm text-white focus:border-cyan-500 outline-none placeholder-slate-600"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">
+                        Note Summary
+                      </label>
+                      <textarea 
+                        value={formNotes} 
+                        onChange={(e) => setFormNotes(e.target.value)}
+                        placeholder="Log water changes, feeding habits, or parameter swings..."
+                        className="w-full h-32 bg-black/50 border border-slate-700 rounded-lg p-3 text-sm text-white focus:border-cyan-500 outline-none resize-none placeholder-slate-600"
+                        required
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    {/* Image Upload Area */}
+                    <div>
+                      <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Photo</label>
                   <div 
                     onClick={() => fileInputRef.current?.click()}
                     className={`relative w-full h-32 border-2 border-dashed rounded-xl flex flex-col items-center justify-center cursor-pointer overflow-hidden transition-all duration-300 ${
@@ -641,6 +757,8 @@ export default function LivestockPage() {
                     className="w-full h-24 bg-black/50 border border-slate-700 rounded-lg p-3 text-sm text-white focus:border-cyan-500 outline-none resize-none placeholder-slate-600"
                   />
                 </div>
+                </>
+                )}
                 
                 <div className="mt-2 flex justify-between items-center gap-3 border-t border-slate-800 pt-5">
                   <div>

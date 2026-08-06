@@ -5,44 +5,45 @@ async def route_intent(client, user_prompt: str, past_messages: str = "") -> dic
     Acts as the Orchestrator to determine which subagents should run.
     """
     prompt = f"""
-    You are the Orchestrator for ReefGPT. Your job is to analyze the user's prompt and determine WHICH subagents are needed to gather enough context for the Master AI.
+    You are the RAG Orchestrator for ReefGPT.
     
-    Available Subagents:
-    - "telemetry": Analyzes the tank's numerical parameters (pH, NO3, PO4, Temp, etc.).
-    - "historian": Analyzes past chat history and tank event notes to find correlations over time.
-    - "equipment": Analyzes the user's tank profile (livestock and equipment) to see if they are missing critical hardware related to their issue.
-    - "knowledge": Queries the database for biological or chemical playbooks (e.g., diseases, algae outbreaks, coral health).
+    The user asked: "{user_prompt}"
     
-    User Prompt: "{user_prompt}"
+    Recent Chat Context:
+    {past_messages}
     
-    RULES:
-    1. Only select the subagents that are relevant to the user's prompt. 
-    2. If it's a general question or adding a fish, you might not need "telemetry".
-    3. If they mention an issue (e.g., algae, disease, parameters), you usually need all of them.
-    4. If the user's prompt is missing critical information required to perform an action (e.g. logging alk without a value, or adding a fish without species/size), set status to SHORT_CIRCUIT and provide the reply.
+    You have 4 specialized subagents:
+    1. "telemetry" - Analyzes raw water parameters (pH, Alk, Calc, Temp).
+    2. "historian" - Analyzes the tank's livestock and recent conversational context.
+    3. "equipment" - Analyzes the user's hardware (skimmers, heaters) and tank notes/events.
+    4. "knowledge" - Searches the Vector DB for general biological/pathological facts.
     
-    Respond STRICTLY in JSON format:
+    Your job is to return an ORDERED list of which subagents we should query.
+    Rank them from MOST likely to contain the root cause to LEAST likely.
+    If the question is purely generic, you can omit 'telemetry' or 'equipment'. 
+    If the question is heavily specific to the user's tank, 'telemetry' and 'historian' should be first.
+    
+    Respond STRICTLY in this JSON format:
     {{
-        "status": "SHORT_CIRCUIT" or "PROCEED",
-        "reply": "If SHORT_CIRCUIT, put the conversational question here. Else empty.",
-        "subagents": ["telemetry", "historian", "equipment", "knowledge"] (array of strings, only include needed ones)
+        "subagents": ["telemetry", "knowledge", "equipment", "historian"], // ORDERED by relevance
+        "reply": "If SHORT_CIRCUIT, explain why here",
+        "status": "PROCEED or SHORT_CIRCUIT"
     }}
     """
     
     response = await client.chat.completions.create(
-        model="llama-3.1-8b-instant",
+        model="llama-3.3-70b-versatile",
         messages=[{"role": "user", "content": prompt}],
         temperature=0.0,
+        max_tokens=200,
         response_format={"type": "json_object"}
     )
     
     try:
         data = json.loads(response.choices[0].message.content)
+        # Ensure it always returns a list
+        if not isinstance(data.get("subagents"), list):
+            data["subagents"] = ["telemetry", "historian", "equipment", "knowledge"]
+        return {"content": data, "tokens": response.usage.total_tokens}
     except Exception:
-        data = {"status": "PROCEED", "reply": "", "subagents": ["telemetry", "historian", "equipment", "knowledge"]}
-        
-    return {
-        "type": "orchestrator",
-        "content": data,
-        "tokens": response.usage.total_tokens
-    }
+        return {"content": {"subagents": ["telemetry", "historian", "equipment", "knowledge"], "status": "PROCEED"}, "tokens": 0}

@@ -10,6 +10,8 @@ interface Action {
   category?: string;
   date_added?: string;
   summary?: string;
+  size?: string;
+  notes?: string;
 }
 
 interface ActionPopupProps {
@@ -20,7 +22,7 @@ interface ActionPopupProps {
 
 export default function ActionPopup({ actions, onConfirm, onDismiss }: ActionPopupProps) {
   // Filter unsupported actions hallucinates by the AI
-  const validActions = actions?.filter(a => ['add_inhabitant', 'monitor_parameters'].includes(a.action)) || [];
+  const validActions = actions?.filter(a => ['add_inhabitant', 'monitor_parameters', 'log_event', 'update_inhabitant', 'delete_inhabitant'].includes(a.action)) || [];
 
   const [selectedIndices, setSelectedIndices] = useState<Set<number>>(new Set());
 
@@ -73,7 +75,7 @@ export default function ActionPopup({ actions, onConfirm, onDismiss }: ActionPop
                   </div>
                   <div className="flex flex-col flex-1 min-w-0">
                     <span className={`text-xs font-bold uppercase tracking-wider mb-1 ${isSelected ? 'text-cyan-400' : 'text-slate-500'}`}>
-                      {action.action.replace("_inhabitant", "").toUpperCase()}
+                      {action.action === 'add_inhabitant' ? 'ADD' : action.action === 'log_event' ? 'LOG EVENT' : action.action === 'delete_inhabitant' ? 'REMOVE' : action.action === 'update_inhabitant' ? 'UPDATE' : action.action.replace("_", " ").toUpperCase()}
                     </span>
                     <span className={`text-sm font-medium ${isSelected ? 'text-white' : 'text-slate-400'}`}>
                       {action.species || action.summary || "Tank Item"} {action.size && `(${action.size})`}

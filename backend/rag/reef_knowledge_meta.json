@@ -178,5 +178,14 @@
     "topic": "new_tank_syndrome",
     "timestamp": "2026-04-29T00:33:28.605219",
     "chunk_id": "94d49f021c9d4a60"
+  },
+  {
+    "content": "Symptoms: mushrooms turning white. mushrooms melting. mushrooms bleaching. soft coral pale. ricordea melting. corallimorphs dying. Causes: excessive amino acid dosing. aminos overdosed. acropower toxicity. Treatments: Stop dosing amino acids immediately. Perform a 20% water change to dilute aminos. Run fresh activated carbon. Do not dip corals, as it will stress them further. Wait for zooxanthellae to naturally repopulate the tissue. References: Reef2Reef. Bulk Reef Supply. Coral Magazine",
+    "source": "manual_knowledge",
+    "url": "",
+    "title": "Amino Acid Toxicity",
+    "topic": "amino_acid_toxicity",
+    "timestamp": "2026-08-05T00:00:00.000000",
+    "chunk_id": "aminoacidtoxicit"
   }
 ]

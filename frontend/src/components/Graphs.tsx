@@ -4,6 +4,7 @@ import React, { useState, useMemo } from 'react';
 import {
     LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
 } from 'recharts';
+import { getParameterColor } from '../utils/colors';
 
 const PARAMETERS = ['pH', 'Alkalinity', 'Calcium', 'Magnesium', 'Temperature', 'Nitrate', 'Phosphate'];
 const TIME_RANGES = [
@@ -21,10 +22,14 @@ interface LogEntry {
 
 interface ParameterGraphProps {
     logs: LogEntry[];
+    id?: string;
+    initialParam?: string;
+    onRemove?: (id: string) => void;
+    onParamChange?: (id: string, newParam: string) => void;
 }
 
-export default function ParameterGraph({ logs }: ParameterGraphProps) {
-    const [selectedParam, setSelectedParam] = useState('pH');
+export default function ParameterGraph({ logs, id, initialParam = 'pH', onRemove, onParamChange }: ParameterGraphProps) {
+    const [selectedParam, setSelectedParam] = useState(initialParam);
     const [timeRange, setTimeRange] = useState(7); // Default to 1 week
 
     const chartData = useMemo(() => {
@@ -62,10 +67,20 @@ export default function ParameterGraph({ logs }: ParameterGraphProps) {
     }, [logs, selectedParam, timeRange]);
 
     return (
-        <div className="w-full bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-lg mb-6">
+        <div className="w-full bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-lg mb-6 relative group">
+            {onRemove && id && (
+                <button 
+                    onClick={() => onRemove(id)}
+                    className="absolute -top-3 -right-3 bg-red-950 text-red-400 border border-red-900 rounded-full w-7 h-7 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-900 hover:text-white shadow-lg z-10"
+                    title="Remove Graph"
+                >
+                    ×
+                </button>
+            )}
+            
             <div className="flex justify-between items-center mb-4">
                 <div className="flex items-center gap-4">
-                    <h2 className="text-lg font-bold text-cyan-400">Telemetry</h2>
+                    <h2 className="text-lg font-bold text-cyan-400 hidden sm:block">Telemetry</h2>
 
                     {/* Strict 1D, 3D, 1W Range Selector */}
                     <div className="flex bg-black/50 border border-slate-700 rounded-lg p-1">
@@ -87,7 +102,10 @@ export default function ParameterGraph({ logs }: ParameterGraphProps) {
                 {/* Apex-Style Dropdown */}
                 <select
                     value={selectedParam}
-                    onChange={(e) => setSelectedParam(e.target.value)}
+                    onChange={(e) => {
+                        setSelectedParam(e.target.value);
+                        if (onParamChange && id) onParamChange(id, e.target.value);
+                    }}
                     className="bg-black/80 border border-slate-700 rounded-lg p-2 text-sm text-slate-200 focus:border-cyan-500 outline-none cursor-pointer"
                 >
                     {PARAMETERS.map(param => (
@@ -96,7 +114,7 @@ export default function ParameterGraph({ logs }: ParameterGraphProps) {
                 </select>
             </div>
 
-            <div className="h-64 w-full">
+            <div className="h-36 w-full">
                 {chartData.length === 0 ? (
                     <div className="h-full flex items-center justify-center text-slate-500 text-sm italic">
                         No data logged for {selectedParam} in the selected time range.
@@ -120,17 +138,17 @@ export default function ParameterGraph({ logs }: ParameterGraphProps) {
                             />
                             <Tooltip
                                 contentStyle={{ backgroundColor: '#0f172a', borderColor: '#1e293b', color: '#f8fafc', borderRadius: '8px' }}
-                                itemStyle={{ color: '#22d3ee', fontWeight: 'bold' }}
+                                itemStyle={{ color: getParameterColor(selectedParam), fontWeight: 'bold' }}
                                 labelFormatter={(label, payload) => payload[0]?.payload.fullDate || label}
                             />
                             <Line
                                 type="monotone"
                                 dataKey={selectedParam}
                                 name={selectedParam}
-                                stroke="#22d3ee"
+                                stroke={getParameterColor(selectedParam)}
                                 strokeWidth={3}
-                                dot={{ r: 4, fill: '#0f172a', stroke: '#22d3ee', strokeWidth: 2 }}
-                                activeDot={{ r: 6, fill: '#22d3ee', stroke: '#fff' }}
+                                dot={{ r: 4, fill: '#0f172a', stroke: getParameterColor(selectedParam), strokeWidth: 2 }}
+                                activeDot={{ r: 6, fill: getParameterColor(selectedParam), stroke: '#fff' }}
                                 isAnimationActive={false} // Prevents graph from bugging out on single point live-updates
                             />
                         </LineChart>

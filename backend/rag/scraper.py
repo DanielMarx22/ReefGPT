@@ -263,6 +263,18 @@ MANUAL_KNOWLEDGE = {
         ],
         "references": ["Reef2Reef", "Marine Depot", "BRS TV"]
     },
+    "amino_acid_toxicity": {
+        "symptoms": ["mushrooms turning white", "mushrooms melting", "mushrooms bleaching", "soft coral pale", "ricordea melting", "corallimorphs dying"],
+        "causes": ["excessive amino acid dosing", "aminos overdosed", "acropower toxicity"],
+        "treatments": [
+            "Stop dosing amino acids immediately",
+            "Perform a 20% water change to dilute aminos",
+            "Run fresh activated carbon",
+            "Do not dip corals, as it will stress them further",
+            "Wait for zooxanthellae to naturally repopulate the tissue"
+        ],
+        "references": ["Reef2Reef", "Bulk Reef Supply", "Coral Magazine"]
+    },
     "clam_health": {
         "symptoms": ["clam not extending mantle", "clam pale", "clam closed", "mantle retraction", "clam not opening"],
         "causes": ["insufficient lighting", "poor water quality", "low alkalinity", "low calcium", "acclimation stress", "lack of phytoplankton"],

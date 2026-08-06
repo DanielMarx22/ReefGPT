@@ -38,14 +38,39 @@ key: str = os.environ.get("SUPABASE_KEY")
 supabase: Client = create_client(url, key)
 
 from openai import OpenAI, AsyncOpenAI
-client = OpenAI(
-    api_key=os.environ.get("GROQ_API_KEY"),
-    base_url="https://api.groq.com/openai/v1"
-)
-async_client = AsyncOpenAI(
-    api_key=os.environ.get("GROQ_API_KEY"),
-    base_url="https://api.groq.com/openai/v1"
-)
+
+# --- DUAL PROVIDER ARCHITECTURE ---
+# Groq (llama-3.1-8b-instant): Fast subagents + router (30 req/min free tier)
+# Gemini (gemini-3.5-flash): Smart master AI (5 req/min free tier)
+
+client = OpenAI(api_key=os.environ.get('GEMINI_API_KEY'), base_url='https://generativelanguage.googleapis.com/v1beta/openai/')
+
+groq_async_client = None
+gemini_async_client = None
+
+def get_groq_client():
+    global groq_async_client
+    if groq_async_client is None:
+        groq_async_client = AsyncOpenAI(
+            api_key=os.environ.get("GROQ_API_KEY"),
+            base_url="https://api.groq.com/openai/v1",
+            max_retries=2
+        )
+    return groq_async_client
+
+def get_gemini_client():
+    global gemini_async_client
+    if gemini_async_client is None:
+        gemini_async_client = AsyncOpenAI(
+            api_key=os.environ.get("GEMINI_API_KEY"),
+            base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
+            max_retries=1
+        )
+    return gemini_async_client
+
+# Backward compat alias used by chat-v1
+def get_async_client():
+    return get_gemini_client()
 
 MODEL_DIR = os.path.join(os.path.dirname(__file__), "models")
 EVAL_CSV = os.path.join(MODEL_DIR, "benchmark_eval_data.csv")
@@ -80,9 +105,9 @@ PROBE_MAPPING = {
 }
 
 async def catchup_sync():
-    print("Running Catch-Up Sync with Apex...")
+    print("Running Catch-Up Sync with Apex...") # Reload trigger
     try:
-        res = supabase.table("metrics_log").select("timestamp").order("timestamp", desc=True).limit(1).execute()
+        res = supabase.table("metrics_log").select("timestamp").eq("user_id", user_id_ctx.get()).order("timestamp", desc=True).limit(1).execute()
         latest_db_time = None
         if res.data:
             latest_db_time = datetime.fromisoformat(res.data[0]['timestamp'][:19])
@@ -94,7 +119,7 @@ async def catchup_sync():
             with urllib.request.urlopen(req_tz, timeout=10) as tz_res:
                 tz_data = json.loads(tz_res.read().decode())
                 # timezone is often a string like "-5.00"
-                tz_offset_hours = float(tz_data.get("timezone", 0))
+                tz_offset_hours = float(tz_data.get("istat", {}).get("timezone", 0))
         except Exception as e:
             print(f"Could not fetch timezone from Apex, defaulting to 0: {e}")
 
@@ -149,7 +174,7 @@ async def catchup_sync():
                 if param in last_vals:
                     # Initialize last_val from database if it's the first time we see it in this loop
                     if last_vals[param] is None:
-                        res = supabase.table("metrics_log").select("value").eq("parameter", param).order("timestamp", desc=True).limit(1).execute()
+                        res = supabase.table("metrics_log").select("value").eq("parameter", param).eq("user_id", user_id_ctx.get()).order("timestamp", desc=True).limit(1).execute()
                         if res.data:
                             last_vals[param] = float(res.data[0]["value"])
                             
@@ -190,7 +215,7 @@ async def smart_polling_loop():
                     if value is None: continue
                     
                     if param_name in ["Alkalinity", "Calcium", "Magnesium"]:
-                        res = supabase.table("metrics_log").select("value").eq("parameter", param_name).order("timestamp", desc=True).limit(1).execute()
+                        res = supabase.table("metrics_log").select("value").eq("parameter", param_name).eq("user_id", user_id_ctx.get()).order("timestamp", desc=True).limit(1).execute()
                         if res.data and float(res.data[0]["value"]) == float(value):
                             continue 
                             
@@ -224,7 +249,7 @@ def get_model_metrics():
     """Run models on Supabase tank data and return real metrics"""
     try:
         # Try to get actual Supabase data
-        history = supabase.table("metrics_log").select("*").order("timestamp", desc=True).limit(500).execute()
+        history = supabase.table("metrics_log").select("*").eq("user_id", user_id_ctx.get()).order("timestamp", desc=True).limit(500).execute()
         
         if history.data and len(history.data) >= 50:
             # Group by timestamp
@@ -365,9 +390,14 @@ class InhabitantUpdateRequest(InhabitantRequest):
     id: int
 
 class EventRequest(BaseModel):
-    summary: str
     event_type: str
-    inhabitant_id: int = None
+    summary: str
+    date: str
+    details: Optional[str] = None
+
+class TankNoteRequest(BaseModel):
+    summary: str
+    date: str
 
 TEMP_USER_ID = "00000000-0000-0000-0000-000000000000"
 user_id_ctx = contextvars.ContextVar("user_id", default=TEMP_USER_ID)
@@ -396,11 +426,40 @@ def update_profile(req: ProfileRequest):
         supabase.table("tank_settings").insert({"user_id": user_id_ctx.get(), "livestock": req.livestock}).execute()
     return {"status": "success"}
 
+@app.get("/get-layout")
+async def get_layout():
+    try:
+        res = supabase.table("tank_settings").select("dashboard_layout").eq("user_id", user_id_ctx.get()).execute()
+        if res.data and res.data[0].get("dashboard_layout"):
+            return {"layout": res.data[0]["dashboard_layout"]}
+        return {"layout": {}}
+    except Exception as e:
+        print(f"Error fetching layout (column may not exist yet): {e}")
+        return {"layout": {}}
+
+@app.post("/save-layout")
+async def save_layout(req: Request):
+    try:
+        data = await req.json()
+        layout = data.get("layout", {})
+        
+        # Check if user exists in tank_settings first
+        res = supabase.table("tank_settings").select("id").eq("user_id", user_id_ctx.get()).execute()
+        if res.data:
+            supabase.table("tank_settings").update({"dashboard_layout": layout}).eq("user_id", user_id_ctx.get()).execute()
+        else:
+            supabase.table("tank_settings").insert({"user_id": user_id_ctx.get(), "dashboard_layout": layout}).execute()
+        return {"status": "success"}
+    except Exception as e:
+        print(f"Error saving layout (column may not exist yet): {e}")
+        return {"status": "error", "message": str(e)}
+
 @app.get("/get-logs")
 async def get_logs():
     try:
         response = supabase.table("metrics_log") \
             .select("*") \
+            .eq("user_id", user_id_ctx.get()) \
             .order("timestamp", desc=True) \
             .limit(3000) \
             .execute()
@@ -414,6 +473,14 @@ def get_chat_history():
     response = supabase.table("chat_history").select("*").eq("user_id", user_id_ctx.get()).order("id", desc=False).execute()
     return {"data": response.data}
 
+@app.delete("/chat-history")
+def clear_chat_history():
+    try:
+        supabase.table("chat_history").delete().eq("user_id", user_id_ctx.get()).execute()
+        return {"success": True}
+    except Exception as e:
+        return {"error": str(e)}
+
 @app.get("/get-inhabitants")
 def get_inhabitants():
     try:
@@ -421,6 +488,52 @@ def get_inhabitants():
         return {"data": response.data}
     except Exception as e:
         return {"data": [], "error": str(e)}
+
+@app.get("/get-tank-notes")
+def get_tank_notes():
+    try:
+        response = supabase.table("tank_events").select("*").eq("user_id", user_id_ctx.get()).order("date", desc=True).execute()
+        return {"data": response.data}
+    except Exception as e:
+        return {"data": [], "error": str(e)}
+
+@app.post("/add-tank-note")
+def add_tank_note(req: TankNoteRequest):
+    try:
+        data = {
+            "user_id": user_id_ctx.get(),
+            "summary": req.summary,
+            "event_type": "User Note",
+            "date": req.date
+        }
+        res = supabase.table("tank_events").insert(data).execute()
+        return {"status": "success"}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+
+class TankNoteUpdateRequest(BaseModel):
+    id: int
+    summary: str
+    date: str
+
+@app.post("/update-tank-note")
+def update_tank_note(req: TankNoteUpdateRequest):
+    try:
+        supabase.table("tank_events").update({
+            "summary": req.summary,
+            "date": req.date
+        }).eq("id", req.id).eq("user_id", user_id_ctx.get()).execute()
+        return {"status": "success"}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+
+@app.delete("/delete-tank-note/{note_id}")
+def delete_tank_note(note_id: int):
+    try:
+        supabase.table("tank_events").delete().eq("id", note_id).eq("user_id", user_id_ctx.get()).execute()
+        return {"status": "success"}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
 
 @app.post("/add-inhabitant")
 def add_inhabitant(req: InhabitantRequest):
@@ -550,10 +663,10 @@ def log_metric(req: LogRequest):
 def delete_logs(parameter: str = None):
     try:
         if parameter:
-            response = supabase.table("metrics_log").delete().eq("parameter", parameter).execute()
+            response = supabase.table("metrics_log").delete().eq("parameter", parameter).eq("user_id", user_id_ctx.get()).execute()
             return {"status": "success"}
         else:
-            response = supabase.table("metrics_log").delete().neq("id", 0).execute()
+            response = supabase.table("metrics_log").delete().neq("id", 0).eq("user_id", user_id_ctx.get()).execute()
             return {"status": "success"}
     except Exception as e:
         return {"status": "error", "message": str(e)}
@@ -569,7 +682,7 @@ def clear_chat():
 @app.delete("/delete-log/{log_id}")
 def delete_log(log_id: int):
     try:
-        supabase.table("metrics_log").delete().eq("id", log_id).execute()
+        supabase.table("metrics_log").delete().eq("id", log_id).eq("user_id", user_id_ctx.get()).execute()
         return {"status": "success"}
     except Exception as e:
         return {"status": "error", "message": str(e)}
@@ -589,6 +702,7 @@ def chat_endpoint(req: ChatRequest):
         res = supabase.table("metrics_log") \
             .select("*") \
             .eq("parameter", param) \
+            .eq("user_id", user_id_ctx.get()) \
             .order("timestamp", desc=True) \
             .limit(limit) \
             .execute()
@@ -777,7 +891,7 @@ You are ReefGPT, an elite clinical diagnostic engine for high-end reef aquariums
 
     # 6. Call LLM
     response = client.chat.completions.create(
-        model="llama-3.3-70b-versatile", 
+        model="gemini-3.5-flash", 
         messages=llm_messages,
         response_format={"type": "json_object"}
     )
@@ -817,8 +931,8 @@ def get_tank_status():
     """Get current tank status based on multi-day stability"""
     try:
         import datetime
-        three_days_ago = (datetime.datetime.utcnow() - datetime.timedelta(days=3)).isoformat()
-        res = supabase.table("metrics_log").select("parameter,value,timestamp").gte("timestamp", three_days_ago).order("timestamp", desc=True).execute()
+        three_days_ago = (datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=3)).isoformat()
+        res = supabase.table("metrics_log").select("parameter,value,timestamp").eq("user_id", user_id_ctx.get()).gte("timestamp", three_days_ago).order("timestamp", desc=True).execute()
         
         if not res.data:
             return {"current_state": {"state_id": 0, "state_name": "Unknown", "confidence": 0.5}}
@@ -958,6 +1072,7 @@ def get_tank_status():
 
 @app.post("/chat-v2")
 async def chat_v2_endpoint(req: ChatRequest):
+  try:
     from rag.summarizers import summarize_telemetry, summarize_history, retrieve_knowledge, analyze_equipment_and_notes
     from rag.router import route_intent
     import asyncio
@@ -966,8 +1081,8 @@ async def chat_v2_endpoint(req: ChatRequest):
     parameters = ["pH", "Temperature", "Alkalinity", "Calcium", "Magnesium", "Nitrate", "Phosphate"]
     chrono_logs = []
     for param in parameters:
-        limit = 8 if param in ["pH", "Temperature"] else 2
-        res = supabase.table("metrics_log").select("*").eq("parameter", param).order("timestamp", desc=True).limit(limit).execute()
+        limit = 12 # Give the AI 3 full days of context (4 readings/day) to spot trends
+        res = supabase.table("metrics_log").select("*").eq("parameter", param).eq("user_id", user_id_ctx.get()).order("timestamp", desc=True).limit(limit).execute()
         if res.data:
             chrono_logs.extend(res.data)
             
@@ -975,7 +1090,7 @@ async def chat_v2_endpoint(req: ChatRequest):
     raw_telemetry = "\n".join([f"[{log['timestamp'][:16]}] {log['parameter']}: {log['value']}" for log in chrono_logs]) if chrono_logs else "No logs"
     
     try:
-        profile = supabase.table("inhabitants").select("*").eq("user_id", user_id_ctx.get()).execute()
+        profile = supabase.table("inhabitants").select("name,species,size,category,count,notes").eq("user_id", user_id_ctx.get()).execute()
         tank_livestock = json.dumps(profile.data) if profile.data else "No livestock"
     except Exception:
         tank_livestock = "No livestock"
@@ -987,13 +1102,13 @@ async def chat_v2_endpoint(req: ChatRequest):
         past_messages = "No chat history"
         
     try:
-        raw_events = supabase.table("tank_events").select("*").eq("user_id", user_id_ctx.get()).order("date", desc=True).execute()
+        raw_events = supabase.table("tank_events").select("summary,date").eq("user_id", user_id_ctx.get()).order("date", desc=True).execute()
         tank_events = json.dumps(raw_events.data) if raw_events.data else "No tank notes"
     except Exception:
         tank_events = "No tank notes"
         
-    # 2. RUN ORCHESTRATOR FIRST
-    router_response = await route_intent(async_client, req.text, past_messages)
+    # 2. RUN ORCHESTRATOR on Groq (fast, high rate limit)
+    router_response = await route_intent(get_groq_client(), req.text, past_messages)
     router_content = router_response['content']
     selected_subagents = router_content.get('subagents', ["telemetry", "historian", "equipment", "knowledge"])
     
@@ -1014,42 +1129,39 @@ async def chat_v2_endpoint(req: ChatRequest):
             }
         }
 
-    # 3. RUN SELECTED SUBAGENTS IN PARALLEL
-    tasks = []
-    task_names = []
-    
-    if "telemetry" in selected_subagents:
-        tasks.append(summarize_telemetry(async_client, raw_telemetry))
-        task_names.append("telemetry")
-    if "historian" in selected_subagents:
-        tasks.append(summarize_history(async_client, tank_livestock, past_messages))
-        task_names.append("historian")
-    if "equipment" in selected_subagents:
-        tasks.append(analyze_equipment_and_notes(async_client, tank_livestock, tank_events, req.text))
-        task_names.append("equipment")
-    if "knowledge" in selected_subagents:
-        tasks.append(retrieve_knowledge(async_client, req.text))
-        task_names.append("knowledge")
-        
-    subagent_results = await asyncio.gather(*tasks) if tasks else []
-    
+    # 3. RUN SELECTED SUBAGENTS SEQUENTIALLY on Groq (30 req/min free tier)
     subagents_trace = []
     layer_1_summaries = ""
     
-    for name, res in zip(task_names, subagent_results):
+    for name in selected_subagents:
+        res = None
         node_name = name.capitalize()
-        if name == "equipment": node_name = "Equipment & Notes Analyst"
-        if name == "knowledge": node_name = "Knowledge Retriever"
-        if name == "historian": node_name = "Historian"
-        if name == "telemetry": node_name = "Telemetry Summarizer"
         
-        subagents_trace.append({
-            "node": node_name,
-            "summary": res['content'],
-            "tokens": res['tokens']
-        })
-        layer_1_summaries += f"{node_name.upper()}: {res['content']}\n"
-    
+        if name == "telemetry":
+            res = await summarize_telemetry(get_groq_client(), raw_telemetry, req.text)
+            node_name = "Telemetry Summarizer"
+        elif name == "historian":
+            res = await summarize_history(get_groq_client(), tank_livestock, past_messages, tank_events, req.text)
+            node_name = "Historian"
+        elif name == "equipment":
+            res = await analyze_equipment_and_notes(get_groq_client(), tank_livestock, tank_events, req.text)
+            node_name = "Equipment & Notes Analyst"
+        elif name == "knowledge":
+            res = await retrieve_knowledge(get_groq_client(), req.text)
+            node_name = "Knowledge Retriever"
+            
+        if res:
+            subagents_trace.append({
+                "node": node_name,
+                "summary": res['content'],
+                "tokens": res['tokens']
+            })
+            layer_1_summaries += f"{node_name.upper()}: {res['content']}\n"
+            
+            if res.get('found_issue'):
+                # Short-circuit the sequential loop! We found a glaring root cause.
+                break
+                
     if not layer_1_summaries:
         layer_1_summaries = "No subagents were run for this prompt."
         
@@ -1057,45 +1169,61 @@ async def chat_v2_endpoint(req: ChatRequest):
     master_prompt = f"""
     You are ReefGPT, an elite clinical diagnostic engine.
     
+    --- RECENT CHAT HISTORY ---
+    {past_messages}
+    
     --- LAYER 1 SUMMARIES ---
     {layer_1_summaries}
     
     USER PROMPT: "{req.text}"
     
     DIRECTIONS:
-    1. Respond to the user with expert, nuanced advice based ONLY on the Layer 1 Summaries.
+    1. Respond to the user with expert, nuanced advice based ONLY on the Layer 1 Summaries and Recent Chat History.
     2. CONVERSATIONAL & SUCCINCT: Write no more than 2-3 sentences. Sound like a knowledgeable human LFS employee talking to a customer. DO NOT write essays.
-    3. You MUST ALWAYS return a valid JSON object at the end of your response, starting with `JSON_START` and ending with `JSON_END`.
-    4. Inside the JSON, you must include a `severity` field ("CRITICAL", "WARNING", or "INFO").
-    5. Inside the JSON, you must include an `internal_thoughts` field explaining your logical deduction BEFORE forming your reply.
-    6. If the user's prompt implies they are adding livestock or logging data, include an `actions` array in the JSON.
-    7. EQUIPMENT CHECK (CRITICAL): If the user has an issue that requires specific equipment (e.g. high nutrients and skimmers) and the EQUIPMENT & NOTES summary indicates it is missing from their profile/notes, ASK them if they have it. If they explicitly state they DO NOT have it, you MUST propose a `log_event` action with a summary like "User confirmed they do not have a [Equipment]" to permanently save it as a tank note.
+    3. BE DEFINITIVE: If the Layer 1 Summaries identify a massive anomaly or glaring root cause (like a huge alkalinity spike or failed equipment), state clearly that this is the cause. DO NOT suggest secondary causes or guess other reasons. Only mention alternatives if the subagents are unsure.
+    4. You MUST ALWAYS return a valid JSON object at the end of your response, starting with `JSON_START` and ending with `JSON_END`.
+    5. Inside the JSON, you must include a `severity` field ("CRITICAL", "WARNING", or "INFO").
+    6. Inside the JSON, you must include an `internal_thoughts` field explaining your logical deduction BEFORE forming your reply.
+    7. If the user's prompt implies they are adding livestock or logging data, include an `actions` array in the JSON.
+    8. ACTION SAFETY (CRITICAL): Only propose `log_event` or `add_inhabitant` actions if the user explicitly asks you to log something, or explicitly confirms a change to their tank. Do not automatically log events based on your own assumptions.
 
     Example Response:
     That Purple Tang is a great addition, but watch out for aggression with your other fish. Let me add him to your tank profile. How is he eating so far?
     
     JSON_START
-    {
+    {{
       "internal_thoughts": "The historian noted aggression with tangs. The user is adding one. I should warn them.",
       "severity": "INFO",
       "actions": [
-        {
+        {{
           "action": "add_inhabitant",
           "name": "Yellow Tang",
           "species": "Zebrasoma flavescens",
           "category": "Fish",
           "size": "3 inches"
-        }
+        }}
       ]
-    }
+    }}
     JSON_END
     """
-    
-    response = await async_client.chat.completions.create(
-        model="llama-3.3-70b-versatile",
-        messages=[{"role": "user", "content": master_prompt}],
-        temperature=0.2
-    )
+    # 5. MASTER DIAGNOSTICIAN on Gemini (smartest model, 1 call only)
+    try:
+        response = await get_gemini_client().chat.completions.create(
+            model="gemini-3.5-flash",
+            messages=[{"role": "user", "content": master_prompt}],
+            temperature=0.2
+        )
+    except Exception as e:
+        if "429" in str(e):
+            print("Gemini rate limit hit! Falling back to Groq for Master AI.")
+            response = await get_groq_client().chat.completions.create(
+                model="llama-3.3-70b-versatile",
+                messages=[{"role": "user", "content": master_prompt}],
+                temperature=0.2,
+                max_tokens=800
+            )
+        else:
+            raise e
     
     full_text = response.choices[0].message.content
     layer_2_tokens = response.usage.total_tokens
@@ -1140,4 +1268,12 @@ async def chat_v2_endpoint(req: ChatRequest):
         "reply": reply_text,
         "proposed_actions": proposed_actions,
         "debug_xray": debug_xray
+    }
+  except Exception as e:
+    import traceback
+    traceback.print_exc()
+    return {
+        "reply": f"An internal error occurred: {str(e)}",
+        "proposed_actions": [],
+        "debug_xray": {"error": str(e)}
     }

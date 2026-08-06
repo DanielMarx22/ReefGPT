@@ -7,17 +7,19 @@ This document outlines the roadmap of outstanding tasks for transforming ReefGPT
 2. **Build Long-Term Tank Memory** (Event Vectorization)
 3. **Create Advanced Diagnostic Playbooks** (Decision trees for disease/pests)
 4. **Develop Dynamic Tank State Classifier** (Thresholds based on tank type)
-5. **Implement Comprehensive Visual Testing Suite** (Playwright automated UI/AI testing)
+5. **[COMPLETED] Implement Comprehensive Visual Testing Suite** (Playwright automated UI/AI testing)
+6. **Agentic Livestock Management** (Autonomous intelligent database updates via function calling)
+7. **Cloud Media Storage Architecture** (Transitioning from browser-scaling to cloud buckets)
+8. **Mobile Responsiveness & UI Overhaul** (Refactoring layout for vertical/mobile screens)
 
 ---
 
 ## Detailed Implementation Plans
 
-### 1. Implement Multi-Step Agentic RAG Architecture
-*   **The Goal**: Split the LLM request into multiple highly-optimized steps to reduce token usage and improve factual accuracy.
-*   **Step 1 (Triage & Retrieval)**: A small, fast model analyzes the query, fetches the exact historical data needed (ignoring irrelevant data), and formulates a search query for the Vector DB.
-*   **Step 2 (Master Diagnostician)**: A heavy reasoning model receives the highly-distilled output from Step 1. With an uncluttered context window, it synthesizes the exact facts into expert advice.
-*   **Testing Nuance (TODO)**: Once the multi-layer RAG is implemented, we must upgrade the Playwright `ai-accuracy` suite to perform "Nuanced Database Inference Tests". Instead of explicitly telling the AI "my alk dropped from 9 to 7" in the prompt, the test will seed the `metrics_log` table with a 9-to-7 Alk drop, and then prompt the AI with a vague complaint like "My SPS corals are shrinking a lot". The test will verify if the RAG layers successfully hunt down the log anomalies and diagnose the Alk swing on their own!
+### 1. [COMPLETED] Implement Multi-Step Agentic RAG Architecture
+*   **Status**: Successfully built!
+*   **The Architecture**: The `/chat-v2` endpoint utilizes a Sequential Ranked Queue. The Orchestrator ranks subagents (Telemetry, Historian, Equipment, Knowledge) which then execute one by one. If a subagent flags a glaring issue (`found_issue: true`), the queue short-circuits.
+*   **The Benefit**: This forces the Master AI to give definitive, evidence-based diagnoses (e.g. "Temp drop to 70.45") instead of generic guesswork, massively reduces LLM token consumption, and completely prevents hallucinated conflicts between subagents.
 
 ### 2. Build Long-Term Tank Memory
 *   **The Goal**: Give the AI episodic memory so it remembers historical tank events (e.g., a tank crash 6 months ago).
@@ -33,6 +35,17 @@ This document outlines the roadmap of outstanding tasks for transforming ReefGPT
 
 ### 5. [COMPLETED] Implement Comprehensive Visual Testing Suite
 *   **Status**: Successfully built!
-*   **Architecture**: Dual-layered Playwright setup.
-    *   **Layer 1 (Mocked API)**: Tests frontend components instantly without spending API tokens or polluting databases.
-    *   **Layer 2 (Real API)**: Evaluates the AI's "brain" directly against the Golden Dataset, proving it can parse complex actions and correctly diagnose critical situations.
+*   **Architecture**: Dual-layered Playwright setup with dynamic Authentication.
+    *   **Layer 1 (Mocked API)**: Tests frontend components instantly without spending API tokens. Now includes tests for the Clear Chat button, Agent X-Ray rendering, and complex Action Popups.
+    *   **Layer 2 (Real API Regression Suite)**: The "Nuanced Database Inference Tests" have been successfully implemented. Using 5 dedicated Sandbox UUIDs (Dev Bypass), the Playwright suite automatically seeds complex tank failures (e.g., Alk drops, Heater failures, Aggressive fish pairings) into the database, prompts the AI with a vague complaint ("Why are my corals shrunk?"), and asserts that the RAG architecture correctly diagnoses the specific root cause without being spoon-fed the data.
+### 6. Agentic Livestock Management
+*   **The Goal**: Enable the chatbot to autonomously parse and update database records (like specific coral morphs buried in a single "Zoanthids" note).
+*   **The Plan**: We will equip the AI with explicit tools (Function Calling) allowing it to not only search the database but execute `update_inhabitant` and `add_tank_note` mutations. For example, if a user states "My Utter Chaos zoa died", the AI will search for "Utter Chaos", identify it within the notes of the broader "Zoanthids" record, autonomously lower the quantity, rewrite the note to reflect the loss, and create a permanent chronological Tank Note, all in one conversational turn.
+
+### 7. Cloud Media Storage Architecture
+*   **The Goal**: Move away from base64 Local Storage to a persistent Cloud Bucket while maintaining our aggressive client-side optimization.
+*   **The Plan**: Right now, the React frontend aggressively downscales and compresses high-res 4K photos using an HTML Canvas (e.g. limiting to 800x800px) *before* saving them as base64 strings to prevent blowing past the browser's `QuotaExceededError` limit. Future work will involve wiring this up to an AWS S3 or Supabase Storage bucket. We will maintain the current client-side downscaling logic because it prevents users from uploading massive raw iPhone photos, saving us extreme bandwidth and storage costs while keeping the app snappy.
+
+### 8. Mobile Responsiveness & UI Formatting
+*   **The Goal**: Rebuild the UI constraints so the app is fully usable on mobile phones and narrow vertical screens.
+*   **The Plan**: Currently, narrowing the browser window causes elements (like Telemetry tiles) to get squished and hidden because they are constrained by rigid box limits. The desktop layout (chatbox on the right, dashboard on the left) completely breaks on mobile. We will need to design a dedicated mobile layout using Tailwind's breakpoints (`md:`, `lg:`). This will likely involve stacking the chatbot *below* the dashboard on narrow screens, or placing the chatbot behind a togglable floating action button (FAB) / sliding drawer so it doesn't consume all the vertical screen real estate.

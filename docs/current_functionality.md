@@ -48,21 +48,38 @@ The backend features a zero-maintenance "Smart Sync" system for Neptune Apex har
 
 ### Flow B: User Asks the Chatbot a Question
 1. **Frontend Action**: User types a question (e.g., "Why are my zoas closed up?") and hits send.
-2. **API Call**: Frontend sends a `POST` request to `/chat`.
+2. **API Call**: Frontend sends a `POST` request to `/chat-v2` with the `x-user-id` header passed from the `AuthProvider`.
 3. **Backend Orchestration (`main.py`)**:
-    *   **Telemetry Check**: Fetches the most recent logs for key parameters (pH, Temp, Alk, Ca, Mg) to drastically reduce token count while ensuring the AI has the latest data.
-    *   **Profile Fetch**: Retrieves the user's livestock profile as a structured list from the `inhabitants` table (replacing the old manual text profile).
-    *   **ML Inference**: Calls the XGBoost model to get the official classification (Stable/Warning/Critical) and calculates the variance (swings) in parameters over the last 24-72 hours.
-    *   **RAG Routing**: Passes the user's query to `rag.py`. If the query matches specific keywords, expert override rules are generated. It also queries the vector database for relevant documentation.
-    *   **Prompt Assembly**: Constructs a massive "System Instruction" prompt containing the ML alerts, RAG context, Tank Data, Livestock, and strict JSON output schema.
-4. **LLM Execution**: Sends the assembled prompt to the Groq API.
+    *   **Sequential Ranked Queue**: The Orchestrator determines which specialized Subagents (Telemetry Summarizer, Historian, Equipment & Notes Analyst, Knowledge Retriever) are most relevant and ranks them in a queue.
+    *   **Subagent Execution**: The system iterates through the queue sequentially. Each subagent reads localized data (isolated by `user_id`) to analyze the tank:
+        *   **Telemetry**: Checks recent parameter logs (pH, Temp, Alk, Ca, Mg).
+        *   **Historian**: Reads the inhabitant profile (including `species` and `size`) and recent chat context.
+        *   **Equipment**: Reads the `tank_events` table for equipment failures or specific notes (e.g., "reactor clogging").
+    *   **Short-Circuiting**: If any subagent finds a glaring anomaly (e.g., Temperature drop from 78 to 70), it returns `found_issue: true`. The backend instantly breaks the loop to save tokens and prevent other agents from hallucinating conflicting causes.
+4. **LLM Master Synthesis**: The Master AI receives the findings from the executed subagents. Because of the short-circuiting, it is forced to provide a highly definitive, data-backed diagnosis rather than generic guesswork.
 5. **Database Logging**: Saves both the user's question and the AI's response (along with its "X-ray" JSON reasoning) to the `chat_history` table.
-6. **Action Proposals**: If the AI determines an action is needed (like adding a fish to the profile or logging a tank event), it returns a `proposed_actions` array.
-7. **Frontend Render**: Returns the response to the frontend. The frontend displays the chat message, updates the "Agent X-Ray" debug panel, and presents an Action Popup to the user to confirm or dismiss any proposed actions.
+6. **Action Proposals**: If the AI determines an action is needed (like adding a fish to the profile or updating an equipment note), it returns a `proposed_actions` array.
+7. **Frontend Render**: Returns the response to the frontend. The frontend displays the chat message, updates the "Agent X-Ray" debug panel (showing exactly which subagents were called), and presents an Action Popup to the user to confirm or dismiss any proposed actions.
 
 ---
 
-## 4. Current LLM Model & Rationale
+## 4. Customizable Dashboard & UI Architecture
+
+The frontend is built with React, Next.js, and TailwindCSS. It heavily leverages `framer-motion` for fluid animations and `@dnd-kit` for drag-and-drop customization.
+
+### Dynamic Dashboard Layout
+- **Persistence**: The layout order of Telemetry Tiles, Analytics Graphs, and Media Galleries is entirely customizable. The order is automatically saved as JSON in the `tank_settings` table via the `POST /save-layout` endpoint.
+- **Aesthetic Overhaul**: The dashboard utilizes a premium glassmorphism design (`backdrop-blur`). The main background features a dynamic mesh gradient that automatically shifts colors based on the ML Model's `STABLE` (Emerald), `WARNING` (Amber), or `CRITICAL` (Crimson) status.
+- **Empty States**: Fresh accounts start with a clean UI, displaying stylized "Waiting for Data" components to encourage initial telemetry and layout additions.
+
+### Media Handling & Progression
+- **MediaGallery Component**: Users can add "Single Picture" or "Rotating Gallery" cards to their dashboard.
+- **Client-Side Compression**: To prevent `QuotaExceededError` in local storage (prior to cloud bucket implementation), the component aggressively resizes and compresses image uploads via an HTML `<canvas>` before base64 encoding.
+- **Framer Motion**: The rotating gallery automatically cycles through photos every 5 seconds, using `<AnimatePresence>` for smooth cross-fading transitions.
+
+---
+
+## 5. Current LLM Model & Rationale
 
 **Current Model:** `llama-3.3-70b-versatile` (Accessed via Groq API)
 
@@ -73,7 +90,7 @@ The backend features a zero-maintenance "Smart Sync" system for Neptune Apex har
 
 ---
 
-## 5. Automated Testing Architecture (Playwright)
+## 6. Automated Testing Architecture (Playwright)
 
 ReefGPT features a comprehensive, dual-layered automated testing suite built with Playwright. 
 
@@ -82,14 +99,17 @@ In standard automated testing, it is considered a "bad practice" to write a sing
 
 ### Layer 1: Frontend & UI Suite (Mocked API)
 **Location:** `frontend/tests/e2e/`
-These tests are incredibly fast and cost **zero tokens**. They do not touch the real database or the LLM. Instead, they intercept network requests (like `/chat` or `/log-metric`) and "fake" the backend's response to ensure the frontend code reacts properly.
-1. **`ui.spec.ts`**: Verifies that all major components render correctly without crashing (e.g., checking if the Navbar routing works, and ensuring the Dashboard loads).
-2. **`manual-logging.spec.ts`**: Simulates a user selecting a parameter (Alkalinity) from the dropdown, typing a value, and clicking Update. It intercepts the network request to prove the frontend successfully built the correct data payload.
-3. **`agent-mocked.spec.ts`**: Simulates the user chatting with the AI about adding livestock. It fakes an AI response containing a JSON action payload to verify that the "Agent Proposed Actions" popup appears and allows the user to click Confirm.
+These tests are incredibly fast and cost **zero tokens**. They do not touch the real database or the LLM. Instead, they intercept network requests (like `/chat-v2` or `/log-metric`) and "fake" the backend's response to ensure the frontend code reacts properly. Because the app requires authentication, these tests click the "Developer Bypass" sandbox accounts (e.g., `Customer A`) on the `/` route before running assertions.
+1. **`ui.spec.ts`**: Verifies that all major components render correctly without crashing (Navbar routing, Dashboard).
+2. **`chat-features.spec.ts`**: Simulates user interactions with the chatbot. It mocks the LLM response to verify that:
+    * The "Clear Chat History" button appears and successfully clears the UI state after accepting the `window.confirm` dialog.
+    * The AI diagnostic text renders correctly, and the Agent X-Ray panel successfully displays internal thoughts.
+    * The Action Popup (`proposed_actions`) appears when the mock AI suggests adding an inhabitant or updating equipment, and disappears when confirmed.
 
 ### Layer 2: Full AI Intelligence Suite (Real API)
 **Location:** `frontend/tests/ai-integration/`
-This is your **Golden Dataset** test runner. It completely ignores the UI and directly hits your real, live FastAPI backend (and the real Groq LLM). 
-1. **`ai-accuracy.spec.ts`**:
-    * **Scenario A (Complex Livestock Parsing)**: Sends a complex prompt ("I just bought a new Purple Tang...") to the AI and strictly verifies that the LLM successfully parses it into the exact JSON schema required by your database (`action: "add_inhabitant"`, `name: "Purple Tang"`, etc.).
-    * **Scenario B (Critical Parameter Triage)**: Sends a paragraph about SPS base peeling and a rapid Alkalinity drop. It verifies that the AI correctly flags the issue as `CRITICAL` in its X-Ray reasoning and mentions key terms like "alkalinity" or "swing" in its final conversational response.
+This is your **Golden Dataset** regression test runner. It clicks through the real UI using the Developer Bypass Sandbox accounts, but actually hits your real, live FastAPI backend (and the real Groq LLM). 
+1. **`scenarios.spec.ts`**:
+    * **Automated Sandbox Testing**: Loops through all 5 sandbox accounts (Customer A through E), logs into each, and asks the AI a diagnostic question (e.g. "Why are my corals shrunk today?").
+    * **Definitive Accuracy Verification**: Using regex matchers (e.g. `/alkalinity/i` or `/aggression/i`), it rigorously verifies that the LLM successfully parses the complex biological and telemetry data to diagnose the correct root cause. 
+    * **WARNING**: Running this suite consumes real tokens and hits the Groq API sequentially. Be cautious of `429 Rate Limit` errors (100k TPD cap) if running it frequently.
