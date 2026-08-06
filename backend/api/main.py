@@ -229,8 +229,13 @@ async def smart_polling_loop():
 
 @app.on_event("startup")
 async def startup_event():
-    asyncio.create_task(catchup_sync())
-    asyncio.create_task(smart_polling_loop())
+    import os
+    if not os.environ.get("VERCEL"):
+        print("Starting hardware polling agents (Local Mode)...")
+        asyncio.create_task(catchup_sync())
+        asyncio.create_task(smart_polling_loop())
+    else:
+        print("Running in Vercel - Hardware polling disabled. Acting as pure API server.")
 
 # Global ML Models Cache
 GLOBAL_ML_MODELS = {"xgb": None, "scaler": None}
