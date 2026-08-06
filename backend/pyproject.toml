@@ -1,2 +1,23 @@
+[project]
+name = "reefgpt-backend"
+version = "0.1.0"
+dependencies = [
+    "fastapi",
+    "uvicorn",
+    "supabase",
+    "python-dotenv",
+    "scikit-learn",
+    "xgboost",
+    "pandas",
+    "numpy",
+    "joblib",
+    "openai",
+    "pytest",
+    "faiss-cpu",
+    "sentence-transformers",
+    "beautifulsoup4",
+    "lxml"
+]
+
 [tool.vercel]
 entrypoint = "api.main:app"
