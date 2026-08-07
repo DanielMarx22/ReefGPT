@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Trash2 } from "lucide-react";
+import { fetchWithAuth } from '@/lib/api';
 
 interface ChatbotProps {
   messages: { role: string; content: string | any }[];

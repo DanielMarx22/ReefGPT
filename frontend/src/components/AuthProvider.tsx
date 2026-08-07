@@ -67,32 +67,50 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
           <p className="text-slate-400 text-center mb-8">Sign in to your tank dashboard</p>
           <Auth 
             supabaseClient={supabase} 
-            appearance={{ 
-                theme: ThemeSupa,
-                variables: {
-                    default: {
-                        colors: {
-                            brand: '#3b82f6',
-                            brandAccent: '#2563eb',
-                        }
-                    }
-                }
-            }} 
+            appearance={{
+              theme: ThemeSupa,
+              variables: {
+                default: {
+                  colors: {
+                    brand: '#3b82f6',
+                    brandAccent: '#2563eb',
+                    messageText: '#cbd5e1',
+                    inputText: 'white',
+                    inputBackground: 'rgba(0,0,0,0.5)',
+                    inputBorder: 'rgba(255,255,255,0.1)',
+                    inputBorderHover: 'rgba(59,130,246,0.5)',
+                    inputBorderFocus: '#3b82f6',
+                    anchorTextColor: '#60a5fa',
+                    dividerBackground: 'rgba(255,255,255,0.1)',
+                  },
+                  space: {
+                    buttonPadding: '12px 16px',
+                    inputPadding: '12px 16px',
+                  },
+                  borderWidths: {
+                    buttonBorderWidth: '1px',
+                    inputBorderWidth: '1px',
+                  },
+                  radii: {
+                    borderRadiusButton: '12px',
+                    buttonBorderRadius: '12px',
+                    inputBorderRadius: '12px',
+                  },
+                },
+              },
+              className: {
+                container: 'auth-container',
+                button: 'auth-button hover:shadow-[0_0_15px_rgba(59,130,246,0.5)] transition-shadow duration-300',
+                input: 'auth-input backdrop-blur-md',
+                message: 'text-slate-300',
+                anchor: 'text-blue-400 hover:text-blue-300 transition-colors',
+                divider: 'bg-white/10',
+                label: 'text-slate-300 font-medium',
+              },
+            }}
+            theme="dark"
             providers={[]} 
           />
-        </div>
-        
-        {/* DEV BYPASS */}
-        <div className="w-full max-w-md bg-slate-900 p-4 rounded-xl border border-dashed border-slate-700 shrink-0 mb-10">
-          <p className="text-slate-400 text-center mb-4 text-sm font-semibold">Developer Testing Scenarios</p>
-          <div className="flex flex-col gap-2">
-            <button onClick={() => setSession({ user: { id: "00000000-0000-0000-0000-000000000000", email: "personal@reef.local" }})} className="bg-sky-900/50 hover:bg-sky-900/70 text-sky-400 p-2 rounded transition-colors text-sm font-bold border border-sky-800 cursor-pointer mb-2">Login as Personal Account</button>
-            <button onClick={() => setSession({ user: { id: "11111111-1111-1111-1111-111111111111", email: "alk_spike@test.com" }})} className="bg-red-900/50 hover:bg-red-900/70 text-red-400 p-2 rounded transition-colors text-sm font-medium cursor-pointer">Customer A: Alk & Calc Spike</button>
-            <button onClick={() => setSession({ user: { id: "22222222-2222-2222-2222-222222222222", email: "amino_toxicity@test.com" }})} className="bg-orange-900/50 hover:bg-orange-900/70 text-orange-400 p-2 rounded transition-colors text-sm font-medium cursor-pointer">Customer B: Amino Overdose</button>
-            <button onClick={() => setSession({ user: { id: "33333333-3333-3333-3333-333333333333", email: "rogue_fish@test.com" }})} className="bg-green-900/50 hover:bg-green-900/70 text-green-400 p-2 rounded transition-colors text-sm font-medium cursor-pointer">Customer C: Rogue Fish (Nipping)</button>
-            <button onClick={() => setSession({ user: { id: "44444444-4444-4444-4444-444444444444", email: "heater_failure@test.com" }})} className="bg-blue-900/50 hover:bg-blue-900/70 text-blue-400 p-2 rounded transition-colors text-sm font-medium cursor-pointer">Customer D: Heater Failure</button>
-            <button onClick={() => setSession({ user: { id: "55555555-5555-5555-5555-555555555555", email: "alk_depletion@test.com" }})} className="bg-purple-900/50 hover:bg-purple-900/70 text-purple-400 p-2 rounded transition-colors text-sm font-medium cursor-pointer">Customer E: Alk Depletion</button>
-          </div>
         </div>
       </div>
     );

@@ -24,3 +24,24 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Mobile overrides for react-resizable-panels */
+@media (max-width: 768px) {
+  [data-panel-group] {
+    display: flex !important;
+    flex-direction: column !important;
+    height: auto !important;
+    min-height: 100vh !important;
+    overflow-y: visible !important;
+  }
+  [data-panel] {
+    flex-basis: auto !important;
+    height: auto !important;
+    flex-shrink: 0 !important;
+    flex-grow: 1 !important;
+    overflow: visible !important;
+  }
+  [data-panel-resize-handle-enabled] {
+    display: none !important;
+  }
+}

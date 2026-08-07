@@ -32,8 +32,9 @@ The backend is a FastAPI application that serves as the brain of ReefGPT. It int
 
 ### Autonomous Apex Data Sync:
 The backend features a zero-maintenance "Smart Sync" system for Neptune Apex hardware integration:
-1. **Catch-Up Sync (Zero Missed Data)**: On server startup, a background task connects to the local Apex's internal memory (`datalog.xml`), calculates exactly how long the ReefGPT server was offline, dynamically fetches the timezone offset, and safely backfills all missing historical data into Supabase as true UTC timestamps.
-2. **Smart Polling Loop**: An `asyncio` thread quietly polls the Apex `status.json` every 10 minutes while the server is running. Fast-moving metrics (Temperature, pH) are logged normally, while Trident data (Alkalinity, Calcium, Magnesium) is intelligently deduplicated against the database so that only genuine test updates are plotted on the graphs.
+1. **Historical Data Backfill (`tlog` & `ilog`)**: The Playwright headless scraper directly logs into Neptune Systems Apex Fusion and intercepts the `tlog` (Trident Logs) and `ilog` (Input Logs) network payloads. This directly bypasses local Apex limitations, grabbing up to 2 weeks of full historical telemetry seamlessly.
+2. **Auto-Reload UX**: When the scraper completes its run, the frontend (which polls every 3 seconds) automatically detects the new records via `logsData.data.length > 0` and triggers a seamless `window.location.reload()`, meaning the user never has to manually refresh after their first sync.
+3. **Scraper Safeguards**: To prevent Neptune from flagging the account, the backend enforces a strict 10-minute rate limit (`last_scrape_times`) on scraper triggers per user. The Playwright scraper also features a robust 3-minute timeout threshold that gracefully processes partial data if the Neptune dashboard takes too long to render.
 
 ---
 
@@ -113,3 +114,26 @@ This is your **Golden Dataset** regression test runner. It clicks through the re
     * **Automated Sandbox Testing**: Loops through all 5 sandbox accounts (Customer A through E), logs into each, and asks the AI a diagnostic question (e.g. "Why are my corals shrunk today?").
     * **Definitive Accuracy Verification**: Using regex matchers (e.g. `/alkalinity/i` or `/aggression/i`), it rigorously verifies that the LLM successfully parses the complex biological and telemetry data to diagnose the correct root cause. 
     * **WARNING**: Running this suite consumes real tokens and hits the Groq API sequentially. Be cautious of `429 Rate Limit` errors (100k TPD cap) if running it frequently.
+    * **Synthetic Data Profiles**: The automated suite relies on 5 specific seeded profiles (`perfect@reefgpt.com`, `crash@reefgpt.com`, `lowcalc@reefgpt.com`, `hot@reefgpt.com`, `swing@reefgpt.com`). These are generated via a specialized backend script (`seed_test_accounts.py`) that mathematically generates 1,600+ hourly historical records to perfectly emulate complex scenarios (e.g., Alk drops, Heater failures) for RAG accuracy testing.
+
+---
+
+## 7. Authentication & User Management
+
+ReefGPT utilizes a fully custom authentication layer built on top of the Supabase Auth API, designed for maximum flexibility and user experience.
+
+### Custom Login Flow (`login/page.tsx`)
+The pre-built `@supabase/auth-ui-react` component was stripped out in favor of a bespoke glassmorphic React form featuring:
+- **Tabbed Interface**: Users can seamlessly switch between "Sign In", "Sign Up", and "Forgot Password".
+- **Password Visibility**: Integrated `lucide-react` Eye toggles for all password fields.
+- **Explicit Error Handling**: The frontend explicitly intercepts the `User already registered` error (if Supabase's "Prevent User Enumeration" is disabled) to present a clear red error message rather than silently failing or providing false success messages.
+
+### Password Reset Flow (`update-password/page.tsx`)
+1. User clicks "Forgot Password" and enters their email.
+2. Supabase uses its built-in SMTP server to send a secure recovery link.
+3. Clicking the link redirects the user to the custom `/update-password` route.
+4. The frontend verifies the session token and allows the user to securely set a new password via `supabase.auth.updateUser()`.
+
+### Supabase Configurations for Testing
+For rapid development and sandbox testing (e.g. allowing testers to create 10 accounts in a single day), the project uses specific Supabase Auth configurations:
+- **Email Confirmations Disabled**: By turning off "Confirm Email" in the Supabase Dashboard, users bypass the free tier's strict 3-emails-per-hour limit for signup confirmations, allowing instant account creation and testing.

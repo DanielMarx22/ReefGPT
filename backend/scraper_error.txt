@@ -1,0 +1,33 @@
+Traceback (most recent call last):
+  File "C:\Users\Daniel\Desktop\reefGPT\backend\api\fusion_scraper.py", line 80, in scrape_fusion_for_user
+    page.wait_for_selector('.tile-container', timeout=30000)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Daniel\Desktop\reefGPT\backend\venv\Lib\site-packages\playwright\sync_api\_generated.py", line 9033, in wait_for_selector
+    self._sync(
+    ~~~~~~~~~~^
+        self._impl_obj.wait_for_selector(
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+        )
+        ^
+    )
+    ^
+  File "C:\Users\Daniel\Desktop\reefGPT\backend\venv\Lib\site-packages\playwright\_impl\_sync_base.py", line 115, in _sync
+    return task.result()
+           ~~~~~~~~~~~^^
+  File "C:\Users\Daniel\Desktop\reefGPT\backend\venv\Lib\site-packages\playwright\_impl\_page.py", line 427, in wait_for_selector
+    return await self._main_frame.wait_for_selector(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Daniel\Desktop\reefGPT\backend\venv\Lib\site-packages\playwright\_impl\_frame.py", line 394, in wait_for_selector
+    await self._channel.send(
+        "waitForSelector", self._timeout, locals_to_params(locals())
+    )
+  File "C:\Users\Daniel\Desktop\reefGPT\backend\venv\Lib\site-packages\playwright\_impl\_connection.py", line 76, in send
+    return await self._connection.wrap_api_call(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "C:\Users\Daniel\Desktop\reefGPT\backend\venv\Lib\site-packages\playwright\_impl\_connection.py", line 632, in wrap_api_call
+    raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+playwright._impl._errors.TargetClosedError: Page.wait_for_selector: Target page, context or browser has been closed

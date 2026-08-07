@@ -2,6 +2,14 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Fish, Plus, Image as ImageIcon, ChevronDown, ChevronUp, Droplets, Anchor, Cpu, UploadCloud, Pencil } from "lucide-react";
+import { createClient } from "@supabase/supabase-js";
+import { useRouter } from "next/navigation";
+import { fetchWithAuth } from '@/lib/api';
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_KEY!
+);
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
@@ -61,6 +69,18 @@ const SUGGESTIONS: Record<string, string[]> = {
 };
 
 export default function LivestockPage() {
+  const router = useRouter();
+
+  // Auth Protection
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session) router.push("/login");
+    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!session) router.push("/login");
+    });
+    return () => subscription.unsubscribe();
+  }, [router]);
   const [inhabitants, setInhabitants] = useState<any[]>([]);
   const [tankNotes, setTankNotes] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -109,7 +129,7 @@ export default function LivestockPage() {
 
   const fetchTankNotes = async () => {
     try {
-      const res = await fetch(`${API_BASE}/get-tank-notes?t=${Date.now()}`);
+      const res = await fetchWithAuth(`/get-tank-notes?t=${Date.now()}`);
       const data = await res.json();
       if (data.data) {
         setTankNotes(data.data);
@@ -121,7 +141,7 @@ export default function LivestockPage() {
 
   const fetchInhabitants = async (isInitialLoad = false) => {
     try {
-      const res = await fetch(`${API_BASE}/get-inhabitants?t=${Date.now()}`);
+      const res = await fetchWithAuth(`/get-inhabitants?t=${Date.now()}`);
       const data = await res.json();
       if (data.data) {
         setInhabitants(data.data);
@@ -159,7 +179,7 @@ export default function LivestockPage() {
     formData.append("file", file);
 
     try {
-      const res = await fetch(`${API_BASE}/upload-image`, {
+      const res = await fetchWithAuth(`/upload-image`, {
         method: "POST",
         body: formData,
       });
@@ -202,7 +222,7 @@ export default function LivestockPage() {
     if (!confirm(`Are you sure you want to delete this ${formCategory}?`)) return;
     
     try {
-      const res = await fetch(`${API_BASE}/delete-inhabitant/${editingItemId}`, {
+      const res = await fetchWithAuth(`/delete-inhabitant/${editingItemId}`, {
         method: "DELETE",
       });
       const data = await res.json();
@@ -261,7 +281,7 @@ export default function LivestockPage() {
         }
       }
 
-      const res = await fetch(`${API_BASE}/${endpoint}`, {
+      const res = await fetchWithAuth(`/${endpoint}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -448,7 +468,7 @@ export default function LivestockPage() {
                       onClick={async () => {
                         if (!confirm("Delete this tank note?")) return;
                         try {
-                          await fetch(`${API_BASE}/delete-tank-note/${note.id}`, { method: "DELETE" });
+                          await fetchWithAuth(`/delete-tank-note/${note.id}`, { method: "DELETE" });
                           fetchTankNotes();
                         } catch (err) {
                           console.error(err);

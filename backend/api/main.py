@@ -16,8 +16,13 @@ import pandas as pd
 import shutil
 import asyncio
 import urllib.request
+import sys
 import xml.etree.ElementTree as ET
 from datetime import datetime
+
+if sys.platform == 'win32':
+    asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
+
 from fastapi import FastAPI, File, UploadFile, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -91,151 +96,84 @@ CRITICAL_RANGES = {
     "Temperature": (70, 86),
 }
 
-APEX_IP = "192.168.4.21"
-APEX_STATUS_URL = f"http://{APEX_IP}/cgi-bin/status.json"
-APEX_DATALOG_URL = f"http://{APEX_IP}/cgi-bin/datalog.xml"
 TEMP_USER_ID = "00000000-0000-0000-0000-000000000000"
 
-PROBE_MAPPING = {
-    "Temp": "Temperature",
-    "pH": "pH",
-    "alk": "Alkalinity",
-    "ca": "Calcium",
-    "mg": "Magnesium"
-}
+import time
+last_scrape_times = {}
 
-async def catchup_sync():
-    print("Running Catch-Up Sync with Apex...") # Reload trigger
+
+
+
+
+
+
+
+@app.post("/sync-fusion")
+async def sync_fusion(background_tasks: BackgroundTasks):
     try:
-        res = supabase.table("metrics_log").select("timestamp").eq("user_id", user_id_ctx.get()).order("timestamp", desc=True).limit(1).execute()
-        latest_db_time = None
-        if res.data:
-            latest_db_time = datetime.fromisoformat(res.data[0]['timestamp'][:19])
-
-        # Fetch dynamic timezone offset from Apex
-        tz_offset_hours = 0
-        try:
-            req_tz = urllib.request.Request(APEX_STATUS_URL)
-            with urllib.request.urlopen(req_tz, timeout=10) as tz_res:
-                tz_data = json.loads(tz_res.read().decode())
-                # timezone is often a string like "-5.00"
-                tz_offset_hours = float(tz_data.get("istat", {}).get("timezone", 0))
-        except Exception as e:
-            print(f"Could not fetch timezone from Apex, defaulting to 0: {e}")
-
-        req = urllib.request.Request(APEX_DATALOG_URL)
-        with urllib.request.urlopen(req, timeout=10) as response:
-            xml_data = response.read().decode('utf-8')
-            
-        root = ET.fromstring(xml_data)
-        records = root.findall('record')
-        insert_payloads = []
+        user_id = user_id_ctx.get()
         
-        for record in records:
-            date_str = record.find('date').text
-            try:
-                # Apex datalog is in local time. Convert to UTC using the fetched offset.
-                from datetime import timedelta
-                local_dt = datetime.strptime(date_str, "%m/%d/%Y %H:%M:%S")
-                # If offset is -5, we SUBTRACT -5 (i.e. add 5) to get UTC.
-                dt_obj = local_dt - timedelta(hours=tz_offset_hours) 
-                
-                if latest_db_time and dt_obj <= latest_db_time:
-                    continue # Skip old records
-                
-                # Append Z so Supabase knows it's UTC
-                iso_date = dt_obj.isoformat() + "Z"
-            except Exception:
-                continue
-                
-            probes = record.findall('probe')
-            for probe in probes:
-                ptype = probe.find('type').text
-                if ptype in PROBE_MAPPING:
-                    try:
-                        val = float(probe.find('value').text)
-                        insert_payloads.append({
-                            "parameter": PROBE_MAPPING[ptype],
-                            "value": val,
-                            "timestamp": iso_date,
-                            "user_id": user_id_ctx.get()
-                        })
-                    except Exception:
-                        pass
+        # 10-minute rate limit (600 seconds)
+        now = time.time()
+        if user_id in last_scrape_times and now - last_scrape_times[user_id] < 600:
+            print(f"[API] Skipping sync for {user_id}, scraped recently.")
+            return {"status": "skipped", "message": "Scraped within the last 10 minutes"}
         
-        if insert_payloads:
-            # Deduplicate Trident records in the payload itself before inserting
-            clean_payloads = []
-            last_vals = {"Alkalinity": None, "Calcium": None, "Magnesium": None}
-            
-            for p in insert_payloads:
-                param = p["parameter"]
-                val = p["value"]
-                if param in last_vals:
-                    # Initialize last_val from database if it's the first time we see it in this loop
-                    if last_vals[param] is None:
-                        res = supabase.table("metrics_log").select("value").eq("parameter", param).eq("user_id", user_id_ctx.get()).order("timestamp", desc=True).limit(1).execute()
-                        if res.data:
-                            last_vals[param] = float(res.data[0]["value"])
-                            
-                    # If it still matches the last known value, skip it
-                    if last_vals[param] == val:
-                        continue 
-                    else:
-                        last_vals[param] = val
-                        clean_payloads.append(p)
-                else:
-                    # Temp and pH always get added
-                    clean_payloads.append(p)
-
-            print(f"Catch-Up Sync: Found {len(clean_payloads)} clean missing points. Uploading...")
-            for i in range(0, len(clean_payloads), 100):
-                supabase.table("metrics_log").insert(clean_payloads[i:i+100]).execute()
-            print("Catch-Up Sync complete!")
+        print(f"[API] Sync triggered for user {user_id}")
+        res = supabase.table("tank_settings").select("fusion_username, fusion_password").eq("user_id", user_id).execute()
+        
+        if res.data and len(res.data) > 0:
+            creds = res.data[0]
+            if creds.get("fusion_username") and creds.get("fusion_password"):
+                # Only lock the rate limit if we actually have credentials to scrape!
+                last_scrape_times[user_id] = now
+                
+                print(f"[API] Found credentials for {user_id}, importing scraper...")
+                import api.fusion_scraper as fusion_scraper
+                
+                print(f"[API] Launching scraper in background thread...")
+                background_tasks.add_task(fusion_scraper.scrape_fusion_for_user, user_id, creds["fusion_username"], creds["fusion_password"])
+                
+                return {"status": "success", "message": "Scraper started in background"}
+            else:
+                print(f"[API] No username/password found in DB for {user_id}.")
         else:
-            print("Catch-Up Sync: Database is fully up to date.")
+            print(f"[API] No tank_settings row found for {user_id}.")
+            
+        return {"status": "error", "message": "No credentials found"}
     except Exception as e:
-        print(f"Catch-Up Sync failed: {e}")
+        print(f"[API] Error in /sync-fusion: {e}")
+        return {"status": "error", "message": str(e)}
 
-async def smart_polling_loop():
-    print("Starting Smart Polling Loop (10min interval)...")
-    while True:
-        try:
-            await asyncio.sleep(600)
-            req = urllib.request.Request(APEX_STATUS_URL)
-            with urllib.request.urlopen(req, timeout=10) as response:
-                data = json.loads(response.read().decode())
-                
-            inputs = data.get("istat", {}).get("inputs", [])
-            for probe in inputs:
-                ptype = probe.get("type")
-                if ptype in PROBE_MAPPING:
-                    param_name = PROBE_MAPPING[ptype]
-                    value = probe.get("value")
-                    if value is None: continue
-                    
-                    if param_name in ["Alkalinity", "Calcium", "Magnesium"]:
-                        res = supabase.table("metrics_log").select("value").eq("parameter", param_name).eq("user_id", user_id_ctx.get()).order("timestamp", desc=True).limit(1).execute()
-                        if res.data and float(res.data[0]["value"]) == float(value):
-                            continue 
-                            
-                    supabase.table("metrics_log").insert({
-                        "parameter": param_name,
-                        "value": float(value),
-                        "user_id": user_id_ctx.get()
-                    }).execute()
-        except Exception as e:
-            print(f"Smart Polling Error: {e}")
+class FusionCreds(BaseModel):
+    fusion_username: str
+    fusion_password: str
 
-@app.on_event("startup")
-async def startup_event():
-    import os
-    if not os.environ.get("VERCEL"):
-        print("Starting hardware polling agents (Local Mode)...")
-        asyncio.create_task(catchup_sync())
-        asyncio.create_task(smart_polling_loop())
-    else:
-        print("Running in Vercel - Hardware polling disabled. Acting as pure API server.")
+
+
+@app.post("/disconnect-fusion")
+async def disconnect_fusion():
+    try:
+        supabase.table("tank_settings").update({
+            "fusion_username": None,
+            "fusion_password": None
+        }).eq("user_id", user_id_ctx.get()).execute()
+        return {"status": "success"}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+
+@app.get("/fusion-status")
+async def fusion_status():
+    try:
+        user_id = user_id_ctx.get()
+        res = supabase.table("tank_settings").select("fusion_username").eq("user_id", user_id).execute()
+        if res.data:
+            for row in res.data:
+                if row.get("fusion_username"):
+                    return {"connected": True, "username": row.get("fusion_username")}
+        return {"connected": False}
+    except:
+        return {"connected": False}
 
 # Global ML Models Cache
 GLOBAL_ML_MODELS = {"xgb": None, "scaler": None}
@@ -634,6 +572,35 @@ def get_events():
         return {"data": response.data}
     except Exception as e:
         return {"data": [], "error": str(e)}
+class FusionCreds(BaseModel):
+    fusion_username: str
+    fusion_password: str
+
+@app.post("/update-fusion-credentials")
+async def update_fusion_credentials(creds: FusionCreds):
+    try:
+        user_id = user_id_ctx.get()
+        # Check if row exists
+        res = supabase.table("tank_settings").select("id").eq("user_id", user_id).execute()
+        
+        if res.data and len(res.data) > 0:
+            # Update existing row
+            supabase.table("tank_settings").update({
+                "fusion_username": creds.fusion_username,
+                "fusion_password": creds.fusion_password
+            }).eq("user_id", user_id).execute()
+        else:
+            # Insert new row
+            supabase.table("tank_settings").insert({
+                "user_id": user_id,
+                "fusion_username": creds.fusion_username,
+                "fusion_password": creds.fusion_password
+            }).execute()
+            
+        return {"status": "success"}
+    except Exception as e:
+        print(f"[API] Error saving credentials: {e}")
+        return {"status": "error", "message": str(e)}
 
 @app.post("/log-event")
 def log_event(req: EventRequest):

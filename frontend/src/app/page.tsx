@@ -9,6 +9,7 @@ import MediaGallery from "../components/MediaGallery";
 import Dashboard from "../components/Dashboard";
 import ActionPopup from "@/components/ActionPopup";
 import { createClient } from "@supabase/supabase-js";
+import { useRouter } from "next/navigation";
 import {
   DndContext,
   closestCenter,
@@ -29,6 +30,7 @@ import {
 } from '@dnd-kit/sortable';
 import { SortableTelemetryTile, SortableGraphWrapper, TelemetryTile } from '@/components/Sortables';
 import { motion } from 'framer-motion';
+import { fetchWithAuth } from '@/lib/api';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
@@ -38,6 +40,18 @@ const supabase = createClient(
 );
 
 export default function ReefOS() {
+  const router = useRouter();
+
+  // Auth Protection
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session) router.push("/login");
+    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!session) router.push("/login");
+    });
+    return () => subscription.unsubscribe();
+  }, [router]);
   // Chat State
   const [messages, setMessages] = useState<{ role: string; content: string }[]>([]);
   const [devMode, setDevMode] = useState(false);
@@ -105,7 +119,7 @@ export default function ReefOS() {
   useEffect(() => {
     const fetchLayout = async () => {
       try {
-        const res = await fetch(`${API_BASE}/get-layout?t=${Date.now()}`);
+        const res = await fetchWithAuth(`/get-layout?t=${Date.now()}`);
         const data = await res.json();
         if (data.layout) {
           setVisibleGraphs(data.layout.graphs || []);
@@ -127,7 +141,7 @@ export default function ReefOS() {
   // Save layout when it changes
   useEffect(() => {
     if (graphsLoaded && !layoutFetchFailed) {
-      fetch(`${API_BASE}/save-layout`, {
+      fetchWithAuth(`/save-layout`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ layout: { graphs: visibleGraphs, telemetry: telemetryLayout } }),
@@ -157,12 +171,12 @@ export default function ReefOS() {
 
           try {
             // 1. Instantly fetch the fresh ML status
-            const predRes = await fetch(`${API_BASE}/tank-status?t=${Date.now()}`);
+            const predRes = await fetchWithAuth(`/tank-status?t=${Date.now()}`);
             const predData = await predRes.json();
             if (predData.current_state) setPrediction(predData);
 
             // 2. Instantly fetch the updated logs
-            const logRes = await fetch(`${API_BASE}/get-logs?t=${Date.now()}`);
+            const logRes = await fetchWithAuth(`/get-logs?t=${Date.now()}`);
             const logData = await logRes.json();
             if (logData.data) setLogs(logData.data);
           } catch (err) {
@@ -180,11 +194,14 @@ export default function ReefOS() {
 
   const fetchData = async () => {
     try {
-      const logRes = await fetch(`${API_BASE}/get-logs?t=${Date.now()}`);
+      // Trigger background Fusion sync (fire and forget)
+      fetchWithAuth("/sync-fusion", { method: "POST" }).catch(e => console.error(e));
+
+      const logRes = await fetchWithAuth(`/get-logs?t=${Date.now()}`);
       const logData = await logRes.json();
       if (logData.data) setLogs(logData.data);
 
-      const chatRes = await fetch(`${API_BASE}/get-chat-history?t=${Date.now()}`);
+      const chatRes = await fetchWithAuth(`/get-chat-history?t=${Date.now()}`);
       const chatData = await chatRes.json();
       if (chatData.data) {
         setMessages(chatData.data);
@@ -197,7 +214,7 @@ export default function ReefOS() {
         }
       }
 
-      const predRes = await fetch(`${API_BASE}/tank-status?t=${Date.now()}`);
+      const predRes = await fetchWithAuth(`/tank-status?t=${Date.now()}`);
       const predData = await predRes.json();
       if (predData.current_state) setPrediction(predData);
     } catch (err) {
@@ -225,7 +242,7 @@ export default function ReefOS() {
     setLogs((prev) => [...prev, optimisticLog]);
 
     try {
-      await fetch(`${API_BASE}/log-metric?t=${Date.now()}`, {
+      await fetchWithAuth(`/log-metric?t=${Date.now()}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ parameter: paramName, value: val }),
@@ -261,7 +278,7 @@ export default function ReefOS() {
   const deleteSingleLog = async (id: number) => {
     // Optimistically remove from UI
     setLogs((prev) => prev.filter(log => log.id !== id));
-    await fetch(`${API_BASE}/delete-log/${id}`, { method: "DELETE" });
+    await fetchWithAuth(`/delete-log/${id}`, { method: "DELETE" });
     fetchData();
   };
 
@@ -270,7 +287,7 @@ export default function ReefOS() {
 
     try {
       const endpoint = useV2 ? "chat-v2" : "chat";
-      const res = await fetch(`${API_BASE}/${endpoint}?t=${Date.now()}`, {
+      const res = await fetchWithAuth(`/${endpoint}?t=${Date.now()}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text: userMessage }),
@@ -299,7 +316,7 @@ export default function ReefOS() {
   const clearHistory = async () => {
     if (!confirm("Are you sure you want to clear the chat history for this tank?")) return;
     try {
-      await fetch(`${API_BASE}/chat-history`, { method: "DELETE" });
+      await fetchWithAuth(`/chat-history`, { method: "DELETE" });
       setMessages([]);
       setSessionXrays([]);
       localStorage.removeItem("reef_session_xrays");
@@ -316,7 +333,7 @@ export default function ReefOS() {
     for (const action of actions) {
       try {
         if (action.action === "add_inhabitant") {
-          const res = await fetch(`${API_BASE}/add-inhabitant`, {
+          const res = await fetchWithAuth(`/add-inhabitant`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ 
@@ -334,7 +351,7 @@ export default function ReefOS() {
           if (res.ok) successCount++;
           else failCount++;
         } else if (action.action === "log_event") {
-          const res = await fetch(`${API_BASE}/log-event`, {
+          const res = await fetchWithAuth(`/log-event`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ 
@@ -345,7 +362,7 @@ export default function ReefOS() {
           if (res.ok) successCount++;
           else failCount++;
         } else if (action.action === "update_inhabitant" && action.id) {
-          const res = await fetch(`${API_BASE}/patch-inhabitant/${action.id}`, {
+          const res = await fetchWithAuth(`/patch-inhabitant/${action.id}`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(action),
@@ -358,7 +375,7 @@ export default function ReefOS() {
             errors.push(data.message || "Unknown error");
           }
         } else if (action.action === "delete_inhabitant" && action.id) {
-          const res = await fetch(`${API_BASE}/delete-inhabitant/${action.id}`, {
+          const res = await fetchWithAuth(`/delete-inhabitant/${action.id}`, {
             method: "DELETE"
           });
           const data = await res.json();
