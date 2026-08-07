@@ -20,7 +20,13 @@ def scrape_fusion_for_user(user_id: str, fusion_user: str, fusion_pass: str):
         ilog_data = []
 
         with sync_playwright() as p:
-            browser = p.chromium.launch(headless=True)
+            browserless_api_key = os.environ.get("BROWSERLESS_API_KEY")
+            if browserless_api_key:
+                print("[Scraper] Connecting to Browserless.io...")
+                browser = p.chromium.connect_over_cdp(f"wss://chrome.browserless.io?token={browserless_api_key}")
+            else:
+                print("[Scraper] Launching local Chromium...")
+                browser = p.chromium.launch(headless=True)
             context = browser.new_context()
             page = context.new_page()
 
