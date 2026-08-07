@@ -13,3 +13,5 @@ faiss-cpu
 sentence-transformers
 beautifulsoup4
 lxml
+python-multipart
+playwright
