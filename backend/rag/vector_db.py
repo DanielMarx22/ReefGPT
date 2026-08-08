@@ -33,7 +33,6 @@ from collections import defaultdict
 
 # Third-party imports for ML/vectors
 import numpy as np
-from sentence_transformers import SentenceTransformer  # Text embeddings
 
 # Check if torch is available (used by sentence_transformers)
 try:
