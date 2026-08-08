@@ -137,12 +137,13 @@ export default function ReefOS() {
         } else {
           setVisibleGraphs([]);
         }
-        setGraphsLoaded(true);
       } catch (err) {
         console.error("Failed to load dashboard layout", err);
         setLayoutFetchFailed(true);
         // We still set some defaults to render, but we won't save them back
         setVisibleGraphs([]);
+      } finally {
+        setGraphsLoaded(true);
       }
     };
     fetchLayout();

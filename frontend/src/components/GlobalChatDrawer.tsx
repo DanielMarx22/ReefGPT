@@ -7,7 +7,7 @@ import Chatbot from "@/components/Chatbot";
 
 export default function GlobalChatDrawer() {
   const { isChatOpen, setIsChatOpen, messages, sendMessage, clearHistory } = useChat();
-  
+
   // Custom 1:1 Touch Tracking
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [dragX, setDragX] = useState(0);
@@ -20,7 +20,7 @@ export default function GlobalChatDrawer() {
     if (touchStart === null) return;
     const currentX = e.targetTouches[0].clientX;
     const deltaX = currentX - touchStart;
-    
+
     // Only allow dragging to the right (positive delta)
     if (deltaX > 0) {
       setDragX(deltaX);
@@ -29,7 +29,6 @@ export default function GlobalChatDrawer() {
 
   useEffect(() => {
     if (!isChatOpen) {
-      // Force reset drag state when closed so it never gets stuck off-screen
       setDragX(0);
       setTouchStart(null);
     }
@@ -40,7 +39,6 @@ export default function GlobalChatDrawer() {
     if (dragX > 100) {
       setIsChatOpen(false);
     } else {
-      // Snap back to 0 if they didn't drag far enough
       setDragX(0);
     }
     setTouchStart(null);
