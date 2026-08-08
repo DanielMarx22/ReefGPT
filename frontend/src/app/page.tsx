@@ -435,15 +435,15 @@ export default function ReefOS() {
   };
 
   return (
-    <div className={`min-h-[100dvh] md:h-full w-full bg-gradient-to-br ${getAmbientBg()} text-white font-sans md:overflow-hidden relative transition-colors duration-1000`}>
+    <div className={`min-h-[100dvh] md:h-full w-full bg-gradient-to-br ${getAmbientBg()} text-white font-sans md:overflow-hidden relative transition-colors duration-1000 overflow-x-hidden`}>
       {/* Mesh Gradient Overlay */}
       <div className="absolute inset-0 z-0 opacity-20 pointer-events-none" style={{
         backgroundImage: `radial-gradient(circle at 15% 50%, rgba(6,182,212,0.15), transparent 25%),
                           radial-gradient(circle at 85% 30%, rgba(236,72,153,0.15), transparent 25%)`
       }} />
 
-      <div className="flex min-h-[100dvh] md:h-full md:overflow-hidden relative z-10">
-        <div className="flex-1 flex flex-col min-h-[100dvh] md:h-full md:overflow-hidden relative">
+      <div className="flex min-h-[100dvh] md:h-full md:overflow-hidden relative z-10 overflow-x-hidden">
+        <div className="flex-1 flex flex-col min-h-[100dvh] md:h-full md:overflow-hidden relative overflow-x-hidden">
           
           {/* Top Navbar */}
           <div className="h-16 border-b border-white/10 bg-black/20 backdrop-blur-md flex items-center justify-between px-6 shrink-0 relative z-30">

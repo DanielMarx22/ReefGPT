@@ -38,7 +38,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-[100dvh] md:h-[100dvh] w-full bg-slate-950 flex flex-col md:overflow-hidden`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-[100dvh] md:h-[100dvh] w-full bg-slate-950 flex flex-col md:overflow-hidden overflow-x-hidden`}
       >
         <AuthProvider>
           <ChatProvider>
