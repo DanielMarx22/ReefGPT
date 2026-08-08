@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { MessageSquare, X } from "lucide-react";
 import { useChat } from "@/context/ChatContext";
 import Chatbot from "@/components/Chatbot";
@@ -27,13 +27,22 @@ export default function GlobalChatDrawer() {
     }
   };
 
-  const handleTouchEnd = () => {
-    // If they dragged more than 120px to the right, close it
-    if (dragX > 120) {
-      setIsChatOpen(false);
+  useEffect(() => {
+    if (!isChatOpen) {
+      // Force reset drag state when closed so it never gets stuck off-screen
+      setDragX(0);
+      setTouchStart(null);
     }
-    // Reset drag state so it smoothly snaps back or animates away
-    setDragX(0);
+  }, [isChatOpen]);
+
+  const handleTouchEnd = () => {
+    // If they dragged more than 100px to the right, close it
+    if (dragX > 100) {
+      setIsChatOpen(false);
+    } else {
+      // Snap back to 0 if they didn't drag far enough
+      setDragX(0);
+    }
     setTouchStart(null);
   };
 
@@ -61,6 +70,7 @@ export default function GlobalChatDrawer() {
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
+        onTouchCancel={handleTouchEnd}
         style={{
           transform: `translateX(${isChatOpen ? dragX + "px" : "100%"})`,
           transitionProperty: "transform",
