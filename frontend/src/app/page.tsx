@@ -41,6 +41,16 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_KEY!
 );
 
+const ConditionalGroup = ({ children, isMobile, ...props }: any) => {
+  if (isMobile) return <div className="flex-1 flex flex-col w-full h-auto">{children}</div>;
+  return <Group {...props}>{children}</Group>;
+};
+
+const ConditionalPanel = ({ children, isMobile, className, ...props }: any) => {
+  if (isMobile) return <div className={`w-full h-auto ${className?.replace('overflow-y-auto', '')?.replace('overflow-hidden', '')?.replace('h-full', '') || ''}`}>{children}</div>;
+  return <Panel className={className} {...props}>{children}</Panel>;
+};
+
 export default function ReefOS() {
   const router = useRouter();
 
@@ -420,15 +430,15 @@ export default function ReefOS() {
   };
 
   return (
-    <div className={`h-full w-full bg-gradient-to-br ${getAmbientBg()} text-white font-sans overflow-hidden relative transition-colors duration-1000`}>
+    <div className={`min-h-[100dvh] md:h-full w-full bg-gradient-to-br ${getAmbientBg()} text-white font-sans md:overflow-hidden relative transition-colors duration-1000`}>
       {/* Mesh Gradient Overlay */}
       <div className="absolute inset-0 z-0 opacity-20 pointer-events-none" style={{
         backgroundImage: `radial-gradient(circle at 15% 50%, rgba(6,182,212,0.15), transparent 25%),
                           radial-gradient(circle at 85% 30%, rgba(236,72,153,0.15), transparent 25%)`
       }} />
 
-      <div className="flex h-full overflow-hidden relative z-10">
-        <div className="flex-1 flex flex-col h-full overflow-hidden relative">
+      <div className="flex min-h-[100dvh] md:h-full md:overflow-hidden relative z-10">
+        <div className="flex-1 flex flex-col min-h-[100dvh] md:h-full md:overflow-hidden relative">
           
           {/* Top Navbar */}
           <div className="h-16 border-b border-white/10 bg-black/20 backdrop-blur-md flex items-center justify-between px-6 shrink-0 relative z-30">
@@ -438,9 +448,9 @@ export default function ReefOS() {
               onDismiss={handleDismissAction} 
             />
           </div>
-          <Group orientation={isMobile ? "vertical" : "horizontal"} className="flex-1 min-h-0 rounded-xl overflow-hidden md:overflow-hidden overflow-y-auto border border-white/10 shadow-2xl bg-black/20 backdrop-blur-xl">
+          <ConditionalGroup isMobile={isMobile} orientation={isMobile ? "vertical" : "horizontal"} className="flex-1 min-h-0 md:rounded-xl md:overflow-hidden md:border border-white/10 md:shadow-2xl md:bg-black/20 md:backdrop-blur-xl">
           {/* LEFT PANEL: Data Input */}
-          <Panel defaultSize={40} minSize={20} className="p-3 md:p-6 overflow-y-auto flex flex-col gap-3 md:gap-6 scrollbar-hide h-full">
+          <ConditionalPanel isMobile={isMobile} defaultSize={40} minSize={20} className="p-3 md:p-6 overflow-y-auto flex flex-col gap-3 md:gap-6 scrollbar-hide h-full">
 
           {/* Tank Condition Alert 
              * ======================
@@ -796,14 +806,14 @@ export default function ReefOS() {
             </div>
           </div>
 
-        </Panel>
+        </ConditionalPanel>
 
-        <Separator className={`${isMobile ? 'h-2 cursor-row-resize' : 'w-2 cursor-col-resize'} bg-slate-950 flex items-center justify-center z-50 hover:bg-cyan-900/30 transition-colors`}>
-          <div className={`${isMobile ? 'w-8 h-1' : 'h-8 w-1'} bg-slate-700 rounded-full`} />
+        <Separator className={`${isMobile ? 'hidden' : 'w-2 cursor-col-resize'} bg-slate-950 flex items-center justify-center z-50 hover:bg-cyan-900/30 transition-colors`}>
+          <div className={`${isMobile ? 'hidden' : 'h-8 w-1'} bg-slate-700 rounded-full`} />
         </Separator>
 
         {/* RIGHT PANEL: Chat & X-Ray (Desktop Only) */}
-        <Panel defaultSize={60} minSize={30} className="hidden md:flex bg-black/20 border-l border-slate-800 flex-col relative">
+        <ConditionalPanel isMobile={isMobile} defaultSize={60} minSize={30} className="hidden md:flex bg-black/20 border-l border-slate-800 flex-col relative">
           <div className="absolute top-3 right-3 z-50 flex gap-2">
             <button
               onClick={() => setUseV2(!useV2)}
@@ -925,9 +935,9 @@ export default function ReefOS() {
           ) : (
             <Chatbot messages={messages} sendMessage={sendMessage} clearHistory={clearHistory} />
           )}
-        </Panel>
+        </ConditionalPanel>
 
-      </Group>
+      </ConditionalGroup>
       </div>
     </div>
   </div>
