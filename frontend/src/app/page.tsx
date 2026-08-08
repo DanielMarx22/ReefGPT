@@ -51,6 +51,11 @@ const ConditionalPanel = ({ children, isMobile, className, ...props }: any) => {
   return <Panel className={className} {...props}>{children}</Panel>;
 };
 
+const ConditionalSeparator = ({ isMobile, ...props }: any) => {
+  if (isMobile) return null;
+  return <Separator {...props} />;
+};
+
 export default function ReefOS() {
   const router = useRouter();
 
@@ -808,9 +813,9 @@ export default function ReefOS() {
 
         </ConditionalPanel>
 
-        <Separator className={`${isMobile ? 'hidden' : 'w-2 cursor-col-resize'} bg-slate-950 flex items-center justify-center z-50 hover:bg-cyan-900/30 transition-colors`}>
+        <ConditionalSeparator isMobile={isMobile} className={`${isMobile ? 'hidden' : 'w-2 cursor-col-resize'} bg-slate-950 flex items-center justify-center z-50 hover:bg-cyan-900/30 transition-colors`}>
           <div className={`${isMobile ? 'hidden' : 'h-8 w-1'} bg-slate-700 rounded-full`} />
-        </Separator>
+        </ConditionalSeparator>
 
         {/* RIGHT PANEL: Chat & X-Ray (Desktop Only) */}
         <ConditionalPanel isMobile={isMobile} defaultSize={60} minSize={30} className="hidden md:flex bg-black/20 border-l border-slate-800 flex-col relative">
