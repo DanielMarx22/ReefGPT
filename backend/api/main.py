@@ -205,7 +205,7 @@ def get_model_metrics():
                 val = row.get("value", 0)
                 if param and val:
                     by_ts[ts][param] = float(val)
-            
+             
             # Build features and labels
             X_data, y_data = [], []
             for ts, params in by_ts.items():
@@ -413,8 +413,12 @@ async def get_logs():
 
 @app.get("/get-chat-history")
 def get_chat_history():
-    response = supabase.table("chat_history").select("*").eq("user_id", user_id_ctx.get()).order("id", desc=False).execute()
-    return {"data": response.data}
+    try:
+        response = supabase.table("chat_history").select("*").eq("user_id", user_id_ctx.get()).order("id", desc=False).execute()
+        return {"data": response.data}
+    except Exception as e:
+        print(f"[API] Error in /get-chat-history: {e}")
+        return {"data": []}
 
 @app.delete("/chat-history")
 def clear_chat_history():
