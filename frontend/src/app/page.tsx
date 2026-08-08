@@ -503,7 +503,7 @@ export default function ReefOS() {
               onDismiss={handleDismissAction} 
             />
           </div>
-          <Group orientation={isMobile ? "vertical" : "horizontal"} className="flex-1 min-h-0 rounded-xl overflow-hidden border border-white/10 shadow-2xl bg-black/20 backdrop-blur-xl">
+          <Group orientation={isMobile ? "vertical" : "horizontal"} className="flex-1 min-h-0 rounded-xl overflow-hidden md:overflow-hidden overflow-y-auto border border-white/10 shadow-2xl bg-black/20 backdrop-blur-xl">
           {/* LEFT PANEL: Data Input */}
           <Panel defaultSize={40} minSize={20} className="p-3 md:p-6 overflow-y-auto flex flex-col gap-3 md:gap-6 scrollbar-hide h-full">
 

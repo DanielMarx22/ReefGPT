@@ -19,6 +19,14 @@ export const metadata: Metadata = {
   description: "AI-Powered Reef Tank Assistant",
 };
 
+import type { Viewport } from 'next';
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -27,7 +35,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased h-screen w-full bg-slate-950 flex flex-col`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased h-[100dvh] w-full bg-slate-950 flex flex-col`}
       >
         <AuthProvider>
           <Navbar />
