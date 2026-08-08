@@ -1180,20 +1180,20 @@ async def chat_v2_endpoint(req: ChatRequest):
     }}
     JSON_END
     """
-    # 5. MASTER DIAGNOSTICIAN on Gemini (smartest model, 1 call only)
+    # 5. MASTER DIAGNOSTICIAN on Groq (ultra-low latency)
     try:
-        response = await get_gemini_client().chat.completions.create(
-            model="gemini-3.5-flash",
-            messages=[{"role": "user", "content": master_prompt}],
-            temperature=0.2
-        )
-    except Exception as e:
-        print(f"Gemini failed ({e})! Falling back to Groq for Master AI.")
         response = await get_groq_client().chat.completions.create(
             model="llama-3.3-70b-versatile",
             messages=[{"role": "user", "content": master_prompt}],
             temperature=0.2,
             max_tokens=800
+        )
+    except Exception as e:
+        print(f"Master Groq failed ({e})! Falling back to Gemini.")
+        response = await get_gemini_client().chat.completions.create(
+            model="gemini-3.5-flash",
+            messages=[{"role": "user", "content": master_prompt}],
+            temperature=0.2
         )
     
     full_text = response.choices[0].message.content
