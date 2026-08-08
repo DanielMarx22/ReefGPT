@@ -1086,7 +1086,10 @@ async def chat_v2_endpoint(req: ChatRequest):
     # 2. RUN ORCHESTRATOR on Groq (fast, high rate limit)
     router_response = await route_intent(get_groq_client(), req.text, past_messages)
     router_content = router_response['content']
-    selected_subagents = router_content.get('subagents', ["telemetry", "historian", "equipment", "knowledge"])
+    selected_subagents = router_content.get('subagents', ["telemetry", "historian", "equipment"]) # Knowledge disabled on Render to prevent 512MB OOM kill
+    
+    # Filter out knowledge if the LLM hallucinated it
+    selected_subagents = [sa for sa in selected_subagents if sa != "knowledge"]
     
     if router_content.get('status') == "SHORT_CIRCUIT":
         reply_text = router_content.get('reply', 'I need more information to proceed.')
