@@ -70,11 +70,12 @@ export function SortableTelemetryTile({ id, paramKey, val, index }: { id: string
     isDragging,
   } = useSortable({ id });
 
-  const style = {
+  const style: React.CSSProperties = {
     transform: CSS.Transform.toString(transform),
     transition,
     zIndex: isDragging ? 0 : 1,
     opacity: isDragging ? 0.3 : 1,
+    touchAction: 'pan-y',
   };
 
   const color = getParamColor(paramKey);
@@ -117,11 +118,12 @@ export function SortableGraphWrapper({ id, children, index }: { id: string, chil
     isDragging,
   } = useSortable({ id });
 
-  const style = {
+  const style: React.CSSProperties = {
     transform: CSS.Transform.toString(transform),
     transition,
     zIndex: isDragging ? 0 : 1,
     opacity: isDragging ? 0.3 : 1,
+    touchAction: 'pan-y',
   };
 
   return (
