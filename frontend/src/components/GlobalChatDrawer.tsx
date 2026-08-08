@@ -1,14 +1,36 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { MessageSquare, X } from "lucide-react";
 import { useChat } from "@/context/ChatContext";
 import Chatbot from "@/components/Chatbot";
-
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function GlobalChatDrawer() {
   const { isChatOpen, setIsChatOpen, messages, sendMessage, clearHistory } = useChat();
+
+  // Custom Touch Swipe Detection
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  const minSwipeDistance = 50;
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    // A negative distance means the touch moved to the right
+    if (distance < -minSwipeDistance) {
+      setIsChatOpen(false);
+    }
+  };
 
   return (
     <>
@@ -39,14 +61,9 @@ export default function GlobalChatDrawer() {
         initial={{ x: "100%" }}
         animate={{ x: isChatOpen ? 0 : "100%" }}
         transition={{ type: "spring", damping: 25, stiffness: 200 }}
-        drag="x"
-        dragConstraints={{ left: 0, right: 300 }}
-        dragElastic={0.2}
-        onDragEnd={(e, info) => {
-          if (info.offset.x > 100 || info.velocity.x > 500) {
-            setIsChatOpen(false);
-          }
-        }}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
         className="md:hidden fixed inset-y-0 right-0 w-[90vw] max-w-[400px] z-50 bg-slate-950/95 backdrop-blur-2xl border-l border-white/10 shadow-[-20px_0_50px_rgba(0,0,0,0.5)] flex flex-col"
       >
         <div className="h-16 border-b border-white/10 bg-black/40 flex items-center justify-between px-4 shrink-0">
