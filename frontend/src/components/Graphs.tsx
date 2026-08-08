@@ -67,7 +67,7 @@ export default function ParameterGraph({ logs, id, initialParam = 'pH', onRemove
     }, [logs, selectedParam, timeRange]);
 
     return (
-        <div className="w-full bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-lg mb-6 relative group">
+        <div className="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 md:p-5 shadow-lg mb-4 md:mb-6 relative group">
             {onRemove && id && (
                 <button 
                     onClick={() => onRemove(id)}
@@ -78,9 +78,9 @@ export default function ParameterGraph({ logs, id, initialParam = 'pH', onRemove
                 </button>
             )}
             
-            <div className="flex justify-between items-center mb-4">
-                <div className="flex items-center gap-4">
-                    <h2 className="text-lg font-bold text-cyan-400 hidden sm:block">Telemetry</h2>
+            <div className="flex justify-between items-center mb-2 md:mb-4">
+                <div className="flex items-center gap-2 md:gap-4">
+                    <h2 className="text-sm md:text-lg font-bold text-cyan-400 hidden sm:block">Telemetry</h2>
 
                     {/* Strict 1D, 3D, 1W Range Selector */}
                     <div className="flex bg-black/50 border border-slate-700 rounded-lg p-1">
@@ -88,7 +88,7 @@ export default function ParameterGraph({ logs, id, initialParam = 'pH', onRemove
                             <button
                                 key={range.label}
                                 onClick={() => setTimeRange(range.days)}
-                                className={`text-xs px-3 py-1 rounded-md transition-colors ${timeRange === range.days
+                                className={`text-[10px] md:text-xs px-2 md:px-3 py-1 rounded-md transition-colors ${timeRange === range.days
                                     ? 'bg-cyan-600 text-white font-bold'
                                     : 'text-slate-400 hover:text-white'
                                     }`}
@@ -106,7 +106,7 @@ export default function ParameterGraph({ logs, id, initialParam = 'pH', onRemove
                         setSelectedParam(e.target.value);
                         if (onParamChange && id) onParamChange(id, e.target.value);
                     }}
-                    className="bg-black/80 border border-slate-700 rounded-lg p-2 text-sm text-slate-200 focus:border-cyan-500 outline-none cursor-pointer"
+                    className="bg-black/80 border border-slate-700 rounded-lg p-1 md:p-2 text-xs md:text-sm text-slate-200 focus:border-cyan-500 outline-none cursor-pointer"
                 >
                     {PARAMETERS.map(param => (
                         <option key={param} value={param}>{param}</option>
@@ -114,10 +114,10 @@ export default function ParameterGraph({ logs, id, initialParam = 'pH', onRemove
                 </select>
             </div>
 
-            <div className="h-36 w-full">
+            <div className="h-28 md:h-36 w-full" style={{ touchAction: 'pan-y' }}>
                 {chartData.length === 0 ? (
-                    <div className="h-full flex items-center justify-center text-slate-500 text-sm italic">
-                        No data logged for {selectedParam} in the selected time range.
+                    <div className="h-full flex items-center justify-center text-slate-500 text-xs md:text-sm italic text-center">
+                        No data logged for {selectedParam} in this range.
                     </div>
                 ) : (
                     <ResponsiveContainer width="100%" height="100%">
@@ -126,14 +126,14 @@ export default function ParameterGraph({ logs, id, initialParam = 'pH', onRemove
                             <XAxis
                                 dataKey="time"
                                 stroke="#64748b"
-                                fontSize={11}
+                                fontSize={10}
                                 tickMargin={10}
                                 minTickGap={20}
                             />
                             <YAxis
                                 domain={['dataMin', 'auto']}
                                 stroke="#64748b"
-                                fontSize={11}
+                                fontSize={10}
                                 tickFormatter={(val) => val.toFixed(1)}
                             />
                             <Tooltip

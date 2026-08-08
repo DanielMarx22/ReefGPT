@@ -27,6 +27,9 @@ export const viewport: Viewport = {
   userScalable: false,
 };
 
+import { ChatProvider } from "@/context/ChatContext";
+import GlobalChatDrawer from "@/components/GlobalChatDrawer";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -35,13 +38,16 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased h-[100dvh] w-full bg-slate-950 flex flex-col`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased h-[100dvh] w-full bg-slate-950 flex flex-col overflow-hidden`}
       >
         <AuthProvider>
-          <Navbar />
-          <main className="flex-1 overflow-hidden relative">
-            {children}
-          </main>
+          <ChatProvider>
+            <Navbar />
+            <main className="flex-1 overflow-hidden relative">
+              {children}
+            </main>
+            <GlobalChatDrawer />
+          </ChatProvider>
         </AuthProvider>
       </body>
     </html>

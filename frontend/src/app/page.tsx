@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from "react";
 import { ShieldAlert, ShieldCheck, Activity, BrainCircuit, Droplets, FlaskConical, Thermometer, Info, ActivitySquare, AlertTriangle, Fish, Trash2, Camera } from "lucide-react";
 import { Group, Panel, Separator } from "react-resizable-panels";
 import Chatbot from "@/components/Chatbot";
+import { useChat } from "@/context/ChatContext";
 import ParameterGraph from "../components/Graphs";
 import MediaGallery from "../components/MediaGallery";
 import Dashboard from "../components/Dashboard";
@@ -52,14 +53,8 @@ export default function ReefOS() {
     });
     return () => subscription.unsubscribe();
   }, [router]);
-  // Chat State
-  const [messages, setMessages] = useState<{ role: string; content: string }[]>([]);
-  const [devMode, setDevMode] = useState(false);
-  const [sessionXrays, setSessionXrays] = useState<any[]>([]);
-  const [xraysLoaded, setXraysLoaded] = useState(false);
-  const [useV2, setUseV2] = useState(true);
-  const [pendingActions, setPendingActions] = useState<any[]>([]);
-
+  // Chat State from Context
+  const { messages, devMode, setDevMode, useV2, setUseV2, sessionXrays, pendingActions, setPendingActions, sendMessage, clearHistory } = useChat();
   // Layout State
   const [isMobile, setIsMobile] = useState(false);
 
@@ -107,17 +102,6 @@ export default function ReefOS() {
   const [updateParamValue, setUpdateParamValue] = useState("");
   const [prediction, setPrediction] = useState<any>(null);
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const savedXrays = localStorage.getItem("reef_session_xrays");
-      if (savedXrays) {
-        try {
-          setSessionXrays(JSON.parse(savedXrays));
-        } catch (e) {}
-      }
-      setXraysLoaded(true);
-    }
-  }, []);
 
   // Fetch layout on mount (separately to ensure it runs once)
   useEffect(() => {
@@ -153,12 +137,6 @@ export default function ReefOS() {
     }
   }, [visibleGraphs, telemetryLayout, graphsLoaded]);
 
-  useEffect(() => {
-    if (xraysLoaded && typeof window !== "undefined") {
-      const last10 = sessionXrays.slice(-10);
-      localStorage.setItem("reef_session_xrays", JSON.stringify(last10));
-    }
-  }, [sessionXrays, xraysLoaded]);
 
   useEffect(() => {
     // Initial load on mount
@@ -205,18 +183,6 @@ export default function ReefOS() {
       const logData = await logRes.json();
       if (logData.data) setLogs(logData.data);
 
-      const chatRes = await fetchWithAuth(`/get-chat-history?t=${Date.now()}`);
-      const chatData = await chatRes.json();
-      if (chatData.data) {
-        setMessages(chatData.data);
-        // Extract xrays from history
-        const loadedXrays = chatData.data
-          .filter((msg: any) => msg.role === 'ai' && msg.agent_reasoning)
-          .map((msg: any) => msg.agent_reasoning);
-        if (loadedXrays.length > 0) {
-          setSessionXrays(loadedXrays.slice(-10));
-        }
-      }
 
       const predRes = await fetchWithAuth(`/tank-status?t=${Date.now()}`);
       const predData = await predRes.json();
@@ -286,48 +252,6 @@ export default function ReefOS() {
     fetchData();
   };
 
-  const sendMessage = async (userMessage: string) => {
-    setMessages((prev) => [...prev, { role: "user", content: userMessage }]);
-
-    try {
-      const endpoint = useV2 ? "chat-v2" : "chat";
-      const res = await fetchWithAuth(`/${endpoint}?t=${Date.now()}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text: userMessage }),
-      });
-      const data = await res.json();
-
-      setMessages((prev) => [...prev, { role: "ai", content: data.reply }]);
-      if (data.debug_xray) {
-        setSessionXrays((prev) => {
-          const updated = [...prev, data.debug_xray];
-          return updated.slice(-10); // Keep only the last 10 in state
-        });
-      }
-      if (data.proposed_actions && data.proposed_actions.length > 0) {
-        const validActions = data.proposed_actions.filter((a: any) => {
-          if (a.action === "add_inhabitant" && !a.species && !a.name) return false;
-          return true;
-        });
-        if (validActions.length > 0) {
-          setPendingActions(validActions);
-        }
-      }
-    } catch (err) { }
-  };
-
-  const clearHistory = async () => {
-    if (!confirm("Are you sure you want to clear the chat history for this tank?")) return;
-    try {
-      await fetchWithAuth(`/chat-history`, { method: "DELETE" });
-      setMessages([]);
-      setSessionXrays([]);
-      localStorage.removeItem("reef_session_xrays");
-    } catch (err) {
-      console.error("Failed to clear chat history", err);
-    }
-  };
 
   const handleConfirmAction = async (actions: any[]) => {
     let successCount = 0;
@@ -528,7 +452,7 @@ export default function ReefOS() {
               layout
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="relative rounded-xl overflow-hidden shadow-[0_0_30px_rgba(0,0,0,0.5)] border border-white/10 h-auto py-2 md:py-0 md:h-32 flex-shrink-0"
+              className="relative rounded-xl overflow-hidden shadow-[0_0_30px_rgba(0,0,0,0.5)] border border-white/10 h-auto py-3 md:py-0 md:h-32 flex-shrink-0"
             >
               {prediction?.current_state ? (
                 <>
@@ -871,8 +795,8 @@ export default function ReefOS() {
           <div className={`${isMobile ? 'w-8 h-1' : 'h-8 w-1'} bg-slate-700 rounded-full`} />
         </Separator>
 
-        {/* RIGHT PANEL: Chat & X-Ray */}
-        <Panel defaultSize={60} minSize={30} className="bg-black/20 border-l border-slate-800 flex flex-col relative">
+        {/* RIGHT PANEL: Chat & X-Ray (Desktop Only) */}
+        <Panel defaultSize={60} minSize={30} className="hidden md:flex bg-black/20 border-l border-slate-800 flex-col relative">
           <div className="absolute top-3 right-3 z-50 flex gap-2">
             <button
               onClick={() => setUseV2(!useV2)}
