@@ -326,18 +326,34 @@ class VectorKnowledgeBase:
     """
     
     def __init__(self):
-        self.model: Optional[SentenceTransformer] = None
         self.supabase: Client = create_client(
             os.environ.get("SUPABASE_URL", ""),
             os.environ.get("SUPABASE_KEY", "")
         )
+        self.gemini_key = os.environ.get("GEMINI_API_KEY", "")
     
-    def _load_model(self):
-        """Load the sentence transformer model for embeddings."""
-        if self.model is None:
-            print("Loading embedding model...")
-            self.model = SentenceTransformer('all-MiniLM-L6-v2')
-            print("Model loaded")
+    def _get_gemini_embedding(self, text: str) -> List[float]:
+        if not self.gemini_key:
+            print("Error: GEMINI_API_KEY not found.")
+            return []
+            
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent?key={self.gemini_key}"
+        headers = {"Content-Type": "application/json"}
+        data = {
+            "model": "models/text-embedding-004",
+            "content": {
+                "parts": [{"text": text}]
+            }
+        }
+        try:
+            import requests
+            response = requests.post(url, headers=headers, json=data)
+            response.raise_for_status()
+            result = response.json()
+            return result.get("embedding", {}).get("values", [])
+        except Exception as e:
+            print(f"Gemini Embedding Error: {e}")
+            return []
     
     def _normalize(self, vectors: np.ndarray) -> np.ndarray:
         norms = np.linalg.norm(vectors, axis=1, keepdims=True)
@@ -347,25 +363,24 @@ class VectorKnowledgeBase:
     def add_chunks(self, chunks: List[ReefKnowledgeChunk]):
         if not chunks:
             return
+            
+        print(f"Embedding {len(chunks)} chunks with Gemini...")
         
-        self._load_model()
-        texts = [chunk.content for chunk in chunks]
-        print(f"Embedding {len(texts)} chunks...")
-        
-        vectors = self.model.encode(texts, show_progress_bar=True)
-        vectors = vectors.astype('float32')
-        vectors = self._normalize(vectors)
-        
-        print("Uploading to Supabase pgvector...")
         data_to_insert = []
         for i, chunk in enumerate(chunks):
+            embedding = self._get_gemini_embedding(chunk.content)
+            if not embedding:
+                continue
+                
             data_to_insert.append({
                 "content": chunk.content,
                 "source": chunk.source,
                 "topic": chunk.title,
-                "embedding": vectors[i].tolist()
+                "embedding": embedding
             })
+            time.sleep(4.1) # 15 RPM limit for free tier
             
+        print("Uploading to Supabase pgvector...")
         # Batch insert to avoid payload size limits
         batch_size = 50
         for i in range(0, len(data_to_insert), batch_size):
@@ -382,14 +397,13 @@ class VectorKnowledgeBase:
         pass
     
     def search(self, query: str, k: int = 5) -> List[Dict]:
-        self._load_model()
-        
-        query_vec = self.model.encode([query]).astype('float32')
-        query_vec = self._normalize(query_vec)
+        query_vec = self._get_gemini_embedding(query)
+        if not query_vec:
+            return []
         
         try:
             response = self.supabase.rpc("match_knowledge", {
-                "query_embedding": query_vec[0].tolist(),
+                "query_embedding": query_vec,
                 "match_threshold": 0.1,
                 "match_count": k
             }).execute()
