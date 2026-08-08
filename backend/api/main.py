@@ -1105,27 +1105,29 @@ async def chat_v2_endpoint(req: ChatRequest):
             }
         }
 
-    # 3. RUN SELECTED SUBAGENTS SEQUENTIALLY on Groq (30 req/min free tier)
+    # 3. RUN SELECTED SUBAGENTS IN PARALLEL on Groq
     subagents_trace = []
     layer_1_summaries = ""
     
-    for name in selected_subagents:
-        res = None
-        node_name = name.capitalize()
-        
+    async def execute_subagent(name):
         if name == "telemetry":
             res = await summarize_telemetry(get_groq_client(), raw_telemetry, req.text)
-            node_name = "Telemetry Summarizer"
+            return ("Telemetry Summarizer", res)
         elif name == "historian":
             res = await summarize_history(get_groq_client(), tank_livestock, past_messages, tank_events, req.text)
-            node_name = "Historian"
+            return ("Historian", res)
         elif name == "equipment":
             res = await analyze_equipment_and_notes(get_groq_client(), tank_livestock, tank_events, req.text)
-            node_name = "Equipment & Notes Analyst"
+            return ("Equipment & Notes Analyst", res)
         elif name == "knowledge":
             res = await retrieve_knowledge(get_groq_client(), req.text)
-            node_name = "Knowledge Retriever"
-            
+            return ("Knowledge Retriever", res)
+        return (name.capitalize(), None)
+
+    import asyncio
+    results = await asyncio.gather(*[execute_subagent(name) for name in selected_subagents])
+    
+    for node_name, res in results:
         if res:
             subagents_trace.append({
                 "node": node_name,
@@ -1133,11 +1135,7 @@ async def chat_v2_endpoint(req: ChatRequest):
                 "tokens": res['tokens']
             })
             layer_1_summaries += f"{node_name.upper()}: {res['content']}\n"
-            
-            if res.get('found_issue'):
-                # Short-circuit the sequential loop! We found a glaring root cause.
-                break
-                
+
     if not layer_1_summaries:
         layer_1_summaries = "No subagents were run for this prompt."
         
@@ -1190,16 +1188,13 @@ async def chat_v2_endpoint(req: ChatRequest):
             temperature=0.2
         )
     except Exception as e:
-        if "429" in str(e):
-            print("Gemini rate limit hit! Falling back to Groq for Master AI.")
-            response = await get_groq_client().chat.completions.create(
-                model="llama-3.3-70b-versatile",
-                messages=[{"role": "user", "content": master_prompt}],
-                temperature=0.2,
-                max_tokens=800
-            )
-        else:
-            raise e
+        print(f"Gemini failed ({e})! Falling back to Groq for Master AI.")
+        response = await get_groq_client().chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=[{"role": "user", "content": master_prompt}],
+            temperature=0.2,
+            max_tokens=800
+        )
     
     full_text = response.choices[0].message.content
     layer_2_tokens = response.usage.total_tokens
