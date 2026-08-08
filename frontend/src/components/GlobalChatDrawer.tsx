@@ -1,13 +1,21 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { MessageSquare, X } from "lucide-react";
 import { useChat } from "@/context/ChatContext";
 import Chatbot from "@/components/Chatbot";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useAnimation } from "framer-motion";
 
 export default function GlobalChatDrawer() {
   const { isChatOpen, setIsChatOpen, messages, sendMessage, clearHistory } = useChat();
+  const controls = useAnimation();
+
+  // Animate the drawer in when it opens
+  useEffect(() => {
+    if (isChatOpen) {
+      controls.start({ x: 0, transition: { type: "spring", damping: 25, stiffness: 250 } });
+    }
+  }, [isChatOpen, controls]);
 
   return (
     <>
@@ -33,20 +41,29 @@ export default function GlobalChatDrawer() {
             />
             <motion.div
               initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
-              transition={{ type: "spring", damping: 25, stiffness: 250 }}
+              animate={controls}
+              exit={{ x: "100%", transition: { type: "spring", damping: 25, stiffness: 200 } }}
               drag="x"
               dragDirectionLock
-              dragConstraints={{ left: 0, right: 0 }} // Forces the drawer to ALWAYS snap back to 0 if not closed
-              dragElastic={{ left: 0, right: 1 }} // 1 = Perfect 1:1 tracking to the right, no rubber band!
+              dragConstraints={{ left: 0, right: 2000 }} // Allow physically dragging infinitely right without cancellation
+              dragElastic={0} // No rubber band, perfect 1:1 feel inside constraints
               onDragEnd={(e: any, info) => {
-                // If they deliberately swiped right with velocity, or dragged it more than 100px
+                // If Safari steals the touch event, ignore the drag end and let it snap back
+                if (e.type === 'touchcancel' || e.type === 'pointercancel') {
+                  controls.start({ x: 0, transition: { type: "spring", damping: 25, stiffness: 250 } });
+                  return;
+                }
+
+                // If they deliberately swiped right with velocity, or dragged it more than 150px
                 const isSwipingRight = info.velocity.x > 200;
-                const isSwipedFar = info.offset.x > 100;
+                const isSwipedFar = info.offset.x > 150;
                 
                 if (isSwipingRight || isSwipedFar) {
                   setIsChatOpen(false);
+                } else {
+                  // They didn't drag it far enough to close, so MANUALLY snap it back to 0!
+                  // This prevents the "stuck off-screen" bug!
+                  controls.start({ x: 0, transition: { type: "spring", damping: 25, stiffness: 250 } });
                 }
               }}
               className="md:hidden fixed inset-y-0 right-0 w-[90vw] max-w-[400px] z-50 bg-slate-950/95 backdrop-blur-2xl border-l border-white/10 shadow-[-20px_0_50px_rgba(0,0,0,0.5)] flex flex-col"
