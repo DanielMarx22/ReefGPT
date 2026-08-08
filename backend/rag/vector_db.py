@@ -481,10 +481,8 @@ GLOBAL_KB = None
 def get_global_kb():
     global GLOBAL_KB
     if GLOBAL_KB is None:
-        print("Initializing Global Vector Database (Model loaded once in memory)...")
+        print("Initializing Global Vector Database (Gemini API)...")
         GLOBAL_KB = VectorKnowledgeBase()
-        # Force the model to load into memory now, not during the first chat request
-        GLOBAL_KB._load_model()
     return GLOBAL_KB
 
 def get_vector_context(query: str, k: int = 5) -> str:
