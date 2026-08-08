@@ -37,13 +37,14 @@ export default function GlobalChatDrawer() {
       <motion.div
         initial={{ x: "100%" }}
         animate={{ x: isChatOpen ? 0 : "100%" }}
-        transition={{ type: "spring", damping: 25, stiffness: 200 }}
+        transition={{ type: "spring", damping: 25, stiffness: 250 }}
         drag="x"
         dragDirectionLock
-        dragConstraints={{ left: 0, right: 0 }}
-        dragElastic={{ left: 0, right: 0.5 }}
+        dragConstraints={{ left: 0, right: 1000 }} // Allow free 1:1 dragging to the right
+        dragElastic={0.05} // Almost zero rubber-banding, tracks finger perfectly
         onDragEnd={(e, info) => {
-          if (info.offset.x > 100 || info.velocity.x > 500) {
+          // If swiped right with velocity, or dragged more than 100px
+          if (info.offset.x > 100 || info.velocity.x > 300) {
             setIsChatOpen(false);
           }
         }}
