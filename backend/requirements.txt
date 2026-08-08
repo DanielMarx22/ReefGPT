@@ -16,3 +16,4 @@ lxml
 python-multipart
 playwright
 requests
+groq
