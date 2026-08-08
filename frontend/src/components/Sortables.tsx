@@ -61,6 +61,9 @@ export function TelemetryTile({ paramKey, val, isOverlay = false }: { paramKey: 
 }
 
 export function SortableTelemetryTile({ id, paramKey, val, index }: { id: string, paramKey: string, val: number, index: number }) {
+  const [isMobile, setIsMobile] = React.useState(false);
+  React.useEffect(() => setIsMobile(window.innerWidth < 768), []);
+
   const {
     attributes,
     listeners,
@@ -68,7 +71,7 @@ export function SortableTelemetryTile({ id, paramKey, val, index }: { id: string
     transform,
     transition,
     isDragging,
-  } = useSortable({ id });
+  } = useSortable({ id, disabled: isMobile });
 
   const style: React.CSSProperties = {
     transform: CSS.Transform.toString(transform),
@@ -88,19 +91,21 @@ export function SortableTelemetryTile({ id, paramKey, val, index }: { id: string
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: index * 0.05, duration: 0.3 }}
-        whileHover={{ scale: 1.05 }}
+        whileHover={{ scale: isMobile ? 1 : 1.05 }}
         className={`relative group bg-black/40 backdrop-blur-xl border border-white/10 hover:border-white/20 ${glow} p-2 md:p-4 rounded-xl flex flex-col items-center justify-center shadow-2xl overflow-hidden h-full transition-colors duration-300`}
       >
         <svg className="absolute bottom-0 left-0 w-full h-8 opacity-20 pointer-events-none" viewBox="0 0 100 30" preserveAspectRatio="none">
           <path d={sparkline} fill="none" stroke="currentColor" strokeWidth="2" className={color} />
         </svg>
-        <div 
-          {...attributes} 
-          {...listeners}
-          className="absolute top-1 left-1 md:top-2 md:left-2 text-slate-500 hover:text-white cursor-grab active:cursor-grabbing opacity-0 group-hover:opacity-100 transition-opacity outline-none"
-        >
-          <GripVertical size={14} />
-        </div>
+        {!isMobile && (
+          <div 
+            {...attributes} 
+            {...listeners}
+            className="hidden md:block absolute top-1 left-1 md:top-2 md:left-2 text-slate-500 hover:text-white cursor-grab active:cursor-grabbing opacity-0 group-hover:opacity-100 transition-opacity outline-none"
+          >
+            <GripVertical size={14} />
+          </div>
+        )}
         <div className={`text-[8px] md:text-[10px] ${color} font-bold uppercase tracking-widest mb-0.5 md:mb-1 z-10 drop-shadow-md`}>{paramKey}</div>
         <div className="text-xl md:text-2xl font-black text-white tracking-tight z-10">{val}</div>
       </motion.div>
@@ -109,6 +114,9 @@ export function SortableTelemetryTile({ id, paramKey, val, index }: { id: string
 }
 
 export function SortableGraphWrapper({ id, children, index }: { id: string, children: React.ReactNode, index: number }) {
+  const [isMobile, setIsMobile] = React.useState(false);
+  React.useEffect(() => setIsMobile(window.innerWidth < 768), []);
+
   const {
     attributes,
     listeners,
@@ -116,7 +124,7 @@ export function SortableGraphWrapper({ id, children, index }: { id: string, chil
     transform,
     transition,
     isDragging,
-  } = useSortable({ id });
+  } = useSortable({ id, disabled: isMobile });
 
   const style: React.CSSProperties = {
     transform: CSS.Transform.toString(transform),
@@ -134,13 +142,15 @@ export function SortableGraphWrapper({ id, children, index }: { id: string, chil
         transition={{ delay: index * 0.1, duration: 0.4 }}
         className="relative group"
       >
-        <div 
-          {...attributes} 
-          {...listeners}
-          className="absolute top-2 left-2 z-50 text-slate-500 hover:text-cyan-400 cursor-grab active:cursor-grabbing p-1 bg-black/50 rounded outline-none"
-        >
-          <GripVertical size={16} />
-        </div>
+        {!isMobile && (
+          <div 
+            {...attributes} 
+            {...listeners}
+            className="hidden md:block absolute top-2 left-2 z-50 text-slate-500 hover:text-cyan-400 cursor-grab active:cursor-grabbing p-1 bg-black/50 rounded outline-none"
+          >
+            <GripVertical size={16} />
+          </div>
+        )}
         {children}
       </motion.div>
     </div>
