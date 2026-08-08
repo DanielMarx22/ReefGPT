@@ -447,11 +447,6 @@ export default function ReefOS() {
           
           {/* Top Navbar */}
           <div className="h-16 border-b border-white/10 bg-black/20 backdrop-blur-md flex items-center justify-between px-6 shrink-0 relative z-30">
-            <ActionPopup 
-              actions={pendingActions} 
-              onConfirm={handleConfirmAction} 
-              onDismiss={handleDismissAction} 
-            />
           </div>
           <ConditionalGroup isMobile={isMobile} orientation={isMobile ? "vertical" : "horizontal"} className="flex-1 min-h-0 md:rounded-xl md:overflow-hidden md:border border-white/10 md:shadow-2xl md:bg-black/20 md:backdrop-blur-xl">
           {/* LEFT PANEL: Data Input */}
@@ -944,7 +939,13 @@ export default function ReefOS() {
 
       </ConditionalGroup>
       </div>
+      </div>
+      
+      <ActionPopup 
+        actions={pendingActions} 
+        onConfirm={handleConfirmAction} 
+        onDismiss={handleDismissAction} 
+      />
     </div>
-  </div>
   );
 }
