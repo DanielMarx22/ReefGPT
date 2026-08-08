@@ -56,3 +56,7 @@ This document outlines the roadmap of outstanding tasks for transforming ReefGPT
 ### 9. Maintenance To-Do List & Push Notifications
 *   **The Goal**: Provide users with a structured maintenance checklist that sends native device notifications for critical tasks.
 *   **The Plan**: Implement a task management system where users can schedule recurring maintenance (e.g., water changes, dosing, skimmer cleaning). We will integrate a service like Firebase Cloud Messaging (FCM) or OneSignal (or native Web Push API) to push actual device notifications to users' phones and desktops when a task is due, ensuring critical tank maintenance is never missed.
+
+### 10. Design an Informative Landing Page
+*   **The Goal**: Modify the base home page (`/`) to act as a proper landing page for unauthenticated users.
+*   **The Plan**: Instead of immediately dumping unauthenticated users onto a simple Login screen, we will build a rich, visually stunning landing page that explains ReefGPT's purpose, showcases its AI capabilities, and teaches new users how to use it. This will act as the marketing front-door for the app.
