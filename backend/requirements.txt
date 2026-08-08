@@ -14,4 +14,5 @@ sentence-transformers
 beautifulsoup4
 lxml
 python-multipart
-playwrightrequests
+playwright
+requests
