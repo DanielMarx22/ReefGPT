@@ -337,10 +337,10 @@ class VectorKnowledgeBase:
             print("Error: GEMINI_API_KEY not found.")
             return []
             
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent?key={self.gemini_key}"
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:embedContent?key={self.gemini_key}"
         headers = {"Content-Type": "application/json"}
         data = {
-            "model": "models/text-embedding-004",
+            "model": "models/gemini-embedding-2",
             "content": {
                 "parts": [{"text": text}]
             }
