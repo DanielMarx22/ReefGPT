@@ -60,3 +60,9 @@ This document outlines the roadmap of outstanding tasks for transforming ReefGPT
 ### 10. Design an Informative Landing Page
 *   **The Goal**: Modify the base home page (`/`) to act as a proper landing page for unauthenticated users.
 *   **The Plan**: Instead of immediately dumping unauthenticated users onto a simple Login screen, we will build a rich, visually stunning landing page that explains ReefGPT's purpose, showcases its AI capabilities, and teaches new users how to use it. This will act as the marketing front-door for the app.
+
+### 11. Neptune Integration & API Transition Strategy
+*   **The Goal**: Transition away from headless browser scraping (Playwright) to a scalable, TOS-compliant data retrieval method before official public launch.
+*   **The Plan**: Currently, ReefGPT acts as a cloud headless browser scraping `apexfusion.com`. At massive scale, this will cause heavy server load on Neptune and likely trigger Cloudflare bot protections. To prevent IP bans, we must transition to one of two methods:
+    1.  **Local Network Polling**: Develop a lightweight local relay (or integrate directly into the frontend) that polls the Apex unit's local XML/JSON endpoints (e.g., `http://apex.local/cgi-bin/status.xml`). This is perfectly safe, bypasses the cloud entirely, and updates instantly.
+    2.  **Official Partner API**: Reach out to Neptune Systems directly to secure an official partner API key (similar to what Hydros or third-party dashboard hardware companies do) for safe, authorized cloud data retrieval.
