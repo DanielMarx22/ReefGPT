@@ -79,6 +79,9 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text: userMessage }),
       });
+      if (!res.ok) {
+        throw new Error(`Server returned ${res.status}`);
+      }
       const data = await res.json();
 
       setMessages((prev) => [...prev, { role: "ai", content: data.reply }]);
@@ -97,7 +100,10 @@ export function ChatProvider({ children }: { children: ReactNode }) {
           setPendingActions(validActions);
         }
       }
-    } catch (err) {}
+    } catch (err: any) {
+      console.error("Chat error:", err);
+      setMessages((prev) => [...prev, { role: "ai", content: `System Error: Failed to reach the AI server (${err.message || "Unknown Network Error"}). Please check the backend logs.` }]);
+    }
   };
 
   const clearHistory = async () => {
