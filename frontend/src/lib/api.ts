@@ -1,7 +1,19 @@
 import { supabase } from './supabase';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+// Dynamically route to local backend if developing locally, otherwise hit production
+const getApiBase = () => {
+  if (typeof window !== 'undefined') {
+    const host = window.location.hostname;
+    // If accessing via localhost or local network (e.g., from your phone)
+    if (host === 'localhost' || host.startsWith('192.168.') || host.startsWith('10.')) {
+      return `http://${host}:8000`; // Hit the local uvicorn server
+    }
+  }
+  // Otherwise, use the explicit env var or default to production
+  return process.env.NEXT_PUBLIC_API_URL || "https://reefgpt.onrender.com";
+};
 
+const API_BASE = getApiBase();
 export async function fetchWithAuth(endpoint: string, options: RequestInit = {}) {
   const { data: { session } } = await supabase.auth.getSession();
   
