@@ -35,20 +35,15 @@ export default function GlobalChatDrawer() {
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
-              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              transition={{ type: "spring", damping: 25, stiffness: 250 }}
               drag="x"
               dragDirectionLock
-              dragConstraints={{ left: 0, right: 2000 }} // Drawer is physically free to move all the way right
-              dragElastic={0} // No elasticity needed since it's within constraints
+              dragConstraints={{ left: 0, right: 0 }} // Forces the drawer to ALWAYS snap back to 0 if not closed
+              dragElastic={{ left: 0, right: 1 }} // 1 = Perfect 1:1 tracking to the right, no rubber band!
               onDragEnd={(e: any, info) => {
-                // If Safari cancels the touch event mid-swipe, ignore it and let it snap back open
-                if (e.type === 'touchcancel' || e.type === 'pointercancel') {
-                  return;
-                }
-
-                // Require a deliberate swipe velocity (> 200) or distance (> 150px) to close
+                // If they deliberately swiped right with velocity, or dragged it more than 100px
                 const isSwipingRight = info.velocity.x > 200;
-                const isSwipedFar = info.offset.x > 150;
+                const isSwipedFar = info.offset.x > 100;
                 
                 if (isSwipingRight || isSwipedFar) {
                   setIsChatOpen(false);
