@@ -38,12 +38,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased h-[100dvh] w-full bg-slate-950 flex flex-col overflow-hidden`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-[100dvh] md:h-[100dvh] w-full bg-slate-950 flex flex-col md:overflow-hidden`}
       >
         <AuthProvider>
           <ChatProvider>
             <Navbar />
-            <main className="flex-1 overflow-hidden relative">
+            <main className="flex-1 md:overflow-hidden relative">
               {children}
             </main>
             <GlobalChatDrawer />
