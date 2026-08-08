@@ -50,7 +50,7 @@ export function TelemetryTile({ paramKey, val, isOverlay = false }: { paramKey: 
   const sparkline = getMockSparkline(paramKey);
 
   return (
-    <div className={`relative group bg-black/40 backdrop-blur-xl border ${isOverlay ? 'border-white/30 scale-105 z-50' : 'border-white/10 hover:border-white/20'} ${glow} p-2 md:p-4 rounded-xl flex flex-col items-center justify-center shadow-2xl overflow-hidden cursor-grabbing transition-colors duration-300`}>
+    <div className={`relative group bg-black/40 backdrop-blur-xl border ${isOverlay ? 'border-cyan-400 shadow-[0_20px_50px_rgba(34,211,238,0.5)] scale-110 z-50 ring-2 ring-cyan-500/50' : 'border-white/10 hover:border-white/20'} ${glow} p-2 md:p-4 rounded-xl flex flex-col items-center justify-center shadow-2xl overflow-hidden cursor-grabbing transition-all duration-300`}>
       <svg className="absolute bottom-0 left-0 w-full h-8 opacity-20 pointer-events-none" viewBox="0 0 100 30" preserveAspectRatio="none">
         <path d={sparkline} fill="none" stroke="currentColor" strokeWidth="2" className={color} />
       </svg>
@@ -71,7 +71,7 @@ export function SortableTelemetryTile({ id, paramKey, val, index }: { id: string
     transform,
     transition,
     isDragging,
-  } = useSortable({ id, disabled: isMobile });
+  } = useSortable({ id });
 
   const style: React.CSSProperties = {
     transform: CSS.Transform.toString(transform),
@@ -97,15 +97,13 @@ export function SortableTelemetryTile({ id, paramKey, val, index }: { id: string
         <svg className="absolute bottom-0 left-0 w-full h-8 opacity-20 pointer-events-none" viewBox="0 0 100 30" preserveAspectRatio="none">
           <path d={sparkline} fill="none" stroke="currentColor" strokeWidth="2" className={color} />
         </svg>
-        {!isMobile && (
-          <div 
-            {...attributes} 
-            {...listeners}
-            className="hidden md:block absolute top-1 left-1 md:top-2 md:left-2 text-slate-500 hover:text-white cursor-grab active:cursor-grabbing opacity-0 group-hover:opacity-100 transition-opacity outline-none"
-          >
-            <GripVertical size={14} />
-          </div>
-        )}
+        <div 
+          {...attributes} 
+          {...listeners}
+          className="absolute top-1 left-1 md:top-2 md:left-2 text-slate-500 hover:text-white cursor-grab active:cursor-grabbing opacity-50 md:opacity-0 group-hover:opacity-100 transition-opacity outline-none touch-none bg-black/40 md:bg-transparent rounded-sm p-0.5 md:p-0"
+        >
+          <GripVertical size={14} />
+        </div>
         <div className={`text-[8px] md:text-[10px] ${color} font-bold uppercase tracking-widest mb-0.5 md:mb-1 z-10 drop-shadow-md`}>{paramKey}</div>
         <div className="text-xl md:text-2xl font-black text-white tracking-tight z-10">{val}</div>
       </motion.div>
@@ -124,7 +122,7 @@ export function SortableGraphWrapper({ id, children, index }: { id: string, chil
     transform,
     transition,
     isDragging,
-  } = useSortable({ id, disabled: isMobile });
+  } = useSortable({ id });
 
   const style: React.CSSProperties = {
     transform: CSS.Transform.toString(transform),
@@ -142,15 +140,13 @@ export function SortableGraphWrapper({ id, children, index }: { id: string, chil
         transition={{ delay: index * 0.1, duration: 0.4 }}
         className="relative group"
       >
-        {!isMobile && (
-          <div 
-            {...attributes} 
-            {...listeners}
-            className="hidden md:block absolute top-2 left-2 z-50 text-slate-500 hover:text-cyan-400 cursor-grab active:cursor-grabbing p-1 bg-black/50 rounded outline-none"
-          >
-            <GripVertical size={16} />
-          </div>
-        )}
+        <div 
+          {...attributes} 
+          {...listeners}
+          className="absolute top-2 left-2 z-50 text-slate-500 hover:text-cyan-400 cursor-grab active:cursor-grabbing p-1.5 md:p-1 bg-black/60 md:bg-black/50 rounded outline-none touch-none opacity-80 md:opacity-100"
+        >
+          <GripVertical size={18} />
+        </div>
         {children}
       </motion.div>
     </div>
