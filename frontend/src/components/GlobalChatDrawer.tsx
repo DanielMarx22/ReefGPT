@@ -42,9 +42,15 @@ export default function GlobalChatDrawer() {
         dragDirectionLock
         dragConstraints={{ left: 0, right: 1000 }} // Allow free 1:1 dragging to the right
         dragElastic={0.05} // Almost zero rubber-banding, tracks finger perfectly
-        onDragEnd={(e, info) => {
-          // If swiped right with velocity, or dragged more than 100px
-          if (info.offset.x > 100 || info.velocity.x > 300) {
+        onDragEnd={(e: any, info) => {
+          // If Safari steals the touch event (e.g. for scrolling), it fires a cancel.
+          // We should NOT close the drawer; let it snap back to open instead.
+          if (e.type === 'touchcancel' || e.type === 'pointercancel') {
+            return;
+          }
+          
+          // If swiped right with velocity, or dragged more than 150px
+          if (info.offset.x > 150 || info.velocity.x > 300) {
             setIsChatOpen(false);
           }
         }}
